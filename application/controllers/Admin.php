@@ -1837,6 +1837,7 @@ class Admin extends MY_Controller {
             $this->load->model("usergroup_model");
             $data_up = $this->user_model->create_object($data);
             $this->user_model->update($data_up, $id);
+
             $array = $this->usergroup_model->where('user_id', $id)->as_array()->get_all();
             $group_old = array_map(function($item) {
                 return $item['group_id'];

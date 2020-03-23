@@ -126,8 +126,33 @@ class Object extends MY_Controller {
             $data_up = $this->object_model->create_object($data);
             $id = $this->object_model->insert($data_up);
 
+            if (isset($data['areas'])) {
+
+                $this->load->model("objectarea_model");
+                foreach ($data['areas'] as $row) {
+                    $array = array(
+                        'area_id' => $row,
+                        'object_id' => $id
+                    );
+                    $this->objectarea_model->insert($array);
+                }
+            }
+            if (isset($data['targets'])) {
+                $this->load->model("objecttarget_model");
+                foreach ($data['targets'] as $row) {
+                    $array = array(
+                        'target_id' => $row,
+                        'object_id' => $id
+                    );
+                    $this->objecttarget_model->insert($array);
+                }
+            }
             redirect('object', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
+
+            $this->load->model("area_model");
+            $this->data['areas'] = $this->area_model->where(array('deleted' => 0))->as_object()->get_all();
+            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
@@ -139,13 +164,44 @@ class Object extends MY_Controller {
             $data = $_POST;
             $data_up = $this->object_model->create_object($data);
             $this->object_model->update($data_up, $id);
+            $this->load->model("objectarea_model");
+            $this->objectarea_model->where(array('object_id' => $id))->delete();
+            if (isset($data['areas'])) {
+                foreach ($data['areas'] as $row) {
+                    $array = array(
+                        'area_id' => $row,
+                        'object_id' => $id
+                    );
+                    $this->objectarea_model->insert($array);
+                }
+            }
+            $this->load->model("objecttarget_model");
+            $this->objecttarget_model->where(array('object_id' => $id))->delete();
+            if (isset($data['targets'])) {
+                foreach ($data['targets'] as $row) {
+                    $array = array(
+                        'target_id' => $row,
+                        'object_id' => $id
+                    );
+                    $this->objecttarget_model->insert($array);
+                }
+            }
             redirect('object', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("object_model");
-            $tin = $this->object_model->where(array('id' => $id))->as_object()->get();
+            $tin = $this->object_model->where(array('id' => $id))->with_areas()->with_targets()->as_object()->get();
+
+            $object_area = (array) $tin->areas;
+            $tin->areas = array_keys($object_area);
+            $object_frequency = (array) $tin->targets;
+            $tin->targets = array_keys($object_frequency);
             $this->data['tin'] = $tin;
 
-//            load_chossen($this->data);
+            $this->load->model("area_model");
+            $this->data['areas'] = $this->area_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->load->model("target_model");
+            $this->data['targets'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }

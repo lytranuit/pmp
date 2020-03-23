@@ -26,6 +26,16 @@
                                     <input class="form-control" type='text' name="name" required="" />
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="area_id">
+                                        @foreach ($areas as $area)
+                                        <option value="{{$area->id}}">{{$area->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

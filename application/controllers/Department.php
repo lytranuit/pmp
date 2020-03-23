@@ -128,6 +128,9 @@ class Department extends MY_Controller {
 
             redirect('department', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
+
+            $this->load->model("area_model");
+            $this->data['areas'] = $this->area_model->where(array('deleted' => 0))->as_object()->get_all();
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
@@ -145,6 +148,8 @@ class Department extends MY_Controller {
             $tin = $this->department_model->where(array('id' => $id))->as_object()->get();
             $this->data['tin'] = $tin;
 
+            $this->load->model("area_model");
+            $this->data['areas'] = $this->area_model->where(array('deleted' => 0))->as_object()->get_all();
 //            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
@@ -180,15 +185,17 @@ class Department extends MY_Controller {
             $where = $this->department_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_area()->paginate($limit, NULL, $page);
 //        echo "<pre>";
 //        print_r($posts);
 //        die();
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
+                $area = $post->area;
                 $nestedData['string_id'] = $post->string_id;
                 $nestedData['name'] = $post->name;
+                $nestedData['area_name'] = $area->name;
                 $nestedData['action'] = '<a href="' . base_url() . 'department/edit/' . $post->id . '" class="btn btn-warning btn-xs mr-2" title="edit">'
                         . '<i class="fas fa-pencil-alt">'
                         . '</i>'

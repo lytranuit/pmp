@@ -19,7 +19,28 @@
                                     <input class="form-control" type='text' name="name" required="" />
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Khu vực:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select name="areas[]"  style="width: 500px;" multiple="">
+                                        @foreach($areas as $area)
+                                        <option value="{{$area->id}}">{{$area->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phương pháp/Chi tiêu:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select name="targets[]"  style="width: 500px;" multiple="">
+                                        @foreach($targets as $target)
+                                        <option value="{{$target->id}}">{{$target->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </section>
@@ -28,7 +49,7 @@
 </div>
 <script type='text/javascript'>
     $(document).ready(function () {
-
+        $("select[multiple]").chosen();
         $.validator.setDefaults({
             debug: true,
             success: "valid"

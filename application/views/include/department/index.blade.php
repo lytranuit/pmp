@@ -14,6 +14,7 @@
                         <tr>
                             <th>Mã Phòng</th>
                             <th>Tên Phòng</th>
+                            <th>Khu vực</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -39,6 +40,7 @@
             "columns": [
                 {"data": "string_id"},
                 {"data": "name"},
+                {"data": "area_name"},
                 {"data": "action"}
             ]
 
