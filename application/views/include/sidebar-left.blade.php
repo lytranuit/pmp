@@ -77,9 +77,15 @@
                 </li>
                 <li class="app-sidebar__heading">Nhập dữ liệu</li>
                 <li>
-                    <a href="{{base_url()}}" class="">
+                    <a href="{{base_url()}}result/" class="">
                         <i class="metismenu-icon fa fa-database"></i>
-                        Nhập
+                        Dữ liệu
+                    </a>
+                </li>
+                <li>
+                    <a href="{{base_url()}}limit/" class="">
+                        <i class="metismenu-icon fas fa-bell"></i>
+                        Giới hạn
                     </a>
                 </li>
                 <li class="app-sidebar__heading">Cài đặt</li>
@@ -107,7 +113,7 @@
                 </li>
                 <li>
                     <a href="#">
-                        <i class="metismenu-icon fa fa-database"></i>
+                        <i class="metismenu-icon fas fa-columns"></i>
                         Trường dữ liệu
                         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                     </a>
