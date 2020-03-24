@@ -30,6 +30,9 @@
         </span>
     </div>
     <div class="app-header__content">
+        <div class="app-header-left">
+            <button class="btn btn-primary" id="btn_object_select" tabindex="-1" data-target='#object-modal' data-toggle='modal'>Vi Sinh</button>
+        </div>
         <div class="app-header-right">
             <div class="header-btn-lg pr-0">
                 <div class="widget-content p-0">
@@ -55,6 +58,36 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="object-modalLabel" class="modal fade" id="object-modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="object-modalLabel">
+                    Chọn đối tượng
+                </h6>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">
+                        x
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        @foreach($objects as $row)
+                        <div class="col-md-3 col-4 my-4">
+                            <a class="btn btn-success btn-xs object_select" href="#" data-id="{{$row['id']}}" data-name="{{$row['name']}}">
+                                {{$row['name']}}
+                            </a>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>

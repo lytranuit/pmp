@@ -2,16 +2,18 @@
 
 use Philo\Blade\Blade;
 
-class MY_Controller extends CI_Controller {
+class MY_Controller extends CI_Controller
+{
 
     protected $data = array();
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library(array('widget', 'ion_auth'));
         $this->load->model("page_model");
-//        $this->load->model("user_model");
-//        echo language_current();
+        //        $this->load->model("user_model");
+        //        echo language_current();
         ////// set langue
         $this->config->set_item('language', language_current());
         $this->lang->load(array('home'));
@@ -19,18 +21,21 @@ class MY_Controller extends CI_Controller {
         $this->data['widget'] = $this->widget;
         $this->data['project_name'] = $this->config->item("project_name");
         $this->data['stylesheet_tag'] = array();
-        $this->data['javascript_tag'] = array();
+        $this->data['javascript_tag'] = array(
 
-////////////////////////////////
+            base_url() . "public/assets/jquery.cookies.2.2.0.min.js",
+        );
+
+        ////////////////////////////////
         $views = APPPATH . "views/";
         $cache = APPPATH . "cache/";
         $this->blade = new Blade($views, $cache);
         $module = $this->router->fetch_module();
         $class = $this->router->fetch_class(); // class = controller
         $method = $this->router->fetch_method();
-//        echo $module;
-//        echo $class;
-//        die();
+        //        echo $module;
+        //        echo $class;
+        //        die();
         $link = $module == "" ? $class . "/" . $method : $module . "/" . $class . "/" . $method;
         $page = $this->page_model->where(array("deleted" => 0, 'link' => $link))->as_array()->get_all();
         if (count($page)) {
@@ -44,8 +49,8 @@ class MY_Controller extends CI_Controller {
         }
 
         $this->data['host'] = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-//        print_r($this->data['template']);
+        //        print_r($this->data['template']);
     }
 
-////////////
+    ////////////
 }

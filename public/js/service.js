@@ -251,7 +251,6 @@ $(document).ready(function () {
                 $(".product-item[data-id=" + id + "] .qty-product").text("(" + qty + ")");
             });
         } else {
-
             $(".open_table").prop("disabled", false);
         }
         ///EXchange

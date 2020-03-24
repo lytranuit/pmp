@@ -18,6 +18,7 @@ class Admin extends MY_Controller {
             base_url() . "public/lib/jquery-validation/jquery.validate.js",
             base_url() . "public/admin/vendor/inputmask/js/jquery.inputmask.bundle.js",
             base_url() . "public/admin/libs/js/moment.js",
+            base_url() . "public/assets/scripts/jquery.cookies.2.2.0.min.js",
             base_url() . "public/assets/scripts/main.js?v=" . $version,
             base_url() . "public/assets/scripts/custom.js?v=" . $version
         );

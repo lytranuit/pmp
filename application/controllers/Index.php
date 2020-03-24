@@ -20,7 +20,7 @@ class Index extends MY_Controller {
         $this->data['javascript_tag'] = array(
             base_url() . 'public/scripts/assets/jquery.min.js',
             base_url() . 'public/lib/bootstrap/js/bootstrap.bundle.min.js',
-            base_url() . "public/assets/jquery.cookies.2.2.0.min.js",
+            base_url() . "public/assets/scripts/jquery.cookies.2.2.0.min.js",
             base_url() . "public/assets/core.min.js",
             base_url() . "public/lib/easing/easing.min.js"
         );
