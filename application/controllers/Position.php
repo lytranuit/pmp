@@ -1,8 +1,10 @@
 <?php
 
-class Position extends MY_Controller {
+class Position extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -23,14 +25,15 @@ class Position extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
         $group = array('admin', 'manager');
 
         if (!$this->ion_auth->in_group($group)) {
-//redirect them to the login page
+            //redirect them to the login page
             redirect("index/login", "refresh");
         } elseif ($this->has_right($method, $params)) {
             $this->$method($params);
@@ -39,87 +42,90 @@ class Position extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
          */
-//        $role_user = $this->session->userdata('role');
-//        $this->user_model->set_permission($role_user);
-//
-//        /* Change method */
-//        switch ($method) {
-//            case 'updatetintuc':
-//                $method = 'edittintuc';
-//                break;
-//            case 'editmenu':
-//                $method = 'quanlymenu';
-//                break;
-//            case 'updatenoibat':
-//                $method = 'editnoibat';
-//                break;
-//            case 'updatenoibo':
-//                $method = 'editnoibo';
-//                break;
-//            case 'updateproduct':
-//                $method = 'editproduct';
-//                break;
-//            case 'viewtin':
-//                $method = 'quanlynoibo';
-//                break;
-//            case 'updatepage':
-//                $method = "editpage";
-//                break;
-//            case 'slider':
-//            case 'saveslider':
-//            case 'gioithieu':
-//            case 'savegioithieu':
-//            case 'quanlycategory':
-//            case 'themcategory':
-//            case 'editcategory':
-//            case 'updatecategory':
-//            case 'removecategory':
-//            case 'quanlyclient':
-//            case 'themclient':
-//            case 'editclient':
-//            case 'updateclient':
-//            case 'removeclient':
-//            case 'quanlyhappy':
-//            case 'themhappy':
-//            case 'edithappy':
-//            case 'updatehappy':
-//            case 'removehappy':
-//                $method = 'trangchu';
-//                break;
-//        }
-//        if (has_permission($method) && !is_permission($method)) {
-//            return false;
-//        }
+        //        $role_user = $this->session->userdata('role');
+        //        $this->user_model->set_permission($role_user);
+        //
+        //        /* Change method */
+        //        switch ($method) {
+        //            case 'updatetintuc':
+        //                $method = 'edittintuc';
+        //                break;
+        //            case 'editmenu':
+        //                $method = 'quanlymenu';
+        //                break;
+        //            case 'updatenoibat':
+        //                $method = 'editnoibat';
+        //                break;
+        //            case 'updatenoibo':
+        //                $method = 'editnoibo';
+        //                break;
+        //            case 'updateproduct':
+        //                $method = 'editproduct';
+        //                break;
+        //            case 'viewtin':
+        //                $method = 'quanlynoibo';
+        //                break;
+        //            case 'updatepage':
+        //                $method = "editpage";
+        //                break;
+        //            case 'slider':
+        //            case 'saveslider':
+        //            case 'gioithieu':
+        //            case 'savegioithieu':
+        //            case 'quanlycategory':
+        //            case 'themcategory':
+        //            case 'editcategory':
+        //            case 'updatecategory':
+        //            case 'removecategory':
+        //            case 'quanlyclient':
+        //            case 'themclient':
+        //            case 'editclient':
+        //            case 'updateclient':
+        //            case 'removeclient':
+        //            case 'quanlyhappy':
+        //            case 'themhappy':
+        //            case 'edithappy':
+        //            case 'updatehappy':
+        //            case 'removehappy':
+        //                $method = 'trangchu';
+        //                break;
+        //        }
+        //        if (has_permission($method) && !is_permission($method)) {
+        //            return false;
+        //        }
         /* Tin đăng check */
-//        $fun_tin = array(
-//            "edittin",
-//            "activate_tin",
-//            "deactivate_tin",
-//            "remove_tin",
-//        );
-//        if (in_array($method, $fun_tin)) {
-//            $id = $params[0];
-//            $id_user = $this->session->userdata('user_id');
-//            $this->load->model("tin_model");
-//            $tin = $this->tin_model->where(array('deleted' => 0, 'id_user' => $id_user, 'id_tin' => $id))->as_array()->get_all();
-//            if (!count($tin)) {
-//                return false;
-//            }
-//        }
+        //        $fun_tin = array(
+        //            "edittin",
+        //            "activate_tin",
+        //            "deactivate_tin",
+        //            "remove_tin",
+        //        );
+        //        if (in_array($method, $fun_tin)) {
+        //            $id = $params[0];
+        //            $id_user = $this->session->userdata('user_id');
+        //            $this->load->model("tin_model");
+        //            $tin = $this->tin_model->where(array('deleted' => 0, 'id_user' => $id_user, 'id_tin' => $id))->as_array()->get_all();
+        //            if (!count($tin)) {
+        //                return false;
+        //            }
+        //        }
         return true;
     }
 
-    public function index() { /////// trang ca nhan
+    public function index()
+    { /////// trang ca nhan
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function add() { /////// trang ca nhan
+    public function add()
+    { /////// trang ca nhan
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("position_model");
@@ -137,7 +143,8 @@ class Position extends MY_Controller {
         }
     }
 
-    public function edit($param) { /////// trang ca nhan
+    public function edit($param)
+    { /////// trang ca nhan
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("position_model");
@@ -155,12 +162,13 @@ class Position extends MY_Controller {
             $this->load->model("frequency_model");
             $this->data['department'] = $this->department_model->where(array('deleted' => 0))->as_object()->get_all();
             $this->data['frequency'] = $this->frequency_model->where(array('deleted' => 0))->as_object()->get_all();
-//            load_chossen($this->data);
+            //            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
 
-    public function remove($params) { /////// trang ca nhan
+    public function remove($params)
+    { /////// trang ca nhan
         $this->load->model("position_model");
         $id = $params[0];
         $this->position_model->update(array("deleted" => 1), $id);
@@ -168,7 +176,8 @@ class Position extends MY_Controller {
         exit;
     }
 
-    public function table() {
+    public function table()
+    {
         $this->load->model("position_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
@@ -179,7 +188,7 @@ class Position extends MY_Controller {
         $totalFiltered = $totalData;
 
         if (empty($this->input->post('search')['value'])) {
-//            $max_page = ceil($totalFiltered / $limit);
+            //            $max_page = ceil($totalFiltered / $limit);
 
             $where = $this->position_model->where(array("deleted" => 0));
         } else {
@@ -190,27 +199,26 @@ class Position extends MY_Controller {
             $where = $this->position_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->with_department()->with_frequency()->paginate($limit, NULL, $page);
-//        echo "<pre>";
-//        print_r($posts);
-//        die();
+        $posts = $where->order_by("id", "DESC")->with_department()->paginate($limit, NULL, $page);
+        //        echo "<pre>";
+        //        print_r($posts);
+        //        die();
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $department = $post->department;
-                $frequency = $post->frequency;
                 $nestedData['string_id'] = $post->string_id;
                 $nestedData['name'] = $post->name;
-                $nestedData['frequency_name'] = $frequency->name;
+                $nestedData['frequency_name'] = $post->frequency_name;
                 $nestedData['department_name'] = $department->name;
                 $nestedData['action'] = '<a href="' . base_url() . 'position/edit/' . $post->id . '" class="btn btn-warning btn-xs mr-2" title="edit">'
-                        . '<i class="fas fa-pencil-alt">'
-                        . '</i>'
-                        . '</a>'
-                        . '<a href="' . base_url() . 'position/remove/' . $post->id . '" class="btn btn-danger btn-xs" data-type="confirm" title="remove">'
-                        . '<i class="far fa-trash-alt">'
-                        . '</i>'
-                        . '</a>';
+                    . '<i class="fas fa-pencil-alt">'
+                    . '</i>'
+                    . '</a>'
+                    . '<a href="' . base_url() . 'position/remove/' . $post->id . '" class="btn btn-danger btn-xs" data-type="confirm" title="remove">'
+                    . '<i class="far fa-trash-alt">'
+                    . '</i>'
+                    . '</a>';
 
                 $data[] = $nestedData;
             }
@@ -225,5 +233,4 @@ class Position extends MY_Controller {
 
         echo json_encode($json_data);
     }
-
 }
