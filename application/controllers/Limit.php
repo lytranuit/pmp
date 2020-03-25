@@ -1,8 +1,10 @@
 <?php
 
-class Result extends MY_Controller {
+class Limit extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -24,7 +26,8 @@ class Result extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -40,7 +43,8 @@ class Result extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
@@ -115,42 +119,68 @@ class Result extends MY_Controller {
         return true;
     }
 
-    public function index() { /////// trang ca nhan
+    public function index()
+    { /////// trang ca nhan
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function add() { /////// trang ca nhan
+    public function add()
+    { /////// trang ca nhan
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
-            $this->load->model("result_model");
-            $data['create_at'] = date("Y-m-d H:i:s");
-            $data_up = $this->result_model->create_object($data);
-            $id = $this->result_model->insert($data_up);
+            $this->load->model("limit_model");
+            $data_up = $this->limit_model->create_object($data);
+            $id = $this->limit_model->insert($data_up);
 
-            redirect('result', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
+            redirect('limit', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
-
-            $this->load->model("position_model");
-            $this->data['positions'] = $this->position_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->load->model("area_model");
+            $this->data['area'] = $this->area_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->load->model("target_model");
+            $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
 
-    public function remove($params) { /////// trang ca nhan
-        $this->load->model("result_model");
+    public function edit($param)
+    { /////// trang ca nhan
+        $id = $param[0];
+        if (isset($_POST['dangtin'])) {
+            $this->load->model("limit_model");
+            $data = $_POST;
+            $data_up = $this->limit_model->create_object($data);
+            $this->limit_model->update($data_up, $id);
+            redirect('limit', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
+        } else {
+            $this->load->model("limit_model");
+            $tin = $this->limit_model->where(array('id' => $id))->as_object()->get();
+            $this->data['tin'] = $tin;
+
+            $this->load->model("area_model");
+            $this->data['area'] = $this->area_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->load->model("target_model");
+            $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+            echo $this->blade->view()->make('page/page', $this->data)->render();
+        }
+    }
+
+    public function remove($params)
+    { /////// trang ca nhan
+        $this->load->model("limit_model");
         $id = $params[0];
-        $this->result_model->update(array("deleted" => 1), $id);
+        $this->limit_model->update(array("deleted" => 1), $id);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
 
-    public function table() {
-        $this->load->model("result_model");
+    public function table()
+    {
+        $this->load->model("limit_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
-        $where = $this->result_model;
+        $where = $this->limit_model;
 
         $totalData = $where->count_rows();
         $totalFiltered = $totalData;
@@ -158,37 +188,37 @@ class Result extends MY_Controller {
         if (empty($this->input->post('search')['value'])) {
             //            $max_page = ceil($totalFiltered / $limit);
 
-            $where = $this->result_model->where(array("deleted" => 0));
+            $where = $this->limit_model->where(array("deleted" => 0));
         } else {
             $search = $this->input->post('search')['value'];
             $sWhere = "deleted = 0";
-            $where = $this->result_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
             $totalFiltered = $where->count_rows();
-            $where = $this->result_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->with_department()->with_area()->with_position()->with_target()->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_area()->with_target()->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);
         //        die();
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
-                $department = $post->department;
-                $position = $post->position;
                 $target = $post->target;
                 $area = $post->area;
                 $nestedData['target_name'] = $target->name;
-                $nestedData['position_string_id'] = $position->string_id;
-                $nestedData['frequency_name'] = $position->frequency_name;
-                $nestedData['department_name'] = $department->name;
-                $nestedData['position_name'] = $position->name;
-                $nestedData['date'] = $post->date;
-                $nestedData['value'] = $post->value;
-                $nestedData['action'] = '<a href="' . base_url() . 'result/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
-                        . '<i class="far fa-trash-alt">'
-                        . '</i>'
-                        . '</a>';
+                $nestedData['area_name'] = $area->name;
+                $nestedData['standard_limit'] = $post->standard_limit;
+                $nestedData['alert_limit'] = $post->alert_limit;
+                $nestedData['action_limit'] = $post->action_limit;
+                $nestedData['action'] = '<a href="' . base_url() . 'limit/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
+                    . '<i class="fas fa-pencil-alt">'
+                    . '</i>'
+                    . '</a>'
+                    . '<a href="' . base_url() . 'limit/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                    . '<i class="far fa-trash-alt">'
+                    . '</i>'
+                    . '</a>';
 
                 $data[] = $nestedData;
             }
@@ -203,5 +233,4 @@ class Result extends MY_Controller {
 
         echo json_encode($json_data);
     }
-
 }
