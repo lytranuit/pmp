@@ -136,10 +136,8 @@ class Result extends MY_Controller
             redirect('position', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
-            $this->load->model("department_model");
-            $this->load->model("frequency_model");
-            $this->data['department'] = $this->department_model->where(array('deleted' => 0))->as_object()->get_all();
-            $this->data['frequency'] = $this->frequency_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->load->model("position_model");
+            $this->data['positions'] = $this->position_model->where(array('deleted' => 0))->as_object()->get_all();
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
@@ -194,7 +192,7 @@ class Result extends MY_Controller
                 $nestedData['position_name'] = $position->name;
                 $nestedData['date'] = $post->date;
                 $nestedData['value'] = $post->value;
-                $nestedData['action'] = '<a href="' . base_url() . 'result/remove/' . $post->id . '" class="btn btn-danger btn-xs" data-type="confirm" title="remove">'
+                $nestedData['action'] = '<a href="' . base_url() . 'result/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
                     . '<i class="far fa-trash-alt">'
                     . '</i>'
                     . '</a>';

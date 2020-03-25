@@ -3,11 +3,9 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Result_model extends MY_Model
-{
+class Result_model extends MY_Model {
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->table = 'pmp_result';
         $this->primary_key = 'id';
         parent::__construct();
@@ -18,10 +16,9 @@ class Result_model extends MY_Model
         $this->has_one['target'] = array('foreign_model' => 'Target_model', 'foreign_table' => 'pmp_target', 'foreign_key' => 'id', 'local_key' => 'target_id');
     }
 
-    function create_object($data)
-    {
+    function create_object($data) {
         $array = array(
-            'deleted', 'target_id', 'position_id', 'department_id', 'area_id', 'value', 'date', 'create_at'
+            'deleted', 'target_id', 'position_id', 'department_id', 'area_id', 'value', 'date', 'create_at', 'deleted_at'
         );
         $obj = array();
         foreach ($array as $key) {
@@ -33,4 +30,5 @@ class Result_model extends MY_Model
 
         return $obj;
     }
+
 }

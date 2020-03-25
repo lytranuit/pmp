@@ -190,11 +190,11 @@ class Area extends MY_Controller {
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
                 $nestedData['name'] = $post->name;
-                $nestedData['action'] = '<a href="' . base_url() . 'area/edit/' . $post->id . '" class="btn btn-warning btn-xs mr-2" title="edit">'
+                $nestedData['action'] = '<a href="' . base_url() . 'area/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                         . '<i class="fas fa-pencil-alt">'
                         . '</i>'
                         . '</a>'
-                        . '<a href="' . base_url() . 'area/remove/' . $post->id . '" class="btn btn-danger btn-xs" data-type="confirm" title="remove">'
+                        . '<a href="' . base_url() . 'area/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
                         . '<i class="far fa-trash-alt">'
                         . '</i>'
                         . '</a>';

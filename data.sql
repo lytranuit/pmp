@@ -1,5 +1,5 @@
 /*
-SQLyog Professional v12.09 (64 bit)
+SQLyog Ultimate v12.09 (64 bit)
 MySQL - 10.1.32-MariaDB : Database - pmp
 *********************************************************************
 */
@@ -53,7 +53,7 @@ CREATE TABLE `ci_sessions` (
 
 /*Data for the table `ci_sessions` */
 
-insert  into `ci_sessions`(`id`,`ip_address`,`timestamp`,`data`) values ('0588ad56aed1eedf720231da962811713d8cd60c','127.0.0.1',1585037807,'__ci_last_regenerate|i:1585037719;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1584762308\";'),('90a591f52eae1ca344148e5bdde58c9c6a739a40','127.0.0.1',1585038560,'__ci_last_regenerate|i:1585038560;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1584762308\";'),('6ed10099fdd7e6903a973daa10ec51a328fa4156','127.0.0.1',1585039325,'__ci_last_regenerate|i:1585039103;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1584762308\";');
+insert  into `ci_sessions`(`id`,`ip_address`,`timestamp`,`data`) values ('0588ad56aed1eedf720231da962811713d8cd60c','127.0.0.1',1585037807,'__ci_last_regenerate|i:1585037719;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1584762308\";'),('90a591f52eae1ca344148e5bdde58c9c6a739a40','127.0.0.1',1585038560,'__ci_last_regenerate|i:1585038560;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1584762308\";'),('6ed10099fdd7e6903a973daa10ec51a328fa4156','127.0.0.1',1585039325,'__ci_last_regenerate|i:1585039103;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1584762308\";'),('28ba8992613ed227cef370356a265d2e639439d4','127.0.0.1',1585043195,'__ci_last_regenerate|i:1585043194;'),('f723508fe9ecfe95ebc025c562c427a333070b78','127.0.0.1',1585043880,'__ci_last_regenerate|i:1585043860;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585023317\";'),('ad69a3c2332f390ceba5a3bd07001fb89cd3cd64','127.0.0.1',1585056519,'__ci_last_regenerate|i:1585056338;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585043860\";'),('2a88ffabe3225b8de6716183d2b094057143baf1','127.0.0.1',1585056816,'__ci_last_regenerate|i:1585056813;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585043860\";'),('43419a76bd048ba406924f38b93d4fc8de2e3f62','127.0.0.1',1585057731,'__ci_last_regenerate|i:1585057469;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585043860\";'),('b0586dec133a94191fa0769e55e94d95c8906909','127.0.0.1',1585057981,'__ci_last_regenerate|i:1585057835;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585043860\";'),('5e4506831134c6a86571e824bf669adbd8d25dea','127.0.0.1',1585058402,'__ci_last_regenerate|i:1585058186;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585043860\";'),('1d099b5da9665f419bd008003af9bb758e6fdf24','127.0.0.1',1585058859,'__ci_last_regenerate|i:1585058561;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585043860\";'),('5ad10e8437a2f4c0a3109ca8a76cb2d835c0684b','127.0.0.1',1585058931,'__ci_last_regenerate|i:1585058863;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585043860\";'),('7e2cd7735384c88104784e24e4c5b8ec4d94d01c','127.0.0.1',1585059538,'__ci_last_regenerate|i:1585059453;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585056339\";'),('49f7dd229fcce2c6302738257a55105c70c431b3','127.0.0.1',1585097082,'__ci_last_regenerate|i:1585096786;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585056339\";'),('5d608ef70820f91e6f3845f9e14a636c984c5302','127.0.0.1',1585097468,'__ci_last_regenerate|i:1585097400;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585056339\";'),('48de9c73f6c3000b7d599145b0e0e4650b792a2a','127.0.0.1',1585098044,'__ci_last_regenerate|i:1585097745;identity|s:5:\"admin\";username|s:5:\"admin\";email|s:19:\"lytranuit@gmail.com\";address|s:0:\"\";phone|s:10:\"0978019668\";name|s:4:\"tran\";user_id|s:1:\"5\";old_last_login|s:10:\"1585056339\";');
 
 /*Table structure for table `email` */
 
@@ -117,7 +117,7 @@ CREATE TABLE `login_attempts` (
   `login` varchar(100) NOT NULL,
   `time` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `login_attempts` */
 
@@ -215,11 +215,11 @@ CREATE TABLE `pmp_object` (
   `parent_id` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 /*Data for the table `pmp_object` */
 
-insert  into `pmp_object`(`id`,`name`,`parent_id`,`deleted`) values (1,'testsdasd',0,1),(2,'Đối tượng 6',0,1),(3,'Vi sinh',0,0),(4,'Đối tượng 4',0,1),(5,'Cấp sạch B',0,1),(6,'test2',0,1),(7,'Vị trí 1',0,1);
+insert  into `pmp_object`(`id`,`name`,`parent_id`,`deleted`) values (1,'testsdasd',0,1),(2,'Đối tượng 6',0,1),(3,'Vi sinh',0,0),(4,'Đối tượng 4',0,1),(5,'Cấp sạch B',0,1),(6,'test2',0,1),(7,'Vị trí 1',0,1),(8,'Nước tiệt trùng',0,0),(9,'Tiểu phân',0,0);
 
 /*Table structure for table `pmp_object_area` */
 
@@ -263,6 +263,7 @@ CREATE TABLE `pmp_position` (
   `string_id` varchar(256) DEFAULT NULL,
   `frequency_id` int(11) DEFAULT NULL,
   `department_id` int(11) DEFAULT '0',
+  `target_id` int(11) DEFAULT NULL,
   `frequency_name` varchar(256) DEFAULT NULL,
   `deleted` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -270,7 +271,7 @@ CREATE TABLE `pmp_position` (
 
 /*Data for the table `pmp_position` */
 
-insert  into `pmp_position`(`id`,`name`,`string_id`,`frequency_id`,`department_id`,`frequency_name`,`deleted`) values (1,'vi tri 1','vt1',1,2,NULL,1),(2,'Vị trí 2','VT2',1,2,'1 ngay /lan',0);
+insert  into `pmp_position`(`id`,`name`,`string_id`,`frequency_id`,`department_id`,`target_id`,`frequency_name`,`deleted`) values (1,'vi tri 1','vt1',1,2,NULL,NULL,1),(2,'Vị trí 2','VT2',1,2,3,'1 ngay /lan',0);
 
 /*Table structure for table `pmp_result` */
 
@@ -285,7 +286,7 @@ CREATE TABLE `pmp_result` (
   `target_id` int(11) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `create_at` datetime DEFAULT NULL,
-  `delete_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
   `deleted` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -581,7 +582,7 @@ CREATE TABLE `users` (
 
 /*Data for the table `users` */
 
-insert  into `users`(`id`,`ip_address`,`username`,`password`,`salt`,`email`,`activation_code`,`forgotten_password_code`,`forgotten_password_time`,`remember_code`,`created_on`,`last_login`,`active`,`first_name`,`last_name`,`company`,`phone`,`gioitinh`,`address`,`debt`,`deleted`) values (1,'127.0.0.1','administrator','$2y$08$fmkInitrbnbOVktOQFIymeSo/oxvclFlz4D7qt9UATh0aQdcT6blq','','admin@admin.com',NULL,NULL,NULL,'apCjjYAyFA0FlwnAjG0Tnu',1268889823,1554884860,1,'Admin','tran','ADMIN','0195623455','Nam','',0,0),(3,'::1','duychung','$2y$08$07kIFreRASeuR6lTozy0bebZM7AQ2fNqhul1sGhxeRBKweaBH2wlm',NULL,'acvjsd@gmail.com',NULL,NULL,NULL,NULL,1467461122,1467723116,1,NULL,'Lê Duy Chung',NULL,'0903525787','Nam',NULL,0,1),(5,'::1','admin','$2y$08$wh5wiQ3QrpyVW3YGWyfVBeBQr1pfg6.NLz/JwLVvr2lba9wZreK/K',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,'w9VRVMBvjToDhpnvogxRn.',1493346401,1585023317,1,NULL,'tran',NULL,'0978019668',NULL,'',120000,0),(7,'115.73.30.40','dfgdfdfgdf','$2y$08$7pdh418YR8begnMFXMGspuzCSD1sPmrYIn/hIleVroL3hxLV48eo.',NULL,'lytranuit@gmail.com','54146ac1983f86b4c8568af4a926fddd2bda7e35',NULL,NULL,NULL,1495634239,NULL,0,NULL,'dao ly tran',NULL,'123124234234','Nam',NULL,0,1),(8,'::1','daotran1234567','$2y$08$WSMXo.K/x.vO7Hd3RY4oh.X36IofmQt3y0.Ja.aASmfmOI8lz7Cu.',NULL,'lytranuit@gmail.com','c254fff6b745bb09c63b2c318709713b07109c67',NULL,NULL,NULL,1551437155,NULL,0,NULL,NULL,NULL,'978019668',NULL,'Binh thanh',0,1),(9,'::1','daotran1232','$2y$08$SSYzQSIE80wnxkwJTqD7xOhnaEAGqJKXXpgq9FzaaehGQLuEdzHn.',NULL,'lytranuit@gmail.com','da9d377752d03f68d590195828185d44e367c8ae',NULL,NULL,NULL,1551437269,NULL,0,NULL,NULL,NULL,'978019668',NULL,'Binh thanh',0,1),(10,'::1','daotran1232q','$2y$08$ix8Sdby5nf7EyWqjzK.2p.9NV7fVNG5sX1t0t7kL/JMHIlCcyG5yS',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,NULL,1551437578,NULL,0,NULL,'tran',NULL,'978019668',NULL,'Binh thanh',0,1),(11,'::1','daotran12321','$2y$08$7CRzhBO3baw7LJvAxBO14ufh7Lsn7ey2QQCx.aFpham/upVf/qraK',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,NULL,1551437646,NULL,0,NULL,'daotran',NULL,'978019668',NULL,'Binh thanh',0,1),(12,'::1','daotran123256','$2y$08$egI3fiwy5qWPipMkKbMqeeYB9BTsofSJNISx6VuCx9lY3s74h55UO',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,'DalSpns2cclUZWiJxlW1yO',1551437700,1551455882,1,NULL,'tran123',NULL,'978019668',NULL,'Binh thanh',60000,1),(13,'::1','daolytran','$2y$08$lGamyoOAHdHxp3qGM9/m6OGCGC5Lypsj2mhnmuUF1h/eau6u5gvzC',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,NULL,1551457629,1551457634,1,NULL,'dao tran',NULL,'090909090',NULL,'Binh thanh',0,1),(14,'115.78.11.72','brian','$2y$08$/kjVcLusw92zV3QPaFBd1ONuGdkFmQoYRGtjlyMi6TsuJYCsQ9QHO',NULL,'nguyennamuit@gmail.com',NULL,NULL,NULL,NULL,1552893467,1552893475,1,NULL,'Nam Nguyen',NULL,'0987872902',NULL,'CMT 8',-1400000,1),(15,'::1','lytranuit@gmail.com','$2y$08$XddY.SmnFArb0jeIwgfNXehU0/57h2963/xOIuUYtx4OxY3lVgUTW',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,NULL,1553743750,1553744459,1,NULL,'daotran',NULL,'',NULL,'',0,1);
+insert  into `users`(`id`,`ip_address`,`username`,`password`,`salt`,`email`,`activation_code`,`forgotten_password_code`,`forgotten_password_time`,`remember_code`,`created_on`,`last_login`,`active`,`first_name`,`last_name`,`company`,`phone`,`gioitinh`,`address`,`debt`,`deleted`) values (1,'127.0.0.1','administrator','$2y$08$fmkInitrbnbOVktOQFIymeSo/oxvclFlz4D7qt9UATh0aQdcT6blq','','admin@admin.com',NULL,NULL,NULL,'apCjjYAyFA0FlwnAjG0Tnu',1268889823,1554884860,1,'Admin','tran','ADMIN','0195623455','Nam','',0,0),(3,'::1','duychung','$2y$08$07kIFreRASeuR6lTozy0bebZM7AQ2fNqhul1sGhxeRBKweaBH2wlm',NULL,'acvjsd@gmail.com',NULL,NULL,NULL,NULL,1467461122,1467723116,1,NULL,'Lê Duy Chung',NULL,'0903525787','Nam',NULL,0,1),(5,'::1','admin','$2y$08$wh5wiQ3QrpyVW3YGWyfVBeBQr1pfg6.NLz/JwLVvr2lba9wZreK/K',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,'fV3t7Z28tG2RJcMw/6h58u',1493346401,1585059456,1,NULL,'tran',NULL,'0978019668',NULL,'',120000,0),(7,'115.73.30.40','dfgdfdfgdf','$2y$08$7pdh418YR8begnMFXMGspuzCSD1sPmrYIn/hIleVroL3hxLV48eo.',NULL,'lytranuit@gmail.com','54146ac1983f86b4c8568af4a926fddd2bda7e35',NULL,NULL,NULL,1495634239,NULL,0,NULL,'dao ly tran',NULL,'123124234234','Nam',NULL,0,1),(8,'::1','daotran1234567','$2y$08$WSMXo.K/x.vO7Hd3RY4oh.X36IofmQt3y0.Ja.aASmfmOI8lz7Cu.',NULL,'lytranuit@gmail.com','c254fff6b745bb09c63b2c318709713b07109c67',NULL,NULL,NULL,1551437155,NULL,0,NULL,NULL,NULL,'978019668',NULL,'Binh thanh',0,1),(9,'::1','daotran1232','$2y$08$SSYzQSIE80wnxkwJTqD7xOhnaEAGqJKXXpgq9FzaaehGQLuEdzHn.',NULL,'lytranuit@gmail.com','da9d377752d03f68d590195828185d44e367c8ae',NULL,NULL,NULL,1551437269,NULL,0,NULL,NULL,NULL,'978019668',NULL,'Binh thanh',0,1),(10,'::1','daotran1232q','$2y$08$ix8Sdby5nf7EyWqjzK.2p.9NV7fVNG5sX1t0t7kL/JMHIlCcyG5yS',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,NULL,1551437578,NULL,0,NULL,'tran',NULL,'978019668',NULL,'Binh thanh',0,1),(11,'::1','daotran12321','$2y$08$7CRzhBO3baw7LJvAxBO14ufh7Lsn7ey2QQCx.aFpham/upVf/qraK',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,NULL,1551437646,NULL,0,NULL,'daotran',NULL,'978019668',NULL,'Binh thanh',0,1),(12,'::1','daotran123256','$2y$08$egI3fiwy5qWPipMkKbMqeeYB9BTsofSJNISx6VuCx9lY3s74h55UO',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,'DalSpns2cclUZWiJxlW1yO',1551437700,1551455882,1,NULL,'tran123',NULL,'978019668',NULL,'Binh thanh',60000,1),(13,'::1','daolytran','$2y$08$lGamyoOAHdHxp3qGM9/m6OGCGC5Lypsj2mhnmuUF1h/eau6u5gvzC',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,NULL,1551457629,1551457634,1,NULL,'dao tran',NULL,'090909090',NULL,'Binh thanh',0,1),(14,'115.78.11.72','brian','$2y$08$/kjVcLusw92zV3QPaFBd1ONuGdkFmQoYRGtjlyMi6TsuJYCsQ9QHO',NULL,'nguyennamuit@gmail.com',NULL,NULL,NULL,NULL,1552893467,1552893475,1,NULL,'Nam Nguyen',NULL,'0987872902',NULL,'CMT 8',-1400000,1),(15,'::1','lytranuit@gmail.com','$2y$08$XddY.SmnFArb0jeIwgfNXehU0/57h2963/xOIuUYtx4OxY3lVgUTW',NULL,'lytranuit@gmail.com',NULL,NULL,NULL,NULL,1553743750,1553744459,1,NULL,'daotran',NULL,'',NULL,'',0,1);
 
 /*Table structure for table `users_groups` */
 

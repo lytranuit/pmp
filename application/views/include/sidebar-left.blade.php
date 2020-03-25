@@ -71,7 +71,7 @@
                 <li class="app-sidebar__heading">Tổng quan</li>
                 <li>
                     <a href="{{base_url()}}dashboard/" class="">
-                        <i class="metismenu-icon pe-7s-rocket"></i>
+                        <i class="metismenu-icon far fa-chart-bar"></i>
                         Báo cáo
                     </a>
                 </li>

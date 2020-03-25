@@ -905,11 +905,11 @@ class Admin extends MY_Controller {
 //                $nestedData['hinhanh'] = "<img src='" . base_url() . (isset($post->hinhanh->thumb_src) ? $post->hinhanh->thumb_src : 'public/img/preview.png') . "' width='50'/>";
                 $nestedData['name'] = $post->name;
                 $action = "";
-                $action .= '<a href="' . base_url() . 'admin/edittable/' . $post->id . '" class="btn btn-warning btn-xs" title="edit">'
+                $action .= '<a href="' . base_url() . 'admin/edittable/' . $post->id . '" class="btn btn-warning btn-sm" title="edit">'
                         . '<i class="fas fa-pencil-alt">'
                         . '</i>'
                         . '</a>';
-                $action .= '<a href="' . base_url() . 'admin/removetable/' . $post->id . '" class="btn btn-danger btn-xs mx-1" data-type="confirm" title="Remove it?">'
+                $action .= '<a href="' . base_url() . 'admin/removetable/' . $post->id . '" class="btn btn-danger btn-sm mx-1" data-type="confirm" title="Remove it?">'
                         . '<i class="far fa-trash-alt">'
                         . '</i>'
                         . '</a>';
@@ -1026,11 +1026,11 @@ class Admin extends MY_Controller {
                 $nestedData['date'] = date("Y-m-d", $post->date);
                 $nestedData['amount'] = number_format($post->amount, 0, ".", ",");
                 $nestedData['note'] = $post->note;
-                $nestedData['action'] = '<a href="#" class="btn btn-warning btn-xs edit_paid" data-id="' . $post->id . '" title="edit" data-target="#paid-modal" data-toggle="modal">'
+                $nestedData['action'] = '<a href="#" class="btn btn-warning btn-sm edit_paid" data-id="' . $post->id . '" title="edit" data-target="#paid-modal" data-toggle="modal">'
                         . '<i class="fas fa-pencil-alt">'
                         . '</i>'
                         . '</a>'
-                        . '<a href="' . base_url() . 'admin/removepaid/' . $post->id . '" class="btn btn-danger btn-xs" title="Remove it?" data-type="confirm">'
+                        . '<a href="' . base_url() . 'admin/removepaid/' . $post->id . '" class="btn btn-danger btn-sm" title="Remove it?" data-type="confirm">'
                         . '<i class="far fa-trash-alt">'
                         . '</i>'
                         . '</a>';
@@ -1929,11 +1929,11 @@ class Admin extends MY_Controller {
                 $nestedData['last_name'] = $post->last_name;
                 $nestedData['groups'] = $groups;
                 $nestedData['active'] = $post->active ? "Có" : "Không";
-                $nestedData['action'] = '<a href="' . base_url() . 'admin/edituser/' . $post->id . '" class="btn btn-warning btn-xs mr-2" title="edit">'
+                $nestedData['action'] = '<a href="' . base_url() . 'admin/edituser/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                         . '<i class="fas fa-pencil-alt">'
                         . '</i>'
                         . '</a>'
-                        . '<a href="' . base_url() . 'admin/removeuser/' . $post->id . '" class="btn btn-danger btn-xs" data-type="confirm" title="remove">'
+                        . '<a href="' . base_url() . 'admin/removeuser/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
                         . '<i class="far fa-trash-alt">'
                         . '</i>'
                         . '</a>';
@@ -2009,20 +2009,20 @@ class Admin extends MY_Controller {
                 $nestedData['status'] = isset($array_status[$post->status]) ? $array_status[$post->status] : "";
                 $nestedData['total_amount'] = number_format($post->total_amount, 0, ".", ",");
                 $action = "";
-                $action .= '<a href="' . base_url() . 'admin/editorder/' . $post->id . '" class="btn btn-warning btn-xs" title="edit">'
+                $action .= '<a href="' . base_url() . 'admin/editorder/' . $post->id . '" class="btn btn-warning btn-sm" title="edit">'
                         . '<i class="fas fa-pencil-alt">'
                         . '</i>'
                         . '</a>';
-                $action .= '<a href="' . base_url() . 'index/printbill?id=' . $post->id . '" class="btn btn-info btn-xs mx-1" data-type="confirm" title="Print it?">'
+                $action .= '<a href="' . base_url() . 'index/printbill?id=' . $post->id . '" class="btn btn-info btn-sm mx-1" data-type="confirm" title="Print it?">'
                         . '<i class="fas fa-print">'
                         . '</i>'
                         . '</a>';
-                $action .= '<a href="' . base_url() . 'admin/removeorder/' . $post->id . '" class="btn btn-danger btn-xs mx-1" data-type="confirm" title="Remove it?">'
+                $action .= '<a href="' . base_url() . 'admin/removeorder/' . $post->id . '" class="btn btn-danger btn-sm mx-1" data-type="confirm" title="Remove it?">'
                         . '<i class="far fa-trash-alt">'
                         . '</i>'
                         . '</a>';
                 if ($post->status != 4 && $post->user_id > 0) {
-                    $action .= '<a href="#" class="btn btn-success btn-xs mx-1 add_paid" data-order_id="' . $post->id . '">'
+                    $action .= '<a href="#" class="btn btn-success btn-sm mx-1 add_paid" data-order_id="' . $post->id . '">'
                             . '<i class="fas fa-hand-holding-usd">'
                             . '</i>'
                             . '</a>';
@@ -2082,11 +2082,11 @@ class Admin extends MY_Controller {
                 $nestedData['name'] = $post->name;
                 $nestedData['price'] = number_format($post->price, 0, ".", ",");
                 $action = "";
-                $action .= '<a href="' . base_url() . 'admin/editproduct/' . $post->id . '" class="btn btn-warning btn-xs mr-2" title="edit">'
+                $action .= '<a href="' . base_url() . 'admin/editproduct/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                         . '<i class="fas fa-pencil-alt">'
                         . '</i>'
                         . '</a>';
-                $action .= '<a href="' . base_url() . 'admin/removeproduct/' . $post->id . '" class="btn btn-danger btn-xs" data-type="confirm" title="Remove it?">'
+                $action .= '<a href="' . base_url() . 'admin/removeproduct/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="Remove it?">'
                         . '<i class="far fa-trash-alt">'
                         . '</i>'
                         . '</a>';
@@ -2128,15 +2128,15 @@ class Admin extends MY_Controller {
                 $nestedData['code'] = $post['code'];
                 $nestedData['name'] = $post['name'];
                 $action = "";
-                $action .= '<a href="' . base_url() . 'admin/sortproduct/' . $post['product_category_id'] . '" class="btn btn-warning btn-xs m-1" title="Sort">'
+                $action .= '<a href="' . base_url() . 'admin/sortproduct/' . $post['product_category_id'] . '" class="btn btn-warning btn-sm m-1" title="Sort">'
                         . '<i class="fas fa-star">'
                         . '</i>'
                         . '</a>';
-                $action .= '<a href="' . base_url() . 'admin/editproduct/' . $post['id'] . '" class="btn btn-warning btn-xs m-1" title="Edit">'
+                $action .= '<a href="' . base_url() . 'admin/editproduct/' . $post['id'] . '" class="btn btn-warning btn-sm m-1" title="Edit">'
                         . '<i class="fas fa-pencil-alt">'
                         . '</i>'
                         . '</a>';
-                $action .= '<a href="' . base_url() . 'admin/removeproductcategory/' . $post['product_category_id'] . '" class="btn btn-danger btn-xs" data-type="confirm" title="Remove it?">'
+                $action .= '<a href="' . base_url() . 'admin/removeproductcategory/' . $post['product_category_id'] . '" class="btn btn-danger btn-sm" data-type="confirm" title="Remove it?">'
                         . '<i class="far fa-trash-alt">'
                         . '</i>'
                         . '</a>';
