@@ -320,7 +320,7 @@ class Index extends MY_Controller {
         require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
         //Đường dẫn file
 //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
-        $dir = APPPATH . '../public/upload/data_visinh/';
+        $dir = APPPATH . '../public/upload/data/';
         echo $dir;
         $this->load->model("result_model");
         $insert = array();
