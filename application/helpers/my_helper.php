@@ -19,6 +19,21 @@ if (!function_exists('sendMessage')) {
     }
 
 }
+if (!function_exists('is_Date')) {
+
+    function is_Date($str) {
+        $str = str_replace('/', '-', $str);
+        $stamp = strtotime($str);
+        if (is_numeric($stamp)) {
+            $month = date('m', $stamp);
+            $day = date('d', $stamp);
+            $year = date('Y', $stamp);
+            return checkdate($month, $day, $year);
+        }
+        return false;
+    }
+
+}
 if (!function_exists('config_item')) {
 
     function config_item($str) {

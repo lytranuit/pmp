@@ -124,7 +124,7 @@ class Result extends MY_Controller {
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("result_model");
-            $data['create_at'] = date("Y-m-d H:i:s");
+            $data['created_at'] = date("Y-m-d H:i:s");
             $data_up = $this->result_model->create_object($data);
             $id = $this->result_model->insert($data_up);
 
@@ -174,15 +174,11 @@ class Result extends MY_Controller {
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
-                $department = $post->department;
-                $position = $post->position;
-                $target = $post->target;
-                $area = $post->area;
-                $nestedData['target_name'] = $target->name;
-                $nestedData['position_string_id'] = $position->string_id;
-                $nestedData['frequency_name'] = $position->frequency_name;
-                $nestedData['department_name'] = $department->name;
-                $nestedData['position_name'] = $position->name;
+                $nestedData['target_name'] = isset($post->target->name) ? $post->target->name : "";
+                $nestedData['position_name'] = isset($post->position->name) ? $post->position->name : "";
+                $nestedData['position_string_id'] = isset($post->position->string_id) ? $post->position->string_id : "";
+                $nestedData['frequency_name'] = isset($post->position->frequency_name) ? $post->position->frequency_name : "";
+                $nestedData['department_name'] = isset($post->department->name) ? $post->department->name : "";
                 $nestedData['date'] = $post->date;
                 $nestedData['value'] = $post->value;
                 $nestedData['action'] = '<a href="' . base_url() . 'result/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
