@@ -135,11 +135,12 @@ class Index extends MY_Controller
         //        array_push($this->data['javascript_tag'], base_url() . "public/js/main.js?v=" . $version);
         //        echo $this->blade->view()->make('page/page', $this->data)->render();
     }
-    public function test()
+    public function test1()
     {
+        die();
         require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
         //Đường dẫn file
-        $file = APPPATH . '../public/upload/vitri.xlsx';
+        $file = APPPATH . '../public/upload/vitri_phong/vitri.xlsx';
         echo $file;
         //Tiến hành xác thực file
         $objFile = PHPExcel_IOFactory::identify($file);
@@ -215,6 +216,196 @@ class Index extends MY_Controller
         echo '<pre>';
         // print_r($temp_area);
         // print_r($data);
+
+        $this->load->model("position_model");
+        $this->load->model("department_model");
+        $this->load->model("target_model");
+        // print_r($temp_phong);
+        // die();
+        ///THEM PHÒNG
+        $temp_phong = $this->department_model->where(array('deleted' => 0))->as_object()->get_all();
+        for ($i = 0; $i < count($data); $i++) {
+            $area_string = $data[$i][3];
+            if ($data[$i][3] == "" || !isset($temp_area[$area_string])) {
+                continue;
+            }
+
+            $phong_name = $data[$i][1];
+            $phong_string_id = $data[$i][2];
+
+            if ($phong_name == "" || $phong_string_id == "") {
+                continue;
+            }
+            $target_name = $data[$i][4];
+
+            $area = $temp_area[$area_string];
+            $position_name = $data[$i][6];
+            $frequency_name =  $data[$i][7];
+            $position_string_id = $data[$i][5];
+            ////
+            $find_phong = false;
+            foreach ($temp_phong as $phong) {
+                if ($phong_string_id == $phong->string_id) {
+                    $find_phong = $phong;
+                    break;
+                }
+            }
+            if (!$find_phong) {
+                $data_phong = array(
+                    'name' => $phong_name,
+                    'string_id' => $phong_string_id,
+                    'area_id' => $area['area_id'],
+                    'workshop_id' => $area['workshop_id'],
+                    'factory_id' => $area['factory_id']
+                );
+                $phong_id = $this->department_model->insert($data_phong);
+                $find_phong = $this->department_model->where(array('id' => $phong_id))->as_object()->get();
+                array_push($temp_phong, $find_phong);
+            }
+            // $phong_id = $find_phong->id;
+        }
+        ///THÊM VỊ TRÍ
+
+        $temp_position = $this->position_model->where(array('deleted' => 0))->as_object()->get_all();
+        for ($i = 0; $i < count($data); $i++) {
+            $area_string = $data[$i][3];
+            if ($data[$i][3] == "" || !isset($temp_area[$area_string])) {
+                continue;
+            }
+            $target_name = $data[$i][4];
+            $target_id = $temp_target[$target_name];
+            $area = $temp_area[$area_string];
+            $position_name = $data[$i][6];
+            $frequency_name =  $data[$i][7];
+            $position_string_id = $data[$i][5];
+
+            if ($position_string_id == "" || $position_name == "") {
+                continue;
+            }
+
+            ////
+            $position_tmp = explode("_", $position_string_id);
+            $phong_string_id = $position_tmp[0];
+            // print_r($phong_string_id);
+            $find_phong = false;
+            foreach ($temp_phong as $phong) {
+                if ($phong_string_id == $phong->string_id) {
+                    $find_phong = $phong;
+                    break;
+                }
+            }
+            if (!$find_phong) {
+                continue;
+            }
+            $phong_id = $find_phong->id;
+            // print_r($find_phong);
+            ////
+            $find_position = false;
+            foreach ($temp_position as $position) {
+                if ($position_string_id == $position->string_id) {
+                    $find_position = $position;
+                    break;
+                }
+            }
+            if (!$find_position) {
+                $data_position = array(
+                    'name' => $position_name,
+                    'string_id' => $position_string_id,
+                    'frequency_name' => $frequency_name,
+                    'target_id' => $target_id,
+                    'department_id' => $phong_id,
+                    'area_id' => $area['area_id'],
+                    'workshop_id' => $area['workshop_id'],
+                    'factory_id' => $area['factory_id']
+                );
+                $position_id = $this->position_model->insert($data_position);
+                $find_position = $this->position_model->where(array('id' => $position_id))->as_object()->get();
+                array_push($temp_position, $find_position);
+            }
+            // $phong_id = $find_phong->id;
+        }
+    }
+    public function test2()
+    {
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        echo $file;
+        //Tiến hành xác thực file
+        $objFile = PHPExcel_IOFactory::identify($file);
+        $objData = PHPExcel_IOFactory::createReader($objFile);
+
+        //Chỉ đọc dữ liệu
+        // $objData->setReadDataOnly(true);
+
+        // Load dữ liệu sang dạng đối tượng
+        $objPHPExcel = $objData->load($file);
+
+        //Lấy ra số trang sử dụng phương thức getSheetCount();
+        // Lấy Ra tên trang sử dụng getSheetNames();
+
+        //Chọn trang cần truy xuất
+        $sheet = $objPHPExcel->setActiveSheetIndex(0);
+
+        //Lấy ra số dòng cuối cùng
+        $Totalrow = $sheet->getHighestRow();
+        //Lấy ra tên cột cuối cùng
+        $LastColumn = $sheet->getHighestColumn();
+        //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+        $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+        //Tạo mảng chứa dữ liệu
+        $data = [];
+
+        //Tiến hành lặp qua từng ô dữ liệu
+        //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+        for ($i = 11; $i <= $Totalrow; $i++) {
+            //----Lặp cột
+            for ($j = 0; $j < $TotalCol; $j++) {
+                // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                $data[$i - 11][$j] = $sheet->getCellByColumnAndRow($j, $i)->getValue();
+            }
+        }
+
+        //Hiển thị mảng dữ liệu
+
+        $this->load->model("area_model");
+        $area_A = $this->area_model->where(array('id' => 1))->as_object()->get();
+        $area_B = $this->area_model->where(array('id' => 4))->as_object()->get();
+        $area_C = $this->area_model->where(array('id' => 2))->as_object()->get();
+        $area_D = $this->area_model->where(array('id' => 3))->as_object()->get();
+
+        $temp_area = array(
+            'A' => array(
+                'area_id' => $area_A->id,
+                'factory_id' => $area_A->factory_id,
+                'workshop_id' => $area_A->workshop_id,
+            ),
+            'B' => array(
+                'area_id' => $area_B->id,
+                'factory_id' => $area_B->factory_id,
+                'workshop_id' => $area_B->workshop_id,
+            ),
+            'C' => array(
+                'area_id' => $area_C->id,
+                'factory_id' => $area_C->factory_id,
+                'workshop_id' => $area_C->workshop_id,
+            ),
+            'D' => array(
+                'area_id' => $area_D->id,
+                'factory_id' => $area_D->factory_id,
+                'workshop_id' => $area_D->workshop_id,
+            )
+        );
+        $temp_target = array(
+            'Active' => 5,
+            'Passive' => 3,
+            'Rodac' => 4
+        );
+        echo '<pre>';
+        // print_r($temp_area);
+        print_r($data);
+        die();
 
         $this->load->model("position_model");
         $this->load->model("department_model");
