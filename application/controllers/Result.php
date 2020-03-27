@@ -131,6 +131,7 @@ class Result extends MY_Controller {
             redirect('result', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
+            load_chossen($this->data);
             $this->load->model("position_model");
             $this->data['positions'] = $this->position_model->where(array('deleted' => 0))->as_object()->get_all();
             echo $this->blade->view()->make('page/page', $this->data)->render();
