@@ -1,4 +1,3 @@
-
 <!-- ============================================================== -->
 <!-- pageheader -->
 <!-- ============================================================== -->
@@ -15,6 +14,8 @@
                             <th>Mã Phòng</th>
                             <th>Tên Phòng</th>
                             <th>Khu vực</th>
+                            <th>Xưởng</th>
+                            <th>Nhà máy</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -28,7 +29,7 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#quanlytin').DataTable({
             "processing": true,
             "serverSide": true,
@@ -37,11 +38,24 @@
                 "dataType": "json",
                 "type": "POST",
             },
-            "columns": [
-                {"data": "string_id"},
-                {"data": "name"},
-                {"data": "area_name"},
-                {"data": "action"}
+            "columns": [{
+                    "data": "string_id"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "area_name"
+                },
+                {
+                    "data": "workshop_name"
+                },
+                {
+                    "data": "factory_name"
+                },
+                {
+                    "data": "action"
+                }
             ]
 
         });

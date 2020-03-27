@@ -1,8 +1,10 @@
 <?php
 
-class Position extends MY_Controller {
+class Position extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -24,7 +26,8 @@ class Position extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -40,7 +43,8 @@ class Position extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
@@ -115,18 +119,22 @@ class Position extends MY_Controller {
         return true;
     }
 
-    public function index() { /////// trang ca nhan
+    public function index()
+    { /////// trang ca nhan
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function get($id) {
+    public function get($params)
+    {
+        $id = $params[0];
         $this->load->model("position_model");
         $json_data = $this->position_model->where(array('id' => $id))->with_department()->with_target()->as_object()->get();
         echo json_encode($json_data);
     }
 
-    public function add() { /////// trang ca nhan
+    public function add()
+    { /////// trang ca nhan
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("position_model");
@@ -135,16 +143,34 @@ class Position extends MY_Controller {
 
             redirect('position', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
+            $this->load->model("factory_model");
+            $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
+
+            $this->load->model("workshop_model");
+            $factory_id = isset($this->data['factory'][0]->id) ? $this->data['factory'][0]->id : 0;
+            $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $factory_id))->as_object()->get_all();
+
+            $this->load->model("area_model");
+            $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
+            $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
 
             $this->load->model("department_model");
+            $area_id = isset($this->data['area'][0]->id) ? $this->data['area'][0]->id : 0;
+            $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $area_id))->as_object()->get_all();
+
             $this->load->model("target_model");
-            $this->data['department'] = $this->department_model->where(array('deleted' => 0))->as_object()->get_all();
             $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+            // echo "<pre>";
+            // print_r($this->data['workshop']);
+            // print_r($this->data['areas']);
+            // print_r($this->data['department']);
+            // die();
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
 
-    public function edit($param) { /////// trang ca nhan
+    public function edit($param)
+    { /////// trang ca nhan
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("position_model");
@@ -157,17 +183,28 @@ class Position extends MY_Controller {
             $tin = $this->position_model->where(array('id' => $id))->as_object()->get();
             $this->data['tin'] = $tin;
 
+            $this->load->model("factory_model");
+            $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
+
+            $this->load->model("workshop_model");
+            $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $tin->factory_id))->as_object()->get_all();
+
+            $this->load->model("area_model");
+            $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $tin->workshop_id))->as_object()->get_all();
+
 
             $this->load->model("department_model");
+            $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $tin->area_id))->as_object()->get_all();
+
             $this->load->model("target_model");
-            $this->data['department'] = $this->department_model->where(array('deleted' => 0))->as_object()->get_all();
             $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
             //            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
 
-    public function remove($params) { /////// trang ca nhan
+    public function remove($params)
+    { /////// trang ca nhan
         $this->load->model("position_model");
         $id = $params[0];
         $this->position_model->update(array("deleted" => 1), $id);
@@ -175,7 +212,8 @@ class Position extends MY_Controller {
         exit;
     }
 
-    public function table() {
+    public function table()
+    {
         $this->load->model("position_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
@@ -197,26 +235,28 @@ class Position extends MY_Controller {
             $where = $this->position_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->with_department()->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_department()->with_area()->with_workshop()->with_factory()->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);
         //        die();
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
-                $department = $post->department;
                 $nestedData['string_id'] = $post->string_id;
                 $nestedData['name'] = $post->name;
                 $nestedData['frequency_name'] = $post->frequency_name;
-                $nestedData['department_name'] = $department->name;
+                $nestedData['department_name'] = isset($post->department->name) ? $post->department->name : "";
+                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
+                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
                 $nestedData['action'] = '<a href="' . base_url() . 'position/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
-                        . '<i class="fas fa-pencil-alt">'
-                        . '</i>'
-                        . '</a>'
-                        . '<a href="' . base_url() . 'position/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
-                        . '<i class="far fa-trash-alt">'
-                        . '</i>'
-                        . '</a>';
+                    . '<i class="fas fa-pencil-alt">'
+                    . '</i>'
+                    . '</a>'
+                    . '<a href="' . base_url() . 'position/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                    . '<i class="far fa-trash-alt">'
+                    . '</i>'
+                    . '</a>';
 
                 $data[] = $nestedData;
             }
@@ -231,5 +271,4 @@ class Position extends MY_Controller {
 
         echo json_encode($json_data);
     }
-
 }

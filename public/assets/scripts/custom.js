@@ -25,7 +25,48 @@ $(document).ready(function () {
         $("#btn_object_select").text(name);
         ///hide modal
         $('#object-modal .close').trigger("click");
-    })
+    });
+    //// Lấy data
+    $("#form-dang-tin [name=area_id]").change(async function () {
+        let value = $(this).val();
+        let department = await $.ajax({
+            url: path + "department/getbyparent/" + value,
+            dataType: "JSON"
+        });
+        let html = "";
+        $.each(department, function (k, item) {
+            html += "<option value='" + item.id + "'>" + item.name + "</option>";
+        })
+        $("#form-dang-tin [name=department_id]").html(html);
+    });
+    $("#form-dang-tin [name=workshop_id]").change(async function () {
+        let value = $(this).val();
+        let area = await $.ajax({
+            url: path + "area/getbyparent/" + value,
+            dataType: "JSON"
+        });
+        let html = "";
+        $.each(area, function (k, item) {
+            html += "<option value='" + item.id + "'>" + item.name + "</option>";
+        })
+        $("#form-dang-tin [name=area_id]").html(html);
+        if ($("#form-dang-tin [name=department_id]").length)
+            $("#form-dang-tin [name=area_id]").trigger("change");
+    });
+    $("#form-dang-tin [name=factory_id]").change(async function () {
+        let value = $(this).val();
+        let workshop = await $.ajax({
+            url: path + "workshop/getbyparent/" + value,
+            dataType: "JSON"
+        });
+        let html = "";
+        $.each(workshop, function (k, item) {
+            html += "<option value='" + item.id + "'>" + item.name + "</option>";
+        })
+        $("#form-dang-tin [name=workshop_id]").html(html);
+        if ($("#form-dang-tin [name=area_id]").length)
+            $("#form-dang-tin [name=workshop_id]").trigger("change");
+    });
     init();
 })
 

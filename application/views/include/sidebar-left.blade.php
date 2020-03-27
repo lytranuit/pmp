@@ -131,6 +131,18 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{base_url()}}factory/">
+                                <i class="metismenu-icon"></i>
+                                Nhà máy
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{base_url()}}workshop/">
+                                <i class="metismenu-icon"></i>
+                                Xưởng
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{base_url()}}area/">
                                 <i class="metismenu-icon"></i>
                                 Khu vực
@@ -139,7 +151,7 @@
                         <li>
                             <a href="{{base_url()}}department/">
                                 <i class="metismenu-icon"></i>
-                                Phòng ban
+                                Phòng
                             </a>
                         </li>
                         <li>
