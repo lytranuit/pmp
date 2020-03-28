@@ -36,6 +36,8 @@
                                     <input class="form-control" type='text' name="department_name" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="department_id" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="area_id" required="" readonly="" />
+                                    <input class="form-control" type='hidden' name="workshop_id" required="" readonly="" />
+                                    <input class="form-control" type='hidden' name="factory_id" required="" readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -73,9 +75,9 @@
     </div>
 </div>
 <script type='text/javascript'>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("#position").chosen();
-        $("#position").change(function() {
+        $("#position").change(function () {
             let value = $(this).val();
             if (!(value > 0)) {
                 return false;
@@ -83,14 +85,16 @@
             $.ajax({
                 url: '{{base_url()}}position/get/' + value,
                 dataType: "JSON",
-                success: function(data) {
+                success: function (data) {
                     let {
                         name,
                         department,
                         target,
                         department_id,
                         target_id,
-                        frequency_name
+                        frequency_name,
+                        factory_id,
+                        workshop_id
                     } = data
                     let department_name = department.name;
                     let target_name = target.name;
@@ -98,6 +102,8 @@
                     $("input[name='frequency_name']").val(frequency_name);
                     $("input[name='position_name']").val(name);
                     $("input[name='area_id']").val(area_id);
+                    $("input[name='factory_id']").val(factory_id);
+                    $("input[name='workshop_id']").val(workshop_id);
                     $("input[name='department_id']").val(department_id);
                     $("input[name='department_name']").val(department_name);
                     $("input[name='target_id']").val(target_id);
@@ -110,16 +116,16 @@
             success: "valid"
         });
         $("#form-dang-tin").validate({
-            highlight: function(input) {
+            highlight: function (input) {
                 $(input).parents('.form-line').addClass('error');
             },
-            unhighlight: function(input) {
+            unhighlight: function (input) {
                 $(input).parents('.form-line').removeClass('error');
             },
-            errorPlacement: function(error, element) {
+            errorPlacement: function (error, element) {
                 $(element).parents('.form-group').append(error);
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 form.submit();
                 return false;
             }

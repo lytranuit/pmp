@@ -116,7 +116,78 @@ class Dashboard extends MY_Controller {
     }
 
     public function index() { /////// trang ca nhan
+        $this->load->model("factory_model");
+        $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
+
+        $this->load->model("workshop_model");
+        $factory_id = isset($this->data['factory'][0]->id) ? $this->data['factory'][0]->id : 0;
+        $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $factory_id))->as_object()->get_all();
+
+        $this->load->model("area_model");
+        $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
+        $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+
+        $this->load->model("department_model");
+        $area_id = isset($this->data['area'][0]->id) ? $this->data['area'][0]->id : 0;
+        $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $area_id))->as_object()->get_all();
+
+
+
+
+        $this->load->model("target_model");
+        $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
         echo $this->blade->view()->make('page/page', $this->data)->render();
+    }
+
+    public function chartdata() {
+
+        $this->load->model("result_model");
+        $department_id = $this->input->get('department_id', TRUE);
+        $target_id = $this->input->get('target_id', TRUE);
+//        echo $department_id;
+        $results = array('labels' => array(), 'datasets' => array());
+
+        $data = $this->result_model->where(array('deleted' => 0, 'department_id' => $department_id, 'target_id' => $target_id))->with_position()->as_object()->get_all();
+        $labels = array();
+        $position_list = array();
+        $datatmp = array();
+        $datasets = array();
+        foreach ($data as $row) {
+            $date = $row->date;
+            $position = $row->position;
+            $value = $row->value;
+            if (!in_array($date, $labels)) {
+                $labels[] = $date;
+            }
+            if (!in_array($position->string_id, $position_list)) {
+                $position_list[] = $position->string_id;
+                $color = getRandomColor();
+                $datasets[] = array(
+                    'backgroundColor' => $color,
+                    'borderColor' => $color,
+                    'label' => $position->string_id,
+                    'data' => array(),
+                    'fill' => 'false'
+                );
+            }
+            $datatmp[$date][$position->string_id] = $value;
+        }
+        foreach ($labels as $date) {
+            foreach ($datasets as &$position) {
+                $position_string_id = $position['label'];
+                $value = isset($datatmp[$date][$position_string_id]) ? $datatmp[$date][$position_string_id] : 0;
+                $position['data'][] = $value;
+//                $index = array_search($position_string_id, $position_list);
+            }
+        }
+        $results = array(
+            'labels' => $labels,
+            'datasets' => $datasets
+        );
+//        echo "<Pre>";
+//        print_r($results);
+//        die();
+        echo json_encode($results);
     }
 
 }

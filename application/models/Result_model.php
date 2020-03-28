@@ -18,7 +18,7 @@ class Result_model extends MY_Model {
 
     function create_object($data) {
         $array = array(
-            'deleted', 'target_id', 'position_id', 'department_id', 'area_id', 'value', 'date', 'created_at', 'deleted_at'
+            'deleted', 'target_id', 'position_id', 'department_id', 'area_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
         );
         $obj = array();
         foreach ($array as $key) {

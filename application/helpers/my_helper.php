@@ -19,6 +19,21 @@ if (!function_exists('sendMessage')) {
     }
 
 }
+if (!function_exists('getRandomColor')) {
+
+    function getRandomColor() {
+        $letters = '0123456789ABCDEF';
+        $color = '#';
+//        echo rand(0, 16) . "<br>";
+//        echo rand(0, 16);
+//        die();
+        for ($i = 0; $i < 6; $i++) {
+            $color .= $letters[rand(0, 15)];
+        }
+        return $color;
+    }
+
+}
 if (!function_exists('is_Date')) {
 
     function is_Date($str) {

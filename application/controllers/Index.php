@@ -362,12 +362,21 @@ class Index extends MY_Controller {
                     for ($j = 0; $j < $TotalCol; $j++) {
                         // Tiến hành lấy giá trị của từng ô đổ vào mảng
                         $cell = $sheet->getCellByColumnAndRow($j, $i);
+
                         $data[$i - 11][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - 11][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - 11][$j] = $data[$i - 11][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
                         if (PHPExcel_Shared_Date::isDateTime($cell)) {
                             $data[$i - 11][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - 11][$j]));
                         }
                     }
                 }
+//                echo "<pre>";
+//                print_r($data);
+//                die();
 ///LIST POSTION
                 $list_position = array_shift($data);
                 ///XOA 1 ROW
@@ -403,7 +412,7 @@ class Index extends MY_Controller {
                         $target_id = $position->target_id;
                         $date = $row[1];
                         $value = $row[$position->col];
-                        if (is_null($value) || !is_Date($date)) {
+                        if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
                             continue;
                         }
                         $data_up = array(

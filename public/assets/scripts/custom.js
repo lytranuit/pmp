@@ -38,6 +38,7 @@ $(document).ready(function () {
             html += "<option value='" + item.id + "'>" + item.name + "</option>";
         })
         $("#form-dang-tin [name=department_id]").html(html);
+        $("#form-dang-tin [name=department_id]").trigger("change");
     });
     $("#form-dang-tin [name=workshop_id]").change(async function () {
         let value = $(this).val();

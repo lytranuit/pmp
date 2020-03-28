@@ -13,32 +13,63 @@
                         <div class="col-12">
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Mã vị trí:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Nhà máy:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="string_id" required="" />
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên vị trí:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="name" required="" />
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phòng ban:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="department_id">
-                                        @foreach ($department as $dep)
-                                        <option value="{{$dep->id}}">{{$dep->name}}</option>
+                                    <select class="form-control" name="factory_id">
+                                        @foreach ($factory as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tần suất lấy mẫu:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Xưởng:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="frequency_name" required="" />
+                                    <select class="form-control" name="workshop_id">
+                                        @foreach ($workshop as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="area_id">
+                                        @foreach ($area as $area)
+                                        <option value="{{$area->id}}">{{$area->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phương pháp lấy mẫu:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="target_id">
+                                        <option></option>
+                                        @foreach ($target as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tiêu chuẩn chấp nhận:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='number' name="standard_limit" required="" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Giới hạn cảnh báo:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='number' name="alert_limit" required="" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Giới hạn hành động:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='number' name="action_limit" required="" />
                                 </div>
                             </div>
                         </div>
@@ -49,7 +80,7 @@
     </div>
 </div>
 <script type='text/javascript'>
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         var tin = <?= json_encode($tin) ?>;
         fillForm($("#form-dang-tin"), tin);
@@ -59,16 +90,16 @@
             success: "valid"
         });
         $("#form-dang-tin").validate({
-            highlight: function(input) {
+            highlight: function (input) {
                 $(input).parents('.form-line').addClass('error');
             },
-            unhighlight: function(input) {
+            unhighlight: function (input) {
                 $(input).parents('.form-line').removeClass('error');
             },
-            errorPlacement: function(error, element) {
+            errorPlacement: function (error, element) {
                 $(element).parents('.form-group').append(error);
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 form.submit();
                 return false;
             }
