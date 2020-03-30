@@ -151,7 +151,7 @@
                         <li>
                             <a href="{{base_url()}}department/">
                                 <i class="metismenu-icon"></i>
-                                Phòng
+                                Phòng/Thiết bị/Nhân viên
                             </a>
                         </li>
                         <li>

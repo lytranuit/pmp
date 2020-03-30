@@ -11,8 +11,8 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Mã Phòng</th>
-                            <th>Tên Phòng</th>
+                            <th>Mã</th>
+                            <th>Tên</th>
                             <th>Khu vực</th>
                             <th>Xưởng</th>
                             <th>Nhà máy</th>

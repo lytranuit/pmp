@@ -214,7 +214,7 @@ class Department extends MY_Controller
             $where = $this->department_model->where(array("deleted" => 0));
         } else {
             $search = $this->input->post('search')['value'];
-            $sWhere = "deleted = 0 and (name like '%" . $search . "%')";
+            $sWhere = "deleted = 0 and (name like '%" . $search . "%' OR string_id like '%" . $search . "%')";
             $where = $this->department_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
             $totalFiltered = $where->count_rows();
             $where = $this->department_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
