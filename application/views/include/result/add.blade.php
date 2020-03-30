@@ -31,7 +31,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phòng:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phòng/Thiết bị/Nhân viên:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="department_name" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="department_id" required="" readonly="" />

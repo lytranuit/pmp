@@ -5,7 +5,7 @@
                 Bộ lọc
 
             </div>
-            <div class="card-body"id="form-dang-tin">
+            <div class="card-body" id="form-dang-tin">
 
                 <div class="row">
                     <div class="col-md-3">
@@ -88,8 +88,9 @@
                 </div>
             </div>
             <div class="card-body">
-                <canvas id="myChart"></canvas>
-
+                <div class="chart-container">
+                    <canvas id="myChart" height="80vh"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -101,8 +102,8 @@
         type: 'line',
         data: []
     });
-    $(document).ready(function () {
-        $("[name=department_id],[name=target_id]").change(function () {
+    $(document).ready(function() {
+        $("[name=department_id],[name=target_id]").change(function() {
             drawChart();
         })
         async function drawChart() {
@@ -110,7 +111,10 @@
             var target_id = $("[name=target_id]").val();
             var data = await $.ajax({
                 url: path + 'dashboard/chartdata',
-                data: {department_id: department_id, target_id: target_id},
+                data: {
+                    department_id: department_id,
+                    target_id: target_id
+                },
                 dataType: "JSON"
             });
             chart.data = data;
