@@ -67,25 +67,27 @@
             <div class="card-header">
                 Biểu đồ xu hướng
                 <div style="margin-left:auto">
+                    <select style="display: inline-block;width: 200px;" class="form-control form-control-sm" id="the_selector">
+                    </select>
                     <input type="text" id="daterange" class="form-control form-control-sm" style="display: inline-block;width: 200px;" />
                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
 
-                        <label class="btn btn-light active">
+                        <label class="btn btn-light type_data">
                             <input type="radio" name="options" id="option4" value="Custom"> Tùy chỉnh
                         </label>
-                        <label class="btn btn-light">
+                        <label class="btn btn-light type_data">
                             <input type="radio" name="options" id="option4" value="Month"> Tháng
                         </label>
 
-                        <label class="btn btn-light">
+                        <label class="btn btn-light type_data">
                             <input type="radio" name="options" id="option4" value="Quarter"> Quý
                         </label>
 
-                        <label class="btn btn-light">
+                        <label class="btn btn-light type_data">
                             <input type="radio" name="options" id="option4" value="HalfYear"> Nửa năm
                         </label>
 
-                        <label class="btn btn-light">
+                        <label class="btn btn-light type_data active">
                             <input type="radio" name="options" id="option5" value="Year"> Năm
                         </label>
                     </div>
@@ -101,6 +103,9 @@
 </div>
 
 <script type="text/javascript">
+    var date_from = moment();
+    var date_to = moment();
+    var date_from_prev, date_from_to;
     var ctx = document.getElementById('myChart').getContext('2d');
     var originalLineDraw = Chart.controllers.line.prototype.draw;
     Chart.helpers.extend(Chart.controllers.line.prototype, {
@@ -142,7 +147,7 @@
         $('#daterange').daterangepicker({
             "startDate": moment().startOf("Y"),
             "endDate": moment(),
-            maxDate: moment(),
+            maxDate: moment()
         }, function(start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
         });
@@ -150,23 +155,63 @@
         $("[name=department_id],[name=target_id]").change(function() {
             drawChart();
         })
-        $("[name=options]").click(function() {
-
+        $("#the_selector").change(function() {
+            drawChart();
         })
+        $(".type_data").click(async function() {
+            let value = $("input", this).val();
+            $("#daterange").addClass("d-none");
+            $("#the_selector").addClass("d-none");
+            if (value == "Custom") {
+                $("#daterange").removeClass("d-none");
+            } else {
+
+                $("#the_selector").removeClass("d-none");
+                let data = await $.ajax({
+                    url: path + 'dashboard/datedata',
+                    data: {
+                        type: value
+                    },
+                    dataType: "JSON"
+                });
+                let html = "";
+                $.each(data, function(k, v) {
+                    html += "<option value='" + v.value + "'>" + v.value + "</option>";
+                })
+                $("#the_selector").html(html);
+                $("#the_selector").trigger("change");
+            }
+        });
         async function drawChart() {
             var department_id = $("[name=department_id]").val();
             var target_id = $("[name=target_id]").val();
+            let type = $(".type_data.active input").val();
+            let selector = $("#the_selector").val();
+            let daterange = $("#daterange").val();
             var data = await $.ajax({
                 url: path + 'dashboard/chartdata',
                 data: {
                     department_id: department_id,
-                    target_id: target_id
+                    target_id: target_id,
+                    type: type,
+                    selector: selector,
+                    daterange: daterange
                 },
                 dataType: "JSON"
             });
-            data['lineAtIndex'] = 5
+            // data['lineAtIndex'] = 5
             chart.data = data;
             chart.update();
         }
+
+        // function check_daterange() {
+        //     // date_from = 
+        //     let type = $(".type_data.active input").val();
+        //     let selector = $("#the_selector").val();
+        //     // if()
+
+        // }
+        ////
+        $(".type_data.active").trigger("click");
     });
 </script>

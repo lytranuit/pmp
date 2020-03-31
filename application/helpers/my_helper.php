@@ -4,7 +4,8 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 if (!function_exists('sendMessage')) {
 
-    function sendMessage($chatID, $messaggio) {
+    function sendMessage($chatID, $messaggio)
+    {
         $token = "606461497:AAH68TUT1mB3adaIxlud48-r-7fi2vADkRU";
         $url = "https://api.telegram.org/bot" . $token . "/sendMessage?chat_id=" . $chatID;
         $url = $url . "&text=" . urlencode($messaggio);
@@ -17,26 +18,56 @@ if (!function_exists('sendMessage')) {
         $result = curl_exec($ch);
         curl_close($ch);
     }
+}
+if (!function_exists("input_params")) {
+    function input_params($params)
+    {
+        $type = $params['type'];
+        $selector = $params['selector'];
+        $daterange = $params['daterange'];
+        $list_date = explode(" - ", $daterange);
+        $params['date_from'] = date("Y-m-d", strtotime($list_date[0]));
+        $params['date_to'] = date("Y-m-d", strtotime($list_date[1]));
+        $params['date_from_prev'] = "";
+        $params['date_to_prev'] = "";
+        if ($type == "Year") {
+            $params['date_from'] = $selector . "-01-01";
+            $params['date_to'] = $selector . "-12-31";
+            $params['date_from_prev'] = ($selector - 1) . "-01-01";
+            $params['date_to_prev'] = ($selector - 1) . "-12-31";
+        } else if ($type == "HalfYear") {
+            
+        } else if ($type == "Quarter") {
 
+        } else if ($type == "Month") {
+            $params['date_from'] = date("Y-m-d", strtotime($selector . "-01"));
+            $params['date_to'] = date("Y-m-t", strtotime($selector . "-01"));
+            $params['date_from_prev']  = date("Y-m-01", strtotime("-1 month", strtotime($params['date_from'])));
+            $params['date_to_prev'] = date("Y-m-t", strtotime("-1 month", strtotime($params['date_from'])));
+        }
+
+        return $params;
+    }
 }
 if (!function_exists('getRandomColor')) {
 
-    function getRandomColor() {
+    function getRandomColor()
+    {
         $letters = '0123456789ABCDEF';
         $color = '#';
-//        echo rand(0, 16) . "<br>";
-//        echo rand(0, 16);
-//        die();
+        //        echo rand(0, 16) . "<br>";
+        //        echo rand(0, 16);
+        //        die();
         for ($i = 0; $i < 6; $i++) {
             $color .= $letters[rand(0, 15)];
         }
         return $color;
     }
-
 }
 if (!function_exists('is_Date')) {
 
-    function is_Date($str) {
+    function is_Date($str)
+    {
         $str = str_replace('/', '-', $str);
         $stamp = strtotime($str);
         if (is_numeric($stamp)) {
@@ -47,20 +78,20 @@ if (!function_exists('is_Date')) {
         }
         return false;
     }
-
 }
 if (!function_exists('config_item')) {
 
-    function config_item($str) {
+    function config_item($str)
+    {
         $CI = &get_instance();
         $item = $CI->config->item($str);
         return $item;
     }
-
 }
 if (!function_exists('sluggable')) {
 
-    function sluggable($str) {
+    function sluggable($str)
+    {
         $str = trim(mb_strtolower($str));
         $str = preg_replace('/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/', 'a', $str);
         $str = preg_replace('/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/', 'e', $str);
@@ -73,11 +104,11 @@ if (!function_exists('sluggable')) {
         $str = preg_replace('/([\s]+)/', '-', $str);
         return $str;
     }
-
 }
 if (!function_exists('get_url_seo')) {
 
-    function get_url_seo($func, $param = array()) {
+    function get_url_seo($func, $param = array())
+    {
         $url = $func;
         $CI = &get_instance();
         $CI->load->model('page_model');
@@ -101,12 +132,12 @@ if (!function_exists('get_url_seo')) {
         }
         return base_url() . $url;
     }
-
 }
 
 if (!function_exists('get_option')) {
 
-    function get_option($key) {
+    function get_option($key)
+    {
         $value = "";
         $CI = &get_instance();
         $CI->load->model('option_model');
@@ -116,11 +147,11 @@ if (!function_exists('get_option')) {
         }
         return $value;
     }
-
 }
 if (!function_exists('get_url_page')) {
 
-    function get_url_page($id) {
+    function get_url_page($id)
+    {
         $url = "";
         $CI = &get_instance();
         $CI->load->model('pageweb_model');
@@ -131,29 +162,29 @@ if (!function_exists('get_url_page')) {
         }
         return base_url() . $url;
     }
-
 }
 
 if (!function_exists('get_url_product')) {
 
-    function get_url_product($id, $title) {
+    function get_url_product($id, $title)
+    {
         $url = "product/$id-" . sluggable($title) . ".html";
         return base_url() . $url;
     }
-
 }
 
 if (!function_exists('get_url_category')) {
 
-    function get_url_category($id, $title) {
+    function get_url_category($id, $title)
+    {
         $url = "category/$id-" . sluggable($title) . ".html";
         return base_url() . $url;
     }
-
 }
 if (!function_exists('language_current')) {
 
-    function language_current() {
+    function language_current()
+    {
         $CI = &get_instance();
         $language_current = $CI->config->item('language');
         if (isset($_SESSION['language_current'])) {
@@ -161,12 +192,12 @@ if (!function_exists('language_current')) {
         }
         return $language_current;
     }
-
 }
 
 if (!function_exists('short_language_current')) {
 
-    function short_language_current() {
+    function short_language_current()
+    {
         $CI = &get_instance();
         $language_current = $CI->config->item('language');
         $arr_lang = $CI->config->item('language_list');
@@ -176,12 +207,12 @@ if (!function_exists('short_language_current')) {
 
         return $arr_lang[$language_current];
     }
-
 }
 
 if (!function_exists('pick_language')) {
 
-    function pick_language($data, $struct = 'name_') {
+    function pick_language($data, $struct = 'name_')
+    {
         $CI = &get_instance();
         $short_lang = short_language_current();
         $data = (array) $data;
@@ -191,12 +222,12 @@ if (!function_exists('pick_language')) {
             return $struct . 'vi';
         }
     }
-
 }
 
 if (!function_exists('strtofloat')) {
 
-    function strtofloat($str) {
+    function strtofloat($str)
+    {
         $str = str_replace(".", "", $str); // replace dots (thousand seps) with blancs 
         $str = str_replace(",", ".", $str); // replace ',' with '.'
         if (preg_match("#([0-9\.]+)#", $str, $match)) { // search for number that may contain '.' 
@@ -205,22 +236,22 @@ if (!function_exists('strtofloat')) {
             return floatval($str); // take some last chances with floatval 
         }
     }
-
 }
 if (!function_exists('split_string')) {
 
-    function split_string($str, $length) {
+    function split_string($str, $length)
+    {
         $str = strip_tags($str);
         if (strlen($str) > $length) {
             $str = mb_substr($str, 0, $length) . "...";
         }
         return $str;
     }
-
 }
 if (!function_exists('is_permission')) {
 
-    function is_permission($func) {
+    function is_permission($func)
+    {
         $array_permission = $_SESSION['permission'];
         $role = $_SESSION['role'];
         if ($role == 1 || in_array($func, $array_permission)) {
@@ -229,12 +260,12 @@ if (!function_exists('is_permission')) {
             return false;
         }
     }
-
 }
 
 if (!function_exists('has_permission')) {
 
-    function has_permission($func) {
+    function has_permission($func)
+    {
         $CI = &get_instance();
         $CI->load->model('permission_model');
         $permission = $CI->permission_model->where(array("function" => $func, 'deleted' => 0))->as_array()->get_all();
@@ -244,13 +275,13 @@ if (!function_exists('has_permission')) {
             return false;
         }
     }
-
 }
 
 if (!function_exists('nestable')) {
 
-    function nestable($array, $column, $parent) {
-        $return = array_filter($array, function($item) use($column, $parent) {
+    function nestable($array, $column, $parent)
+    {
+        $return = array_filter($array, function ($item) use ($column, $parent) {
             return $item[$column] == $parent;
         });
         foreach ($return as &$row) {
@@ -259,13 +290,13 @@ if (!function_exists('nestable')) {
 
         return $return;
     }
-
 }
 
 if (!function_exists('array_child_category')) {
 
-    function array_child_category($array, $parent) {
-        $return = array_filter($array, function($item) use($parent) {
+    function array_child_category($array, $parent)
+    {
+        $return = array_filter($array, function ($item) use ($parent) {
             return $item['parent_id'] == $parent;
         });
         $data = array();
@@ -277,40 +308,40 @@ if (!function_exists('array_child_category')) {
 
         return $data;
     }
-
 }
 if (!function_exists('html_menu')) {
 
-    function html_menu() {
+    function html_menu()
+    {
         $CI = &get_instance();
         $CI->load->model('category_model');
         $category = $CI->category_model->where(array("active" => 1, 'deleted' => 0, 'is_menu' => 1))->order_by('sort', "ASC")->as_array()->get_all();
-//        echo "<pre>";
-//        print_r($)
+        //        echo "<pre>";
+        //        print_r($)
         echo html_menu_lv1($category, 0);
     }
-
 }
 if (!function_exists('html_menu_lv1')) {
 
-    function html_menu_lv1($array, $parent) {
+    function html_menu_lv1($array, $parent)
+    {
         $html = "";
-        $return = array_filter($array, function($item) use($parent) {
+        $return = array_filter($array, function ($item) use ($parent) {
             return $item['parent_id'] == $parent;
         });
         ///Bebin Tag
         $html .= '';
         ///Content
         foreach ($return as $row) {
-//            $id = $row['id'];
-//            $child = array_filter($array, function($item) use($id) {
-//                return $item['parent_id'] == $id;
-//            });
-//            if (count($child) > 0) {
-//                $type = "cm-menu-item-responsive";
-//            } else {
-//                $type = 
-//            }
+            //            $id = $row['id'];
+            //            $child = array_filter($array, function($item) use($id) {
+            //                return $item['parent_id'] == $id;
+            //            });
+            //            if (count($child) > 0) {
+            //                $type = "cm-menu-item-responsive";
+            //            } else {
+            //                $type = 
+            //            }
             $html .= '<li class="item_' . $row['id'] . ' ty-menu__item cm-menu-item-responsive">
                         <a href="' . get_url_category($row['id'], $row['name']) . '" class="ty-menu__item-link">
                             ' . $row['name'] . '
@@ -323,13 +354,13 @@ if (!function_exists('html_menu_lv1')) {
 
         return $html;
     }
-
 }
 if (!function_exists('html_menu_lv2')) {
 
-    function html_menu_lv2($array, $parent) {
+    function html_menu_lv2($array, $parent)
+    {
         $html = "";
-        $return = array_filter($array, function($item) use($parent) {
+        $return = array_filter($array, function ($item) use ($parent) {
             return $item['parent_id'] == $parent;
         });
         if (count($return)) {
@@ -338,7 +369,7 @@ if (!function_exists('html_menu_lv2')) {
             $has_child = FALSE;
             foreach ($return as $row) {
                 $id = $row['id'];
-                $child = array_filter($array, function($item) use($id) {
+                $child = array_filter($array, function ($item) use ($id) {
                     return $item['parent_id'] == $id;
                 });
                 if (count($child)) {
@@ -375,13 +406,13 @@ if (!function_exists('html_menu_lv2')) {
         }
         return $html;
     }
-
 }
 if (!function_exists('html_menu_lv3')) {
 
-    function html_menu_lv3($array, $parent) {
+    function html_menu_lv3($array, $parent)
+    {
         $html = "";
-        $return = array_filter($array, function($item) use($parent) {
+        $return = array_filter($array, function ($item) use ($parent) {
             return $item['parent_id'] == $parent;
         });
         if (count($return)) {
@@ -401,37 +432,37 @@ if (!function_exists('html_menu_lv3')) {
         }
         return $html;
     }
-
 }
 
 
 if (!function_exists('html_select_category')) {
 
-    function html_select_category($array, $column, $parent) {
+    function html_select_category($array, $column, $parent)
+    {
         $html = "";
-        $return = array_filter($array, function($item) use($column, $parent) {
+        $return = array_filter($array, function ($item) use ($column, $parent) {
             return $item[$column] == $parent;
         });
         ///Bebin Tag
-//        $html .= '';
+        //        $html .= '';
         ///Content
         foreach ($return as $row) {
             $html .= '<option value = "' . $row['id'] . '">' . $row['name'] . '</option>';
             $html .= html_select_category($array, $column, $row['id']);
         }
         ///End Tag
-//        $html .= '</ol>';
+        //        $html .= '</ol>';
 
         return $html;
     }
-
 }
 
 if (!function_exists('html_nestable')) {
 
-    function html_nestable($array, $column, $parent) {
+    function html_nestable($array, $column, $parent)
+    {
         $html = "";
-        $return = array_filter($array, function($item) use($column, $parent) {
+        $return = array_filter($array, function ($item) use ($column, $parent) {
             return $item[$column] == $parent;
         });
         ///Bebin Tag
@@ -481,11 +512,11 @@ if (!function_exists('html_nestable')) {
 
         return $html;
     }
-
 }
 if (!function_exists('html_page_footer')) {
 
-    function html_page_footer() {
+    function html_page_footer()
+    {
         $html = "";
         $CI = &get_instance();
         $CI->load->model('pageweb_model');
@@ -495,11 +526,11 @@ if (!function_exists('html_page_footer')) {
         }
         return $html;
     }
-
 }
 if (!function_exists('breadcrumbs_category')) {
 
-    function breadcrumbs_category($id, $name, $parent) {
+    function breadcrumbs_category($id, $name, $parent)
+    {
         $html = "";
         if ($parent == 0) {
             $html .= '<a href="' . get_url_category($id, $name) . '" class="ty-breadcrumbs__a">' . $name . '</a>';
@@ -512,11 +543,11 @@ if (!function_exists('breadcrumbs_category')) {
         }
         return $html;
     }
-
 }
 if (!function_exists('sync_cart')) {
 
-    function sync_cart() {
+    function sync_cart()
+    {
 
         $CI = &get_instance();
         $items = array(
@@ -539,9 +570,9 @@ if (!function_exists('sync_cart')) {
             $cart = json_decode(get_cookie("CART"), true);
         }
         if (count($cart) > 0) {
-//            echo "<pre>";
-//            print_r($cart);
-//            die();
+            //            echo "<pre>";
+            //            print_r($cart);
+            //            die();
             foreach ($cart as $key => $item) {
                 $data = array();
                 if (!isset($item['product_id']) || !isset($item['qty'])) {
@@ -574,9 +605,9 @@ if (!function_exists('sync_cart')) {
                 $parent = $CI->product_model->where(array('id' => $parent))->with_colors()->with_size()->as_object()->get();
                 array_unshift($variant, $parent);
                 $array_size = array();
-//                echo "<pre>";
-//                print_r($variant);
-//                die();
+                //                echo "<pre>";
+                //                print_r($variant);
+                //                die();
                 foreach ($variant as $key1 => $row) {
                     if (isset($row->size->id) && !isset($array_size[$row->size->id])) {
                         $array_size[$row->size->id] = array('product_id' => $row->id, 'size_id' => $row->size->id, 'size_name' => $row->size->name);
@@ -587,23 +618,23 @@ if (!function_exists('sync_cart')) {
 
                 $items['details'][] = $data;
             }
-//            echo "<pre>";
-//            print_r($items);
-//            die();
-//            $cookie = array(
-//                'name' => 'CART',
-//                'value' => json_encode($items),
-//                'secure' => TRUE
-//            );
-//            $CI->input->set_cookie($co
+            //            echo "<pre>";
+            //            print_r($items);
+            //            die();
+            //            $cookie = array(
+            //                'name' => 'CART',
+            //                'value' => json_encode($items),
+            //                'secure' => TRUE
+            //            );
+            //            $CI->input->set_cookie($co
         }
         return $items;
     }
-
 }
 if (!function_exists('sync_wishlist')) {
 
-    function sync_wishlist() {
+    function sync_wishlist()
+    {
 
         $CI = &get_instance();
         $CI->load->model('product_model');
@@ -628,32 +659,32 @@ if (!function_exists('sync_wishlist')) {
         }
         return $items;
     }
-
 }
 if (!function_exists('is_wishlist')) {
 
-    function is_wishlist($product_id) {
+    function is_wishlist($product_id)
+    {
         $wish_list = array();
         if (get_cookie("WISHLIST") && get_cookie("WISHLIST") != "") {
             $wish_list = json_decode(get_cookie("WISHLIST"), true);
         }
-//            echo $product_id;
-//            print_r($wish_list);
-//            var_dump(in_array($product_id, $wish_list));
-//            die();
+        //            echo $product_id;
+        //            print_r($wish_list);
+        //            var_dump(in_array($product_id, $wish_list));
+        //            die();
         return in_array($product_id, $wish_list);
     }
-
 }
 
 if (!function_exists('html_img_second')) {
 
-    function html_img_second($product_id) {
+    function html_img_second($product_id)
+    {
 
         $db = &DB();
         $where = "WHERE a.product_id = $product_id";
         $sql = "SELECT b.* FROM product_hinhanh as a JOIN tbl_hinhanh as b ON a.hinhanh_id = b.id_hinhanh $where ";
-//        echo $sql . "<br>";
+        //        echo $sql . "<br>";
         $query = $db->query($sql);
         $rows = $query->result_array();
         if (empty($rows))
@@ -668,5 +699,4 @@ if (!function_exists('html_img_second')) {
 
         return $html;
     }
-
 }

@@ -155,13 +155,30 @@ class Dashboard extends MY_Controller
 
         $department_id = $this->input->get('department_id', TRUE);
         $target_id = $this->input->get('target_id', TRUE);
+        $type = $this->input->get('type', TRUE);
+        $selector = $this->input->get('selector', TRUE);
+        $daterange = $this->input->get('daterange', TRUE);
+        $params = array(
+            'type' => $type,
+            'selector' => $selector,
+            'daterange' => $daterange
+        );
+        $params = input_params($params);
+        // echo "<pre>";
+        // print_r($params);
+        // die();
+
         $department = $this->department_model->where(array('id' => $department_id))->as_object()->get();
         $area_id = $department->area_id;
         //        echo $department_id;
         $results = array('labels' => array(), 'datasets' => array());
         $data_limit = $this->limit_model->where(array('deleted' => 0, 'area_id' => $area_id, 'target_id' => $target_id))->as_array()->get();
 
-        $data = $this->result_model->where(array('deleted' => 0, 'department_id' => $department_id, 'target_id' => $target_id))->with_position()->as_object()->get_all();
+
+        $params['department_id'] = $department_id;
+        $params['target_id'] = $target_id;
+        $data = $this->result_model->chartdata($params);
+        // $data = $this->result_model->where(array('deleted' => 0, 'department_id' => $department_id, 'target_id' => $target_id))->with_position()->as_object()->get_all();
         $labels = array();
         // $labels[] = array()
         $position_list = array();
@@ -185,23 +202,23 @@ class Dashboard extends MY_Controller
         );
         foreach ($data as $row) {
             $date = $row->date;
-            $position = $row->position;
+            $position = $row->position_string_id;
             $value = $row->value;
             if (!in_array($date, $labels)) {
                 $labels[] = $date;
             }
-            if (!in_array($position->string_id, $position_list)) {
-                $position_list[] = $position->string_id;
+            if (!in_array($position, $position_list)) {
+                $position_list[] = $position;
                 $color = getRandomColor();
                 $datasets[] = array(
                     'backgroundColor' => $color,
                     'borderColor' => $color,
-                    'label' => $position->string_id,
+                    'label' => $position,
                     'data' => array(),
                     'fill' => 'false'
                 );
             }
-            $datatmp[$date][$position->string_id] = $value;
+            $datatmp[$date][$position] = $value;
         }
         foreach ($labels as $date) {
             foreach ($datasets as &$position) {
@@ -224,5 +241,13 @@ class Dashboard extends MY_Controller
         //        print_r($results);
         //        die();
         echo json_encode($results);
+    }
+    public function datedata()
+    {
+
+        $type = $this->input->get('type', TRUE);
+        $this->load->model("result_model");
+        $data = $this->result_model->get_date_has_data($type);
+        echo json_encode($data);
     }
 }
