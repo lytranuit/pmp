@@ -418,7 +418,7 @@ class Import extends MY_Controller
             // $phong_id = $find_phong->id;
         }
     }
-    public function test2()
+    public function result()
     {
         set_time_limit(-1);
         require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
@@ -429,9 +429,9 @@ class Import extends MY_Controller
         $this->load->model("result_model");
         $insert = array();
         $sortedarray1 = array_values(array_diff(scandir($dir), array('..', '.')));
-        foreach ($sortedarray1 as $file) {
+        foreach ($sortedarray1 as $file_name) {
             //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
-            $file = $dir . $file;
+            $file = $dir . $file_name;
             //Tiến hành xác thực file
             $objFile = PHPExcel_IOFactory::identify($file);
             $objData = PHPExcel_IOFactory::createReader($objFile);
@@ -446,7 +446,7 @@ class Import extends MY_Controller
             //Chọn trang cần truy xuất
             $count_sheet = $objPHPExcel->getSheetCount();
             for ($k = 0; $k < $count_sheet; $k++) {
-
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
                 $sheet = $objPHPExcel->setActiveSheetIndex($k);
 
                 //Lấy ra số dòng cuối cùng
@@ -514,6 +514,8 @@ class Import extends MY_Controller
                         $area_id = $position->area_id;
                         $department_id = $position->department_id;
                         $target_id = $position->target_id;
+                        $factory_id = $position->factory_id;
+                        $workshop_id = $position->workshop_id;
                         $date = $row[1];
                         $value = $row[$position->col];
                         if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
@@ -525,8 +527,11 @@ class Import extends MY_Controller
                             'area_id' => $area_id,
                             'department_id' => $department_id,
                             'target_id' => $target_id,
+                            'factory_id' => $factory_id,
+                            'workshop_id' => $workshop_id,
                             'date' => $date,
-                            'create_at' => date("Y-m-d")
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name
                             //                        'workshop_id' => $area['workshop_id'],
                             //                        'factory_id' => $area['factory_id']
                         );

@@ -4,7 +4,8 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 if (!function_exists('load_inputfile')) {
 
-    function load_inputfile(&$data) {
+    function load_inputfile(&$data)
+    {
         array_push($data['stylesheet_tag'], base_url() . "public/lib/fileinput/css/fileinput.css");
         array_push($data['stylesheet_tag'], base_url() . "public/lib/fileinput/css/theme_fileinput.css");
 
@@ -12,30 +13,42 @@ if (!function_exists('load_inputfile')) {
         array_push($data['javascript_tag'], base_url() . "public/lib/fileinput/js/sortable.js");
         array_push($data['javascript_tag'], base_url() . "public/lib/fileinput/js/theme_fileinput.js");
     }
-
 }
 
 
 if (!function_exists('load_datatable')) {
 
-    function load_datatable(&$data) {
+    function load_datatable(&$data)
+    {
         array_push($data['stylesheet_tag'], base_url() . "public/admin/vendor/datatables/datatables.min.css");
 
         array_push($data['javascript_tag'], base_url() . "public/admin/vendor/datatables/datatables.min.js");
         array_push($data['javascript_tag'], base_url() . "public/admin/vendor/datatables/jquery.highlight.js");
     }
+}
 
+
+if (!function_exists('load_daterangepicker')) {
+
+    function load_daterangepicker(&$data)
+    {
+        array_push($data['stylesheet_tag'], base_url() . "public/lib/daterangepicker/daterangepicker.css");
+
+        array_push($data['javascript_tag'], base_url() . "public/lib/daterangepicker/moment.min.js");
+        array_push($data['javascript_tag'], base_url() . "public/lib/daterangepicker/daterangepicker.js");
+    }
 }
 
 
 
 if (!function_exists('load_editor')) {
 
-    function load_editor(&$data) {
+    function load_editor(&$data)
+    {
 
-//        array_push($data['stylesheet_tag'], "https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_editor.min.css");
-//        array_push($data['stylesheet_tag'], "https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_style.min.css");
-//        array_push($data['javascript_tag'], "https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/js/froala_editor.min.js");
+        //        array_push($data['stylesheet_tag'], "https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_editor.min.css");
+        //        array_push($data['stylesheet_tag'], "https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_style.min.css");
+        //        array_push($data['javascript_tag'], "https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/js/froala_editor.min.js");
         array_push($data['stylesheet_tag'], base_url() . "public/lib/froala_editor/froala_editor.min.css");
         array_push($data['stylesheet_tag'], base_url() . "public/lib/froala_editor/froala_style.min.css");
         /////////// Plugin
@@ -73,31 +86,30 @@ if (!function_exists('load_editor')) {
         array_push($data['javascript_tag'], base_url() . "public/lib/froala_editor/plugins/url.min.js");
         array_push($data['javascript_tag'], base_url() . "public/lib/froala_editor/plugins/video.min.js");
     }
-
 }
 
 
 if (!function_exists('load_sort_nest')) {
 
-    function load_sort_nest(&$data) {
+    function load_sort_nest(&$data)
+    {
         array_push($data['stylesheet_tag'], base_url() . "public/admin/vendor/sortable-nestable/sort-nest.css");
         /////////// Plugin
-//        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/Sortable.min.js");
+        //        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/Sortable.min.js");
         array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/jquery.mjs.nestedSortable.js");
-//        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/jquery.nestable.js");
+        //        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/jquery.nestable.js");
     }
-
 }
 
 
 if (!function_exists('load_chossen')) {
 
-    function load_chossen(&$data) {
+    function load_chossen(&$data)
+    {
         array_push($data['stylesheet_tag'], base_url() . "public/lib/chosen/chosen.min.css");
         /////////// Plugin
-//        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/Sortable.min.js");
+        //        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/Sortable.min.js");
         array_push($data['javascript_tag'], base_url() . "public/lib/chosen/chosen.jquery.js");
-//        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/jquery.nestable.js");
+        //        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/jquery.nestable.js");
     }
-
 }

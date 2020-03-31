@@ -66,25 +66,29 @@
         <div class="card">
             <div class="card-header">
                 Biểu đồ xu hướng
-                <div class="btn-group btn-group-toggle" style="margin-left:auto" data-toggle="buttons">
-                    <label class="btn btn-light">
-                        <input type="radio" name="options" id="option3" value="Week"> Tuần
-                    </label>
-                    <label class="btn btn-light">
-                        <input type="radio" name="options" id="option4" value="Month"> Tháng
-                    </label>
+                <div style="margin-left:auto">
+                    <input type="text" id="daterange" class="form-control form-control-sm" style="display: inline-block;width: 200px;" />
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
 
-                    <label class="btn btn-light">
-                        <input type="radio" name="options" id="option4" value="Month"> Quý
-                    </label>
+                        <label class="btn btn-light active">
+                            <input type="radio" name="options" id="option4" value="Custom"> Tùy chỉnh
+                        </label>
+                        <label class="btn btn-light">
+                            <input type="radio" name="options" id="option4" value="Month"> Tháng
+                        </label>
 
-                    <label class="btn btn-light">
-                        <input type="radio" name="options" id="option4" value="Month"> Nửa năm
-                    </label>
+                        <label class="btn btn-light">
+                            <input type="radio" name="options" id="option4" value="Quarter"> Quý
+                        </label>
 
-                    <label class="btn btn-light">
-                        <input type="radio" name="options" id="option5" value="Year"> Năm
-                    </label>
+                        <label class="btn btn-light">
+                            <input type="radio" name="options" id="option4" value="HalfYear"> Nửa năm
+                        </label>
+
+                        <label class="btn btn-light">
+                            <input type="radio" name="options" id="option5" value="Year"> Năm
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -98,13 +102,56 @@
 
 <script type="text/javascript">
     var ctx = document.getElementById('myChart').getContext('2d');
+    var originalLineDraw = Chart.controllers.line.prototype.draw;
+    Chart.helpers.extend(Chart.controllers.line.prototype, {
+        draw: function() {
+            originalLineDraw.apply(this, arguments);
+
+            var chart = this.chart;
+            var ctx = chart.chart.ctx;
+
+            var index = chart.config.data.lineAtIndex;
+            if (index) {
+                var xaxis = chart.scales['x-axis-0'];
+                var yaxis = chart.scales['y-axis-0'];
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(xaxis.getPixelForValue(undefined, index), yaxis.top);
+                ctx.strokeStyle = 'gray';
+                ctx.lineTo(xaxis.getPixelForValue(undefined, index), yaxis.bottom);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+    });
     var chart = new Chart(ctx, {
         type: 'line',
-        data: []
+        data: [],
+        options: {
+            elements: {
+                line: {
+                    tension: 0.0000001
+                }
+            }
+        }
     });
+
     $(document).ready(function() {
+        ////DATE RANGE
+        $('#daterange').daterangepicker({
+            "startDate": moment().startOf("Y"),
+            "endDate": moment(),
+            maxDate: moment(),
+        }, function(start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        });
+        ///EVENT
         $("[name=department_id],[name=target_id]").change(function() {
             drawChart();
+        })
+        $("[name=options]").click(function() {
+
         })
         async function drawChart() {
             var department_id = $("[name=department_id]").val();
@@ -117,6 +164,7 @@
                 },
                 dataType: "JSON"
             });
+            data['lineAtIndex'] = 5
             chart.data = data;
             chart.update();
         }
