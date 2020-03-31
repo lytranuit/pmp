@@ -425,6 +425,8 @@ class Import extends MY_Controller
         //Đường dẫn file
         //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
         $dir = APPPATH . '../public/upload/data/';
+
+        echo "<pre>";
         echo $dir;
         $this->load->model("result_model");
         $insert = array();
@@ -473,14 +475,19 @@ class Import extends MY_Controller
                             $data[$i - 11][$j] = $data[$i - 11][$j]->getPlainText();
                         }
                         ////CHUYEN DATE 
-                        if (PHPExcel_Shared_Date::isDateTime($cell)) {
-                            $data[$i - 11][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - 11][$j]));
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - 11][$j] > 0) {
+
+                            if (is_numeric($data[$i - 11][$j])) {
+                                $data[$i - 11][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - 11][$j]));
+                            } else if ($data[$i - 11][$j] == '26/09/16') {
+                                $data[$i - 11][$j] = '2016-09-26';
+                            }
                         }
                     }
                 }
                 //                echo "<pre>";
-                //                print_r($data);
-                //                die();
+                // print_r($data);
+                // die();
                 ///LIST POSTION
                 $list_position = array_shift($data);
                 ///XOA 1 ROW
@@ -503,8 +510,8 @@ class Import extends MY_Controller
                     array_push($positions, $find_vitri);
                 }
                 //        print_r($positions);
-                //        print_r($data);
-                //        die();
+                // print_r($data);
+                // die();
                 // print_r($temp_phong);
                 // die();
                 for ($i = 0; $i < count($data); $i++) {
@@ -517,6 +524,11 @@ class Import extends MY_Controller
                         $factory_id = $position->factory_id;
                         $workshop_id = $position->workshop_id;
                         $date = $row[1];
+                        // if ($date == '2020-03-21') {
+                        //     print_r($i);
+                        //     print($data);
+                        //     die();
+                        // }
                         $value = $row[$position->col];
                         if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
                             continue;
