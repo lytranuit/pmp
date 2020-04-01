@@ -361,7 +361,7 @@ class Import extends MY_Controller
                 ///Ngực
                 $data_nhanvien[] = array(
                     'name' => "Ngực",
-                    'string_id' => $nhanvien_string_id . "_N",
+                    'string_id' => $nhanvien_string_id . "_C",
                     'frequency_name' => $frequency_name,
                     'target_id' => 6,
                     'department_id' => $nhanvien_id,
@@ -563,11 +563,41 @@ class Import extends MY_Controller
         require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
         //Đường dẫn file
         //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
-        $dir = APPPATH . '../public/upload/data/';
+        $dir = APPPATH . '../public/upload/data_nhanvien/';
 
         echo "<pre>";
         echo $dir;
         $this->load->model("result_model");
+        $this->load->model("position_model");
+        $this->load->model("department_model");
+        $this->load->model("area_model");
+        $area_A = $this->area_model->where(array('id' => 1))->as_object()->get();
+        $area_B = $this->area_model->where(array('id' => 4))->as_object()->get();
+        $area_C = $this->area_model->where(array('id' => 2))->as_object()->get();
+        $area_D = $this->area_model->where(array('id' => 3))->as_object()->get();
+
+        $temp_area = array(
+            'A' => array(
+                'area_id' => $area_A->id,
+                'factory_id' => $area_A->factory_id,
+                'workshop_id' => $area_A->workshop_id,
+            ),
+            'B' => array(
+                'area_id' => $area_B->id,
+                'factory_id' => $area_B->factory_id,
+                'workshop_id' => $area_B->workshop_id,
+            ),
+            'C' => array(
+                'area_id' => $area_C->id,
+                'factory_id' => $area_C->factory_id,
+                'workshop_id' => $area_C->workshop_id,
+            ),
+            'D' => array(
+                'area_id' => $area_D->id,
+                'factory_id' => $area_D->factory_id,
+                'workshop_id' => $area_D->workshop_id,
+            )
+        );
         $insert = array();
         $sortedarray1 = array_values(array_diff(scandir($dir), array('..', '.')));
         foreach ($sortedarray1 as $file_name) {
@@ -624,18 +654,36 @@ class Import extends MY_Controller
                         }
                     }
                 }
-                $nhanvien_string_id = $sheet->getCellByColumnAndRow(2, 6)->getValue();
+                $nhanvien_string_id = $sheet->getCellByColumnAndRow(5, 6)->getValue();
                 $area_string = $sheet->getCellByColumnAndRow(2, 7)->getValue();
-                echo $nhanvien_string_id . "<br>" . $area_string;
-                //                echo "<pre>";
-                // print_r($data);
+                // echo $nhanvien_string_id . "<br>" . $area_string;
+
+                if (!isset($temp_area[$area_string])) {
+                    continue;
+                }
+                $area = $temp_area[$area_string];
+                $nhan_vien = $this->department_model->where(array('area_id' => $area['area_id'], 'string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string))->as_object()->get();
+
+                // echo "<pre>";
+                // print_r($nhan_vien);
+                if (empty($nhan_vien)) {
+                    continue;
+                }
+                $position_H = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_H"))->as_object()->get();
+                $position_N = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_N"))->as_object()->get();
+                $position_C = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_C"))->as_object()->get();
+                $position_LF = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_LF"))->as_object()->get();
+                $position_RF = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_RF"))->as_object()->get();
+                $position_LG = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_LG"))->as_object()->get();
+                $position_RG = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_RG"))->as_object()->get();
+
                 // die();
                 ///LIST POSTION
                 $list_position = array_shift($data);
                 ///XOA 1 ROW
                 array_shift($data);
-                $this->load->model("position_model");
-                echo "<pre>";
+
+                // echo "<pre>";
                 //        print_r($positions);
                 // print_r($data);
                 // die();
@@ -643,6 +691,136 @@ class Import extends MY_Controller
                 // die();
                 for ($i = 0; $i < count($data); $i++) {
                     $row = $data[$i];
+                    $date = $row[1];
+                    $head = $row[2];
+                    $nose = $row[3];
+                    $chest = $row[4];
+                    $lf = $row[5];
+                    $rf = $row[6];
+                    $lg = $row[7];
+                    $rg = $row[8];
+                    if (!is_Date($date)) {
+                        continue;
+                    }
+                    if (is_numeric($head)) {
+                        $data_up = array(
+                            'value' => $head,
+                            'position_id' => $position_H->id,
+                            'area_id' => $position_H->area_id,
+                            'department_id' => $position_H->department_id,
+                            'target_id' => 6,
+                            'factory_id' => $position_H->factory_id,
+                            'workshop_id' => $position_H->workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name
+                            //                        'workshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $insert[] = $data_up;
+                    }
+                    if (is_numeric($nose)) {
+                        $data_up = array(
+                            'value' => $nose,
+                            'position_id' => $position_N->id,
+                            'area_id' => $position_N->area_id,
+                            'department_id' => $position_N->department_id,
+                            'target_id' => 6,
+                            'factory_id' => $position_N->factory_id,
+                            'workshop_id' => $position_N->workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name
+                            //                        'workshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $insert[] = $data_up;
+                    }
+                    if (is_numeric($chest)) {
+                        $data_up = array(
+                            'value' => $chest,
+                            'position_id' => $position_C->id,
+                            'area_id' => $position_C->area_id,
+                            'department_id' => $position_C->department_id,
+                            'target_id' => 6,
+                            'factory_id' => $position_C->factory_id,
+                            'workshop_id' => $position_C->workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name
+                            //                        'workshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $insert[] = $data_up;
+                    }
+                    if (is_numeric($lf)) {
+                        $data_up = array(
+                            'value' => $lf,
+                            'position_id' => $position_LF->id,
+                            'area_id' => $position_LF->area_id,
+                            'department_id' => $position_LF->department_id,
+                            'target_id' => 6,
+                            'factory_id' => $position_LF->factory_id,
+                            'workshop_id' => $position_LF->workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name
+                            //                        'workshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $insert[] = $data_up;
+                    }
+                    if (is_numeric($rf)) {
+                        $data_up = array(
+                            'value' => $rf,
+                            'position_id' => $position_RF->id,
+                            'area_id' => $position_RF->area_id,
+                            'department_id' => $position_RF->department_id,
+                            'target_id' => 6,
+                            'factory_id' => $position_RF->factory_id,
+                            'workshop_id' => $position_RF->workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name
+                            //                        'workshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $insert[] = $data_up;
+                    }
+                    if (is_numeric($lg)) {
+                        $data_up = array(
+                            'value' => $lg,
+                            'position_id' => $position_LG->id,
+                            'area_id' => $position_LG->area_id,
+                            'department_id' => $position_LG->department_id,
+                            'target_id' => 6,
+                            'factory_id' => $position_LG->factory_id,
+                            'workshop_id' => $position_LG->workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name
+                            //                        'workshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $insert[] = $data_up;
+                    }
+                    if (is_numeric($rg)) {
+                        $data_up = array(
+                            'value' => $rg,
+                            'position_id' => $position_RG->id,
+                            'area_id' => $position_RG->area_id,
+                            'department_id' => $position_RG->department_id,
+                            'target_id' => 6,
+                            'factory_id' => $position_RG->factory_id,
+                            'workshop_id' => $position_RG->workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name
+                            //                        'workshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $insert[] = $data_up;
+                    }
                 }
             }
         }
