@@ -200,12 +200,20 @@ class Dashboard extends MY_Controller
             'pointRadius' => 0,
             'fill' => 'false'
         );
+        // echo "<pre>";
+        // print_r($params);
+        // die();
+        $lineAtIndex = null;
         foreach ($data as $row) {
             $date = $row->date;
             $position = $row->position_string_id;
             $value = $row->value;
             if (!in_array($date, $labels)) {
                 $labels[] = $date;
+                ///CHECK MỐC 
+                if ($lineAtIndex == null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
+                    $lineAtIndex =  count($labels) - 1;
+                }
             }
             if (!in_array($position, $position_list)) {
                 $position_list[] = $position;
@@ -235,7 +243,8 @@ class Dashboard extends MY_Controller
         }
         $results = array(
             'labels' => $labels,
-            'datasets' => $datasets
+            'datasets' => $datasets,
+            'lineAtIndex' => $lineAtIndex
         );
         //        echo "<Pre>";
         //        print_r($results);

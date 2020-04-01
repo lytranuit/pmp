@@ -155,9 +155,9 @@
         $("[name=department_id],[name=target_id]").change(function() {
             drawChart();
         })
-        $("#the_selector").change(function() {
+        $("#the_selector,#daterange").change(function() {
             drawChart();
-        })
+        });
         $(".type_data").click(async function() {
             let value = $("input", this).val();
             $("#daterange").addClass("d-none");

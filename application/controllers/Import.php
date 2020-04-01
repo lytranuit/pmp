@@ -557,4 +557,96 @@ class Import extends MY_Controller
         print_r($insert);
         $this->result_model->insert($insert);
     }
+    public function result_nhanvien()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/upload/data/';
+
+        echo "<pre>";
+        echo $dir;
+        $this->load->model("result_model");
+        $insert = array();
+        $sortedarray1 = array_values(array_diff(scandir($dir), array('..', '.')));
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $dir . $file_name;
+            //Tiến hành xác thực file
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+
+            //Chỉ đọc dữ liệu
+            // $objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            for ($k = 0; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                for ($i = 11; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i - 11][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - 11][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - 11][$j] = $data[$i - 11][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - 11][$j] > 0) {
+
+                            if (is_numeric($data[$i - 11][$j])) {
+                                $data[$i - 11][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - 11][$j]));
+                            } else if ($data[$i - 11][$j] == '26/09/16') {
+                                $data[$i - 11][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+                $nhanvien_string_id = $sheet->getCellByColumnAndRow(2, 6)->getValue();
+                $area_string = $sheet->getCellByColumnAndRow(2, 7)->getValue();
+                echo $nhanvien_string_id . "<br>" . $area_string;
+                //                echo "<pre>";
+                // print_r($data);
+                // die();
+                ///LIST POSTION
+                $list_position = array_shift($data);
+                ///XOA 1 ROW
+                array_shift($data);
+                $this->load->model("position_model");
+                echo "<pre>";
+                //        print_r($positions);
+                // print_r($data);
+                // die();
+                // print_r($temp_phong);
+                // die();
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                }
+            }
+        }
+        print_r($insert);
+        $this->result_model->insert($insert);
+    }
 }

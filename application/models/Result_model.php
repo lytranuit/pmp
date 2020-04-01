@@ -59,11 +59,13 @@ class Result_model extends MY_Model
         } else {
             $where .= " AND a.date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
         }
-        $sql = "SELECT a.*,b.string_id as position_string_id FROM pmp_result as a JOIN pmp_position as b ON a.position_id = b.id $where";
-        $query = $this->db->query($sql);
-        $result = $query->result();
+        $sql = "SELECT a.*,b.string_id as position_string_id FROM pmp_result as a JOIN pmp_position as b ON a.position_id = b.id $where ORDER BY a.date ASC";
+        
         // echo "<pre>";
         // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result();
         return $result;
     }
 }

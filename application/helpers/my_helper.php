@@ -36,16 +36,51 @@ if (!function_exists("input_params")) {
             $params['date_from_prev'] = ($selector - 1) . "-01-01";
             $params['date_to_prev'] = ($selector - 1) . "-12-31";
         } else if ($type == "HalfYear") {
-            
-        } else if ($type == "Quarter") {
+            $spilt = explode("-", $selector);
 
+            $year = $spilt[0];
+            if ($spilt[1] == 1) {
+                $params['date_from'] = date("Y-m-d", strtotime($year . "-01-01"));
+                $params['date_to'] = date("Y-m-t", strtotime($year . "-06-01"));
+                $params['date_from_prev']  = date("Y-m-01", strtotime("-6 month", strtotime($params['date_from'])));
+                $params['date_to_prev'] = date("Y-m-t", strtotime("-6 month", strtotime($params['date_from'])));
+            } else {
+                $params['date_from'] = date("Y-m-d", strtotime($year . "-07-01"));
+                $params['date_to'] = date("Y-m-t", strtotime($year . "-12-01"));
+                $params['date_from_prev']  = date("Y-m-01", strtotime("-6 month", strtotime($params['date_from'])));
+                $params['date_to_prev'] = date("Y-m-t", strtotime("-6 month", strtotime($params['date_from'])));
+            }
+        } else if ($type == "Quarter") {
+            $spilt = explode("-", $selector);
+
+            $year = $spilt[0];
+            if ($spilt[1] == 1) {
+                $params['date_from'] = date("Y-m-d", strtotime($year . "-01-01"));
+                $params['date_to'] = date("Y-m-t", strtotime($year . "-03-01"));
+                $params['date_from_prev']  = date("Y-m-01", strtotime("-3 month", strtotime($params['date_from'])));
+                $params['date_to_prev'] = date("Y-m-t", strtotime("-3 month", strtotime($params['date_from'])));
+            } else if ($spilt[1] == 2) {
+                $params['date_from'] = date("Y-m-d", strtotime($year . "-04-01"));
+                $params['date_to'] = date("Y-m-t", strtotime($year . "-06-01"));
+                $params['date_from_prev']  = date("Y-m-01", strtotime("-3 month", strtotime($params['date_from'])));
+                $params['date_to_prev'] = date("Y-m-t", strtotime("-3 month", strtotime($params['date_from'])));
+            } else if ($spilt[1] == 3) {
+                $params['date_from'] = date("Y-m-d", strtotime($year . "-07-01"));
+                $params['date_to'] = date("Y-m-t", strtotime($year . "-09-01"));
+                $params['date_from_prev']  = date("Y-m-01", strtotime("-3 month", strtotime($params['date_from'])));
+                $params['date_to_prev'] = date("Y-m-t", strtotime("-3 month", strtotime($params['date_from'])));
+            } else {
+                $params['date_from'] = date("Y-m-d", strtotime($year . "-10-01"));
+                $params['date_to'] = date("Y-m-t", strtotime($year . "-12-01"));
+                $params['date_from_prev']  = date("Y-m-01", strtotime("-3 month", strtotime($params['date_from'])));
+                $params['date_to_prev'] = date("Y-m-t", strtotime("-3 month", strtotime($params['date_from'])));
+            }
         } else if ($type == "Month") {
             $params['date_from'] = date("Y-m-d", strtotime($selector . "-01"));
             $params['date_to'] = date("Y-m-t", strtotime($selector . "-01"));
             $params['date_from_prev']  = date("Y-m-01", strtotime("-1 month", strtotime($params['date_from'])));
             $params['date_to_prev'] = date("Y-m-t", strtotime("-1 month", strtotime($params['date_from'])));
         }
-
         return $params;
     }
 }
