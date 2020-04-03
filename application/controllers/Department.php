@@ -1,10 +1,8 @@
 <?php
 
-class Department extends MY_Controller
-{
+class Department extends MY_Controller {
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -26,8 +24,7 @@ class Department extends MY_Controller
         );
     }
 
-    public function _remap($method, $params = array())
-    {
+    public function _remap($method, $params = array()) {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -43,8 +40,7 @@ class Department extends MY_Controller
         }
     }
 
-    private function has_right($method, $params = array())
-    {
+    private function has_right($method, $params = array()) {
 
         /*
          * SET PERMISSION
@@ -119,27 +115,108 @@ class Department extends MY_Controller
         return true;
     }
 
-    public function index()
-    { /////// trang ca nhan
+    public function index() { /////// trang ca nhan
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
-    public function getbyparent($params)
-    {
+
+    public function getbyparent($params) {
         $id = $params[0];
         $this->load->model("department_model");
         $data = $this->department_model->where(array('deleted' => 0, 'area_id' => $id))->as_array()->get_all();
         echo json_encode($data);
     }
 
-    public function add()
-    { /////// trang ca nhan
+    public function add() { /////// trang ca nhan
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("department_model");
             $data_up = $this->department_model->create_object($data);
             $id = $this->department_model->insert($data_up);
-
+            if (isset($data_up['type']) && $data_up['type'] == 3) { /// Tự tạo vị trí cho nhân viên
+                $this->load->model("position_model");
+                $nhanvien_string_id = $data_up['string_id'];
+                $frequency_name = "";
+                $nhanvien_id = $id;
+                $data_nhanvien = array();
+                $data_nhanvien[] = array(
+                    'name' => "Đầu",
+                    'string_id' => $nhanvien_string_id . "_H",
+                    'frequency_name' => $frequency_name,
+                    'target_id' => 6,
+                    'department_id' => $nhanvien_id,
+                    'area_id' => $data_up['area_id'],
+                    'workshop_id' => $data_up['workshop_id'],
+                    'factory_id' => $data_up['factory_id']
+                );
+                ///Mũi
+                $data_nhanvien[] = array(
+                    'name' => "Mũi",
+                    'string_id' => $nhanvien_string_id . "_N",
+                    'frequency_name' => $frequency_name,
+                    'target_id' => 6,
+                    'department_id' => $nhanvien_id,
+                    'area_id' => $data_up['area_id'],
+                    'workshop_id' => $data_up['workshop_id'],
+                    'factory_id' => $data_up['factory_id']
+                );
+                ///Ngực
+                $data_nhanvien[] = array(
+                    'name' => "Ngực",
+                    'string_id' => $nhanvien_string_id . "_C",
+                    'frequency_name' => $frequency_name,
+                    'target_id' => 6,
+                    'department_id' => $nhanvien_id,
+                    'area_id' => $data_up['area_id'],
+                    'workshop_id' => $data_up['workshop_id'],
+                    'factory_id' => $data_up['factory_id']
+                );
+                ///Cẳng tay trái
+                $data_nhanvien[] = array(
+                    'name' => "Cẳng tay trái",
+                    'string_id' => $nhanvien_string_id . "_LF",
+                    'frequency_name' => $frequency_name,
+                    'target_id' => 6,
+                    'department_id' => $nhanvien_id,
+                    'area_id' => $data_up['area_id'],
+                    'workshop_id' => $data_up['workshop_id'],
+                    'factory_id' => $data_up['factory_id']
+                );
+                ///Cẳng tay phải
+                $data_nhanvien[] = array(
+                    'name' => "Cẳng tay phải",
+                    'string_id' => $nhanvien_string_id . "_RF",
+                    'frequency_name' => $frequency_name,
+                    'target_id' => 6,
+                    'department_id' => $nhanvien_id,
+                    'area_id' => $data_up['area_id'],
+                    'workshop_id' => $data_up['workshop_id'],
+                    'factory_id' => $data_up['factory_id']
+                );
+                ///Dấu găng tay trái
+                $data_nhanvien[] = array(
+                    'name' => "Dấu găng tay trái",
+                    'string_id' => $nhanvien_string_id . "_LG",
+                    'frequency_name' => $frequency_name,
+                    'target_id' => 6,
+                    'department_id' => $nhanvien_id,
+                    'area_id' => $data_up['area_id'],
+                    'workshop_id' => $data_up['workshop_id'],
+                    'factory_id' => $data_up['factory_id']
+                );
+                ///Dấu găng tay phải
+                $data_nhanvien[] = array(
+                    'name' => "Dấu găng tay phải",
+                    'string_id' => $nhanvien_string_id . "_RG",
+                    'frequency_name' => $frequency_name,
+                    'target_id' => 6,
+                    'department_id' => $nhanvien_id,
+                    'area_id' => $data_up['area_id'],
+                    'workshop_id' => $data_up['workshop_id'],
+                    'factory_id' => $data_up['factory_id']
+                );
+                $this->position_model->insert($data_nhanvien);
+            }
             redirect('department', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -161,14 +238,101 @@ class Department extends MY_Controller
         }
     }
 
-    public function edit($param)
-    { /////// trang ca nhan
+    public function edit($param) { /////// trang ca nhan
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("department_model");
             $data = $_POST;
             $data_up = $this->department_model->create_object($data);
             $this->department_model->update($data_up, $id);
+            if (isset($data_up['type']) && $data_up['type'] == 3) { /// Tự tạo vị trí cho nhân viên
+                $this->load->model("position_model");
+                $nhanvien_string_id = $data_up['string_id'];
+                $frequency_name = "";
+                $nhanvien_id = $id;
+
+                $check = $this->position_model->where(array("department_id" => $id, 'deleted' => 0))->as_array()->get_all();
+                if (empty($check)) {
+                    $data_nhanvien = array();
+                    $data_nhanvien[] = array(
+                        'name' => "Đầu",
+                        'string_id' => $nhanvien_string_id . "_H",
+                        'frequency_name' => $frequency_name,
+                        'target_id' => 6,
+                        'department_id' => $nhanvien_id,
+                        'area_id' => $data_up['area_id'],
+                        'workshop_id' => $data_up['workshop_id'],
+                        'factory_id' => $data_up['factory_id']
+                    );
+                    ///Mũi
+                    $data_nhanvien[] = array(
+                        'name' => "Mũi",
+                        'string_id' => $nhanvien_string_id . "_N",
+                        'frequency_name' => $frequency_name,
+                        'target_id' => 6,
+                        'department_id' => $nhanvien_id,
+                        'area_id' => $data_up['area_id'],
+                        'workshop_id' => $data_up['workshop_id'],
+                        'factory_id' => $data_up['factory_id']
+                    );
+                    ///Ngực
+                    $data_nhanvien[] = array(
+                        'name' => "Ngực",
+                        'string_id' => $nhanvien_string_id . "_C",
+                        'frequency_name' => $frequency_name,
+                        'target_id' => 6,
+                        'department_id' => $nhanvien_id,
+                        'area_id' => $data_up['area_id'],
+                        'workshop_id' => $data_up['workshop_id'],
+                        'factory_id' => $data_up['factory_id']
+                    );
+                    ///Cẳng tay trái
+                    $data_nhanvien[] = array(
+                        'name' => "Cẳng tay trái",
+                        'string_id' => $nhanvien_string_id . "_LF",
+                        'frequency_name' => $frequency_name,
+                        'target_id' => 6,
+                        'department_id' => $nhanvien_id,
+                        'area_id' => $data_up['area_id'],
+                        'workshop_id' => $data_up['workshop_id'],
+                        'factory_id' => $data_up['factory_id']
+                    );
+                    ///Cẳng tay phải
+                    $data_nhanvien[] = array(
+                        'name' => "Cẳng tay phải",
+                        'string_id' => $nhanvien_string_id . "_RF",
+                        'frequency_name' => $frequency_name,
+                        'target_id' => 6,
+                        'department_id' => $nhanvien_id,
+                        'area_id' => $data_up['area_id'],
+                        'workshop_id' => $data_up['workshop_id'],
+                        'factory_id' => $data_up['factory_id']
+                    );
+                    ///Dấu găng tay trái
+                    $data_nhanvien[] = array(
+                        'name' => "Dấu găng tay trái",
+                        'string_id' => $nhanvien_string_id . "_LG",
+                        'frequency_name' => $frequency_name,
+                        'target_id' => 6,
+                        'department_id' => $nhanvien_id,
+                        'area_id' => $data_up['area_id'],
+                        'workshop_id' => $data_up['workshop_id'],
+                        'factory_id' => $data_up['factory_id']
+                    );
+                    ///Dấu găng tay phải
+                    $data_nhanvien[] = array(
+                        'name' => "Dấu găng tay phải",
+                        'string_id' => $nhanvien_string_id . "_RG",
+                        'frequency_name' => $frequency_name,
+                        'target_id' => 6,
+                        'department_id' => $nhanvien_id,
+                        'area_id' => $data_up['area_id'],
+                        'workshop_id' => $data_up['workshop_id'],
+                        'factory_id' => $data_up['factory_id']
+                    );
+                    $this->position_model->insert($data_nhanvien);
+                }
+            }
             redirect('department', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("department_model");
@@ -188,8 +352,7 @@ class Department extends MY_Controller
         }
     }
 
-    public function remove($params)
-    { /////// trang ca nhan
+    public function remove($params) { /////// trang ca nhan
         $this->load->model("department_model");
         $id = $params[0];
         $this->department_model->update(array("deleted" => 1), $id);
@@ -197,8 +360,7 @@ class Department extends MY_Controller
         exit;
     }
 
-    public function table()
-    {
+    public function table() {
         $this->load->model("department_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
@@ -233,13 +395,13 @@ class Department extends MY_Controller
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
                 $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
                 $nestedData['action'] = '<a href="' . base_url() . 'department/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
-                    . '<i class="fas fa-pencil-alt">'
-                    . '</i>'
-                    . '</a>'
-                    . '<a href="' . base_url() . 'department/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
-                    . '<i class="far fa-trash-alt">'
-                    . '</i>'
-                    . '</a>';
+                        . '<i class="fas fa-pencil-alt">'
+                        . '</i>'
+                        . '</a>'
+                        . '<a href="' . base_url() . 'department/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                        . '<i class="far fa-trash-alt">'
+                        . '</i>'
+                        . '</a>';
 
                 $data[] = $nestedData;
             }
@@ -254,4 +416,5 @@ class Department extends MY_Controller
 
         echo json_encode($json_data);
     }
+
 }

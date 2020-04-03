@@ -39,7 +39,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Phòng ban:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">Phòng/Thiết bị/Nhân viên:<i class="text-danger">*</i></b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm" name="department_id">
                                 @foreach ($department as $dep)

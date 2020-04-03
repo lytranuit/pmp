@@ -1,10 +1,8 @@
 <?php
 
-class Position extends MY_Controller
-{
+class Position extends MY_Controller {
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -26,8 +24,7 @@ class Position extends MY_Controller
         );
     }
 
-    public function _remap($method, $params = array())
-    {
+    public function _remap($method, $params = array()) {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -43,8 +40,7 @@ class Position extends MY_Controller
         }
     }
 
-    private function has_right($method, $params = array())
-    {
+    private function has_right($method, $params = array()) {
 
         /*
          * SET PERMISSION
@@ -119,22 +115,19 @@ class Position extends MY_Controller
         return true;
     }
 
-    public function index()
-    { /////// trang ca nhan
+    public function index() { /////// trang ca nhan
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function get($params)
-    {
+    public function get($params) {
         $id = $params[0];
         $this->load->model("position_model");
         $json_data = $this->position_model->where(array('id' => $id))->with_department()->with_target()->as_object()->get();
         echo json_encode($json_data);
     }
 
-    public function add()
-    { /////// trang ca nhan
+    public function add() { /////// trang ca nhan
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("position_model");
@@ -160,6 +153,9 @@ class Position extends MY_Controller
 
             $this->load->model("target_model");
             $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+
+            $this->load->model("object_model");
+            $this->data['object'] = $this->object_model->where(array('deleted' => 0))->as_object()->get_all();
             // echo "<pre>";
             // print_r($this->data['workshop']);
             // print_r($this->data['areas']);
@@ -169,8 +165,7 @@ class Position extends MY_Controller
         }
     }
 
-    public function edit($param)
-    { /////// trang ca nhan
+    public function edit($param) { /////// trang ca nhan
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("position_model");
@@ -192,19 +187,20 @@ class Position extends MY_Controller
             $this->load->model("area_model");
             $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $tin->workshop_id))->as_object()->get_all();
 
-
             $this->load->model("department_model");
             $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $tin->area_id))->as_object()->get_all();
 
             $this->load->model("target_model");
             $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+
+            $this->load->model("object_model");
+            $this->data['object'] = $this->object_model->where(array('deleted' => 0))->as_object()->get_all();
             //            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
 
-    public function remove($params)
-    { /////// trang ca nhan
+    public function remove($params) { /////// trang ca nhan
         $this->load->model("position_model");
         $id = $params[0];
         $this->position_model->update(array("deleted" => 1), $id);
@@ -212,8 +208,7 @@ class Position extends MY_Controller
         exit;
     }
 
-    public function table()
-    {
+    public function table() {
         $this->load->model("position_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
@@ -250,13 +245,13 @@ class Position extends MY_Controller
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
                 $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
                 $nestedData['action'] = '<a href="' . base_url() . 'position/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
-                    . '<i class="fas fa-pencil-alt">'
-                    . '</i>'
-                    . '</a>'
-                    . '<a href="' . base_url() . 'position/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
-                    . '<i class="far fa-trash-alt">'
-                    . '</i>'
-                    . '</a>';
+                        . '<i class="fas fa-pencil-alt">'
+                        . '</i>'
+                        . '</a>'
+                        . '<a href="' . base_url() . 'position/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                        . '<i class="far fa-trash-alt">'
+                        . '</i>'
+                        . '</a>';
 
                 $data[] = $nestedData;
             }
@@ -271,4 +266,5 @@ class Position extends MY_Controller
 
         echo json_encode($json_data);
     }
+
 }
