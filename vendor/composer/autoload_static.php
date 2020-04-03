@@ -16,6 +16,10 @@ class ComposerStaticInitac9066523ac48407a802a1f48f9ac30f
     );
 
     public static $prefixLengthsPsr4 = array (
+        'Z' => 
+        array (
+            'Zend\\Escaper\\' => 13,
+        ),
         'S' => 
         array (
             'Symfony\\Component\\Finder\\' => 25,
@@ -24,6 +28,8 @@ class ComposerStaticInitac9066523ac48407a802a1f48f9ac30f
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
+            'PhpOffice\\PhpWord\\' => 18,
+            'PhpOffice\\Common\\' => 17,
             'Philo\\Blade\\' => 12,
         ),
         'M' => 
@@ -53,6 +59,10 @@ class ComposerStaticInitac9066523ac48407a802a1f48f9ac30f
     );
 
     public static $prefixDirsPsr4 = array (
+        'Zend\\Escaper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-escaper/src',
+        ),
         'Symfony\\Component\\Finder\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/finder',
@@ -64,6 +74,14 @@ class ComposerStaticInitac9066523ac48407a802a1f48f9ac30f
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'PhpOffice\\PhpWord\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
+        ),
+        'PhpOffice\\Common\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/common/src/Common',
         ),
         'Philo\\Blade\\' => 
         array (
@@ -136,12 +154,17 @@ class ComposerStaticInitac9066523ac48407a802a1f48f9ac30f
         ),
     );
 
+    public static $classMap = array (
+        'PclZip' => __DIR__ . '/..' . '/pclzip/pclzip/pclzip.lib.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitac9066523ac48407a802a1f48f9ac30f::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitac9066523ac48407a802a1f48f9ac30f::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitac9066523ac48407a802a1f48f9ac30f::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitac9066523ac48407a802a1f48f9ac30f::$classMap;
 
         }, null, ClassLoader::class);
     }

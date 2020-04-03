@@ -1,10 +1,8 @@
 <?php
 
-class Dashboard extends MY_Controller
-{
+class Dashboard extends MY_Controller {
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -26,8 +24,7 @@ class Dashboard extends MY_Controller
         );
     }
 
-    public function _remap($method, $params = array())
-    {
+    public function _remap($method, $params = array()) {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -43,8 +40,7 @@ class Dashboard extends MY_Controller
         }
     }
 
-    private function has_right($method, $params = array())
-    {
+    private function has_right($method, $params = array()) {
 
         /*
          * SET PERMISSION
@@ -119,9 +115,7 @@ class Dashboard extends MY_Controller
         return true;
     }
 
-    public function index()
-    { /////// trang ca nhan
-
+    public function index() { /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
 
@@ -146,8 +140,7 @@ class Dashboard extends MY_Controller
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function chartdata()
-    {
+    public function chartdata() {
 
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -184,7 +177,7 @@ class Dashboard extends MY_Controller
         $position_list = array();
         $datatmp = array();
         $datasets = array();
-        $datasets[] =  array(
+        $datasets[] = array(
             'backgroundColor' => 'red',
             'borderColor' => 'red',
             'label' => "Action Limit",
@@ -192,7 +185,7 @@ class Dashboard extends MY_Controller
             'pointRadius' => 0,
             'fill' => 'false'
         );
-        $datasets[] =  array(
+        $datasets[] = array(
             'backgroundColor' => 'orange',
             'borderColor' => 'orange',
             'label' => "Alert Limit",
@@ -212,7 +205,7 @@ class Dashboard extends MY_Controller
                 $labels[] = $date;
                 ///CHECK MỐC 
                 if ($lineAtIndex == null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
-                    $lineAtIndex =  count($labels) - 1;
+                    $lineAtIndex = count($labels) - 1;
                 }
             }
             if (!in_array($position, $position_list)) {
@@ -251,12 +244,56 @@ class Dashboard extends MY_Controller
         //        die();
         echo json_encode($results);
     }
-    public function datedata()
-    {
+
+    public function datedata() {
 
         $type = $this->input->get('type', TRUE);
         $this->load->model("result_model");
         $data = $this->result_model->get_date_has_data($type);
         echo json_encode($data);
     }
+
+    function printyear() {
+        //          echo "<pre>";
+        //        print_r($tin);
+        //        die();
+        //            PRINT BILL
+        // boost the memory limit if it's low ;)
+        ini_set('memory_limit', '256M');
+        // load library
+        $this->load->library('pdf');
+        $pdf = $this->pdf->load();
+        // retrieve data from model
+//        $this->data['cart'] = $tin;
+        $pdf->allow_charset_conversion = true;  // Set by default to TRUE
+        $pdf->charset_in = 'UTF-8';
+        //   $pdf->SetDirectionality('rtl');
+        $pdf->autoLangToFont = true;
+
+        $header = $this->blade->view()->make('pdf/header', $this->data)->render();
+//        print_r($header);
+//        die();
+        $pdf->SetHTMLHeader($header);
+        $footer = $this->blade->view()->make('pdf/footer', $this->data)->render();
+        $pdf->SetHTMLFooter($footer);
+//        echo $html;die();
+        // render the view into HTML
+        $html = $this->blade->view()->make('pdf/year', $this->data)->render();
+        $pdf->WriteHTML($html);
+        // write the HTML into the PDF
+        $output = 'itemreport' . date('Y_m_d_H_i_s') . '_.pdf';
+        $pdf->Output("$output", 'I');
+        // save to file because we can exit();
+        // - See more at: http://webeasystep.com/blog/view_article/codeigniter_tutorial_pdf_to_create_your_reports#sthash.QFCyVGLu.dpuf
+    }
+
+    function wordtest() {
+
+        $file = APPPATH . '../public/upload/template/1.docx';
+        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+
+        $templateProcessor->setValue('date', date("d-m-Y"));
+        $templateProcessor->saveAs('MyWordFile.docx');
+    }
+
 }
