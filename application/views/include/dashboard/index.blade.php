@@ -67,9 +67,10 @@
             <div class="card-header">
                 Biểu đồ xu hướng
                 <div style="margin-left:auto">
-                    <select style="display: inline-block;width: 200px;" class="form-control form-control-sm" id="the_selector">
-                    </select>
-                    <input type="text" id="daterange" class="form-control form-control-sm" style="display: inline-block;width: 200px;" />
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-sm" id="export_report"><i class="fas fa-print"></i></button>
+
+                    </div>
                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
 
                         <label class="btn btn-light type_data">
@@ -91,6 +92,10 @@
                             <input type="radio" name="options" id="option5" value="Year"> Năm
                         </label>
                     </div>
+                    <select style="width: 200px;" class="form-control form-control-sm btn-group" id="the_selector">
+                    </select>
+                    <input type="text" id="daterange" class="form-control form-control-sm btn-group" style="width: 200px;" />
+
                 </div>
             </div>
             <div class="card-body">
@@ -134,6 +139,9 @@
         type: 'line',
         data: [],
         options: {
+            legend: {
+                position: 'right'
+            },
             elements: {
                 line: {
                     tension: 0.0000001
@@ -144,6 +152,26 @@
 
     $(document).ready(function() {
         ////DATE RANGE
+        $("#export_report").click(function() {
+            var workshop_id = $("[name=workshop_id]").val();
+            let type = $(".type_data.active input").val();
+            let selector = $("#the_selector").val();
+            let daterange = $("#daterange").val();
+            let obj = {
+                workshop_id: workshop_id,
+                type: type,
+                selector: selector,
+                daterange: daterange
+            }
+            var str = "";
+            for (var key in obj) {
+                if (str != "") {
+                    str += "&";
+                }
+                str += key + "=" + encodeURIComponent(obj[key]);
+            }
+            location.href = path + "dashboard/export?" + str;
+        })
         $('#daterange').daterangepicker({
             "startDate": moment().startOf("Y"),
             "endDate": moment(),

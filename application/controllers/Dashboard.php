@@ -204,7 +204,7 @@ class Dashboard extends MY_Controller {
             if (!in_array($date, $labels)) {
                 $labels[] = $date;
                 ///CHECK MỐC 
-                if ($lineAtIndex == null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
+                if ($lineAtIndex === null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
                     $lineAtIndex = count($labels) - 1;
                 }
             }
