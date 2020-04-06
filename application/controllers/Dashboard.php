@@ -1,8 +1,13 @@
 <?php
 
-class Dashboard extends MY_Controller {
+use PhpOffice\PhpWord\Element\Table;
+use PhpOffice\PhpWord\SimpleType\TblWidth;
 
-    function __construct() {
+class Dashboard extends MY_Controller
+{
+
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -24,7 +29,8 @@ class Dashboard extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -40,7 +46,8 @@ class Dashboard extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
@@ -115,7 +122,9 @@ class Dashboard extends MY_Controller {
         return true;
     }
 
-    public function index() { /////// trang ca nhan
+    public function index()
+    {
+        /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
 
@@ -140,7 +149,8 @@ class Dashboard extends MY_Controller {
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function chartdata() {
+    public function chartdata()
+    {
 
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -245,15 +255,69 @@ class Dashboard extends MY_Controller {
         echo json_encode($results);
     }
 
-    public function datedata() {
+    public function datedata()
+    {
 
         $type = $this->input->get('type', TRUE);
         $this->load->model("result_model");
         $data = $this->result_model->get_date_has_data($type);
         echo json_encode($data);
     }
+    public function export()
+    {
+        // print_r($_COOKIE);
+        // die();
+        $this->load->model("workshop_model");
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
+        $object_name = isset($_COOKIE['SELECT_NAME']) ? $_COOKIE['SELECT_NAME'] : "";
+        if ($object_id == 3) {
+            $workshop_id = $this->input->get('workshop_id', TRUE);
 
-    function printyear() {
+            $workshop = $this->workshop_model->where(array('id' => $workshop_id))->with_factory()->as_object()->get();
+            $workshop_name = $workshop->name;
+            $factory_name = isset($workshop->factory->name) ? $workshop->factory->name : "";
+            $type = $this->input->get('type', TRUE);
+            $selector = $this->input->get('selector', TRUE);
+            $daterange = $this->input->get('daterange', TRUE);
+            $params = array(
+                'type' => $type,
+                'selector' => $selector,
+                'daterange' => $daterange
+            );
+            $params = input_params($params);
+
+            $file = APPPATH . '../public/upload/template/template_nhan_vien.docx';
+            $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+
+            $templateProcessor->setValue('date_from', $params['date_from']);
+            $templateProcessor->setValue('date_from_prev', $params['date_from_prev']);
+            $templateProcessor->setValue('date_to', $params['date_to']);
+            $templateProcessor->setValue('date_to_prev', $params['date_to_prev']);
+            $templateProcessor->setValue('workshop_name', $workshop_name);
+            $templateProcessor->setValue('factory_name', $factory_name);
+            $replacements = array(
+                array('customer_name' => 'Batman', 'customer_address' => 'Gotham City'),
+                array('customer_name' => 'Superman', 'customer_address' => 'Metropolis'),
+            );
+            $templateProcessor->cloneBlock('block_name', 3, true, true);
+
+            $table = new Table(array('borderSize' => 12, 'borderColor' => 'green', 'width' => 6000, 'unit' => TblWidth::TWIP));
+            $table->addRow();
+            $table->addCell(150)->addText('Cell A1');
+            $table->addCell(150)->addText('Cell A2');
+            $table->addCell(150)->addText('Cell A3');
+            $table->addRow();
+            $table->addCell(150)->addText('Cell B1');
+            $table->addCell(150)->addText('Cell B2');
+            $table->addCell(150)->addText('Cell B3');
+            $templateProcessor->setComplexBlock('table', $table);
+            $templateProcessor->saveAs('MyWordFile.docx');
+            redirect("MyWordFile.docx", 'refresh');
+            // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
+        }
+    }
+    function printyear()
+    {
         //          echo "<pre>";
         //        print_r($tin);
         //        die();
@@ -264,19 +328,19 @@ class Dashboard extends MY_Controller {
         $this->load->library('pdf');
         $pdf = $this->pdf->load();
         // retrieve data from model
-//        $this->data['cart'] = $tin;
+        //        $this->data['cart'] = $tin;
         $pdf->allow_charset_conversion = true;  // Set by default to TRUE
         $pdf->charset_in = 'UTF-8';
         //   $pdf->SetDirectionality('rtl');
         $pdf->autoLangToFont = true;
 
         $header = $this->blade->view()->make('pdf/header', $this->data)->render();
-//        print_r($header);
-//        die();
+        //        print_r($header);
+        //        die();
         $pdf->SetHTMLHeader($header);
         $footer = $this->blade->view()->make('pdf/footer', $this->data)->render();
         $pdf->SetHTMLFooter($footer);
-//        echo $html;die();
+        //        echo $html;die();
         // render the view into HTML
         $html = $this->blade->view()->make('pdf/year', $this->data)->render();
         $pdf->WriteHTML($html);
@@ -287,7 +351,8 @@ class Dashboard extends MY_Controller {
         // - See more at: http://webeasystep.com/blog/view_article/codeigniter_tutorial_pdf_to_create_your_reports#sthash.QFCyVGLu.dpuf
     }
 
-    function wordtest() {
+    function wordtest()
+    {
 
         $file = APPPATH . '../public/upload/template/1.docx';
         $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
@@ -295,5 +360,4 @@ class Dashboard extends MY_Controller {
         $templateProcessor->setValue('date', date("d-m-Y"));
         $templateProcessor->saveAs('MyWordFile.docx');
     }
-
 }
