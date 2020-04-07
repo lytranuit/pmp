@@ -36,7 +36,9 @@ class Result_model extends MY_Model
 
         return $obj;
     }
-
+    function dateIn()
+    {
+    }
     function get_date_has_data($type)
     {
         if ($type == "Year") {
@@ -71,6 +73,21 @@ class Result_model extends MY_Model
         $result = $query->result();
         return $result;
     }
+
+    function chartdata_limit($params)
+    {
+        $where = "WHERE a.deleted = 0 and a.area_id = " . $this->db->escape($params['area_id']) . " and a.target_id = " . $this->db->escape($params['target_id']) . "";
+
+        $sql = "SELECT a.* FROM pmp_limit as a $where";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result_array();
+        $result = count($result) ? $result[0] : array();
+        return $result;
+    }
     function area_export($params)
     {
         $where = "WHERE a.deleted = 0 and a.workshop_id = " . $this->db->escape($params['workshop_id']) . " and c.object_id = " . $this->db->escape($params['object_id']);
@@ -100,5 +117,83 @@ class Result_model extends MY_Model
         $query = $this->db->query($sql);
         $result = $query->result();
         return $result;
+    }
+
+    function chart_data($params)
+    {
+        $results = array('labels' => array(), 'datasets' => array());
+        $data = $this->chartdata($params);
+        $data_limit = $this->chartdata_limit($params);
+        // echo "<pre>";
+        // print_r($data_limit);
+        // die();
+        $labels = array();
+        // $labels[] = array()
+        $position_list = array();
+        $datatmp = array();
+        $datasets = array();
+        $datasets[] = array(
+            'backgroundColor' => 'red',
+            'borderColor' => 'red',
+            'label' => "Action Limit",
+            'data' => array(),
+            'pointRadius' => 0,
+            'fill' => 'false'
+        );
+        $datasets[] = array(
+            'backgroundColor' => 'orange',
+            'borderColor' => 'orange',
+            'label' => "Alert Limit",
+            'data' => array(),
+            'pointRadius' => 0,
+            'fill' => 'false'
+        );
+        // echo "<pre>";
+        // print_r($params);
+        // die();
+        $lineAtIndex = null;
+        foreach ($data as $row) {
+            $date = $row->date;
+            $position = $row->position_string_id;
+            $value = $row->value;
+            if (!in_array($date, $labels)) {
+                $labels[] = $date;
+                ///CHECK MỐC 
+                if ($lineAtIndex === null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
+                    $lineAtIndex = count($labels) - 1;
+                }
+            }
+            if (!in_array($position, $position_list)) {
+                $position_list[] = $position;
+                $color = getRandomColor();
+                $datasets[] = array(
+                    'backgroundColor' => $color,
+                    'borderColor' => $color,
+                    'label' => $position,
+                    'data' => array(),
+                    'fill' => 'false'
+                );
+            }
+            $datatmp[$date][$position] = $value;
+        }
+        foreach ($labels as $date) {
+            foreach ($datasets as &$position) {
+                $position_string_id = $position['label'];
+                $value = isset($datatmp[$date][$position_string_id]) ? $datatmp[$date][$position_string_id] : 0;
+                if ($position_string_id == "Action Limit") {
+                    $value = isset($data_limit['action_limit']) ? $data_limit['action_limit'] : 0;
+                } else if ($position_string_id == "Alert Limit") {
+                    $value = isset($data_limit['alert_limit']) ? $data_limit['alert_limit'] : 0;
+                }
+                $position['data'][] = $value;
+                //                $index = array_search($position_string_id, $position_list);
+            }
+        }
+        $results = array(
+            'labels' => $labels,
+            'datasets' => $datasets,
+            'lineAtIndex' => $lineAtIndex
+        );
+        return $results;
     }
 }

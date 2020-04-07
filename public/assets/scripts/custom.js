@@ -17,14 +17,10 @@ $(document).ready(function () {
         var i = $(this).data("id");
         var name = $(this).data("name");
 
-        $(".object_select").addClass("btn-success").removeClass("btn-primary");
-        $(this).removeClass("btn-success").addClass("btn-primary");
         // console.log(table_name);
         $.cookies.set('SELECT_NAME', name);
         $.cookies.set('SELECT_ID', i);
-        $("#btn_object_select").text(name);
-        ///hide modal
-        $('#object-modal .close').trigger("click");
+        location.reload();
     });
     //// Lấy data
     $("#form-dang-tin [name=area_id]").change(async function () {
@@ -73,7 +69,11 @@ $(document).ready(function () {
 
 function init() {
     var select_id = $.cookies.get('SELECT_ID') || "1";
-    $(".object_select[data-id=" + select_id + "]").trigger("click");
+    var object_name = $.cookies.get('SELECT_NAME') || "";
+
+    $(".object_select").addClass("btn-success").removeClass("btn-primary");
+    $(".object_select[data-id=" + select_id + "]").removeClass("btn-success").addClass("btn-primary");
+    $("#btn_object_select").text(object_name);
 }
 var fillForm = function (form, data) {
     $('input, select, textarea', form).not("[type=file]").each(function () {

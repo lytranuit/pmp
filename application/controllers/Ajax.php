@@ -1,31 +1,58 @@
 <?php
 
-class Ajax extends MY_Controller {
+class Ajax extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
-//    function login() {
-//        if (isset($_POST['identity']) && isset($_POST['password'])) {
-//            $this->load->model("user_model");
-//            // check to see if the user is logging in
-//            if ($this->user_model->login($this->input->post('identity'), $this->input->post('password'))) {
-//                echo json_encode(array('success' => 1, 'username' => $this->session->userdata('identity')));
-//            } else {
-//                echo json_encode(array('success' => 0, 'code' => 501, 'msg' => lang('alert_501')));
-//            }
-//        } else {
-//            echo json_encode(array('success' => 0, 'code' => 501, 'msg' => lang('alert_501')));
-//        }
-//    }
-    function bestsale() {
+    //    function login() {
+    //        if (isset($_POST['identity']) && isset($_POST['password'])) {
+    //            $this->load->model("user_model");
+    //            // check to see if the user is logging in
+    //            if ($this->user_model->login($this->input->post('identity'), $this->input->post('password'))) {
+    //                echo json_encode(array('success' => 1, 'username' => $this->session->userdata('identity')));
+    //            } else {
+    //                echo json_encode(array('success' => 0, 'code' => 501, 'msg' => lang('alert_501')));
+    //            }
+    //        } else {
+    //            echo json_encode(array('success' => 0, 'code' => 501, 'msg' => lang('alert_501')));
+    //        }
+    //    }
+    function bestsale()
+    {
         $this->load->model('saleorder_model');
         $data = $this->saleorder_model->best_sale();
         echo json_encode($data);
     }
+    function uploadchart()
+    {
+        $data = $this->input->post('image');
+        $name = $this->input->post('name');
+        if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+            $data = substr($data, strpos($data, ',') + 1);
+            $type = strtolower($type[1]); // jpg, png, gif
 
-    function datachart() {
+            if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                throw new \Exception('invalid image type');
+            }
+
+            $data = base64_decode($data);
+
+            if ($data === false) {
+                throw new \Exception('base64_decode failed');
+            }
+        } else {
+            throw new \Exception('did not match data URI with image data');
+        }
+
+        file_put_contents(APPPATH . '../public/upload/chart/' . $name . "." . $type, $data);
+        echo 1;
+    }
+    function datachart()
+    {
         $time_type = $this->input->get('time_type') or "Day";
 
         $this->load->model('saleorder_model');
@@ -33,7 +60,8 @@ class Ajax extends MY_Controller {
         echo json_encode($data);
     }
 
-    function getopencart() {
+    function getopencart()
+    {
 
         $this->load->model('productopen_model');
 
@@ -42,7 +70,8 @@ class Ajax extends MY_Controller {
         echo json_encode($items);
     }
 
-    function getcart() {
+    function getcart()
+    {
         $cart = json_decode($this->input->post('data'), true);
         $items = array(
             'details' => array(),
@@ -51,9 +80,9 @@ class Ajax extends MY_Controller {
         );
         $this->load->model('product_model');
         if (count($cart) > 0) {
-//            echo "<pre>";
-//            print_r($cart);
-//            die();
+            //            echo "<pre>";
+            //            print_r($cart);
+            //            die();
             foreach ($cart as $key => $item) {
                 $data = array();
                 if (!isset($item['id']) || !isset($item['qty'])) {
@@ -83,7 +112,8 @@ class Ajax extends MY_Controller {
         echo json_encode($items);
     }
 
-    function order() {
+    function order()
+    {
         $cart = json_decode($this->input->post('data'), true);
         $items = array(
             'details' => array(),
@@ -91,9 +121,9 @@ class Ajax extends MY_Controller {
             'amount_product' => 0
         );
         if (count($cart) > 0) {
-//            echo "<pre>";
-//            print_r($cart);
-//            die();
+            //            echo "<pre>";
+            //            print_r($cart);
+            //            die();
             $this->load->model('product_model');
             $this->load->model('saleorder_model');
             $this->load->model('saleorderline_model');
@@ -155,20 +185,21 @@ class Ajax extends MY_Controller {
 
             $this->load->helper('cookie');
             delete_cookie("CART");
-//            sendMessage(-313318123, $messsage);
+            //            sendMessage(-313318123, $messsage);
             echo 1;
         } else {
             echo "Lỗi đặt hàng!";
         }
     }
 
-    function cart() {
+    function cart()
+    {
 
         $userdata = $this->session->userdata();
-//        print_r($userdata);
+        //        print_r($userdata);
         $user_id = $userdata['user_id'];
         $user_name = $userdata['name'];
-//        print_r($userdata);
+        //        print_r($userdata);
         $table_id = $this->input->post('table_id');
         $cart = json_decode($this->input->post('data'), true);
         $items = array(
@@ -177,9 +208,9 @@ class Ajax extends MY_Controller {
             'amount_product' => 0
         );
         if (count($cart) > 0) {
-//            echo "<pre>";
-//            print_r($cart);
-//            die();
+            //            echo "<pre>";
+            //            print_r($cart);
+            //            die();
             $this->load->model('product_model');
             $this->load->model('saleorder_model');
             $this->load->model('saleorderline_model');
@@ -243,14 +274,15 @@ class Ajax extends MY_Controller {
             }
             $messsage .= "Tổng: " . number_format($items['amount_product'], 0, ",", ".") . " đ\n";
 
-//            sendMessage(-313318123, $messsage);
+            //            sendMessage(-313318123, $messsage);
             echo $order_id;
         } else {
             echo "Lỗi thanh toán!";
         }
     }
 
-    function saveordercategory() {
+    function saveordercategory()
+    {
         $this->load->model("category_model");
         $data = json_decode($this->input->post('data'), true);
         foreach ($data as $key => $row) {
@@ -271,7 +303,8 @@ class Ajax extends MY_Controller {
         }
     }
 
-    function savecategory() {
+    function savecategory()
+    {
         $this->load->model("category_model");
         $data = json_decode($this->input->post('data'), true);
         $id = $data['id'];
@@ -279,7 +312,8 @@ class Ajax extends MY_Controller {
         $this->category_model->update($data_up, $id);
     }
 
-    function listslider() {
+    function listslider()
+    {
         $this->load->model("slider_model");
         $this->load->model("hinhanh_model");
         $arr_slider = $this->slider_model->where(array('deleted' => 0))->as_array()->get_all();
@@ -290,7 +324,8 @@ class Ajax extends MY_Controller {
         echo json_encode($arr_slider);
     }
 
-    function news() {
+    function news()
+    {
         $this->load->model("tintuc_model");
         $search = $this->input->get("search");
         $page = $this->input->get("page");
@@ -318,9 +353,9 @@ class Ajax extends MY_Controller {
         $data = $where->paginate($limit, NULL, $page);
 
         $max_page = ceil($count / $limit);
-//        echo "<pre>";
-//        print_r($data);
-//        die();
+        //        echo "<pre>";
+        //        print_r($data);
+        //        die();
         $this->data['count'] = $count;
         $this->data['data'] = $data;
         $this->data['current_page'] = $page;
@@ -329,7 +364,8 @@ class Ajax extends MY_Controller {
         echo $this->blade->view()->make('ajax/news', $this->data)->render();
     }
 
-    function product() {
+    function product()
+    {
         $this->load->model("product_model");
         $this->load->model("categorysimba_model");
         $category = $this->input->get("category");
@@ -341,9 +377,9 @@ class Ajax extends MY_Controller {
         $sql_where = "deleted = 0";
         if ($category > 0) {
             $category = $this->categorysimba_model->where('id', $category)->with_product()->as_array()->get();
-//            echo "<pre>";
-//            print_r($category);
-//            die();
+            //            echo "<pre>";
+            //            print_r($category);
+            //            die();
             if (isset($category['product']) && count($category['product'])) {
                 $array_product = array_keys($category['product']);
                 $str_product = implode(",", $array_product);
@@ -363,10 +399,10 @@ class Ajax extends MY_Controller {
          * LAY DATA
          */
         $data = $this->product_model->where($sql_where, NULL, NULL, FALSE, FALSE, TRUE)->order_by("date", "DESC")->with_files()->as_array()->paginate($limit, NULL, $page);
-//        echo "<pre>";
-//        print_r($count);
-//        print_r($limit);
-//        die();
+        //        echo "<pre>";
+        //        print_r($count);
+        //        print_r($limit);
+        //        die();
         $max_page = ceil($count / $limit);
 
         $this->data['count'] = $count;
@@ -377,7 +413,8 @@ class Ajax extends MY_Controller {
         echo $this->blade->view()->make('ajax/product', $this->data)->render();
     }
 
-    function editpage() {
+    function editpage()
+    {
         $id = $this->input->get('id');
         $link = $this->input->get('link');
         $seo = $this->input->get('seo');
@@ -394,7 +431,8 @@ class Ajax extends MY_Controller {
         $this->page_model->update($array, $id);
     }
 
-    function addpage() {
+    function addpage()
+    {
         $link = $this->input->get('link');
         $seo = $this->input->get('seo');
         $template = $this->input->get('template');
@@ -410,12 +448,14 @@ class Ajax extends MY_Controller {
         $this->page_model->insert($array);
     }
 
-    function removepage() {
+    function removepage()
+    {
         $id = $this->input->get('id');
         $this->page_model->update(array("deleted" => 1), $id);
     }
 
-    function rowpage() {
+    function rowpage()
+    {
         //$dirmodule = APPPATH . 'modules/';
         $dir = APPPATH . 'controllers/';
         $this->load->library('directoryinfo');
@@ -423,9 +463,9 @@ class Ajax extends MY_Controller {
         $arr = array($arr);
         // $sortedarray2 = $this->directoryinfo->readDirectory($dirmodule, true);
         // $arr = array_merge(array($sortedarray1), $sortedarray2);
-//        echo "<pre>";
-//        print_r($arr);
-//        die();
+        //        echo "<pre>";
+        //        print_r($arr);
+        //        die();
         $dataselect = array();
         foreach ($arr as $key => $row) {
             $module = mb_strtolower($key, 'UTF-8');
@@ -443,7 +483,7 @@ class Ajax extends MY_Controller {
             }
         }
         $arr_page = $this->page_model->where(array("deleted" => 0))->as_array()->get_all();
-        $page_ava = array_map(function($item) {
+        $page_ava = array_map(function ($item) {
             return $item['link'];
         }, $arr_page);
         $this->data['page_ava'] = $page_ava;
@@ -451,12 +491,13 @@ class Ajax extends MY_Controller {
         echo $this->blade->view()->make('ajax/ajaxpage', $this->data)->render();
     }
 
-    function contactsubmit() {
+    function contactsubmit()
+    {
 
-//        if (isset($_SESSION['timer_contact']) && $_SESSION['timer_contact'] > date("Y-m-d H:i:s")) {
-//            echo json_encode(array('msg' => "Xin chờ trong ít phút", 'timer' => $_SESSION['timer_contact'], 'code' => 401));
-//            die();
-//        }
+        //        if (isset($_SESSION['timer_contact']) && $_SESSION['timer_contact'] > date("Y-m-d H:i:s")) {
+        //            echo json_encode(array('msg' => "Xin chờ trong ít phút", 'timer' => $_SESSION['timer_contact'], 'code' => 401));
+        //            die();
+        //        }
 
         $recaptcha = $this->input->post('g-recaptcha-response');
         $response = $this->recaptcha->verifyResponse($recaptcha);
@@ -484,7 +525,7 @@ class Ajax extends MY_Controller {
                  * Mail setting
                  */
                 $conf = $this->option_model->get_setting_mail();
-//            $this->load->config('ion_auth', TRUE);
+                //            $this->load->config('ion_auth', TRUE);
                 $config = array(
                     'mailtype' => 'html',
                     'protocol' => "smtp",
@@ -500,17 +541,17 @@ class Ajax extends MY_Controller {
                 );
                 $this->load->library("email", $config);
 
-//            /*
-//             * Send mail
-//             */
-//            $this->email->clear();
+                //            /*
+                //             * Send mail
+                //             */
+                //            $this->email->clear();
                 $this->email->from($conf['email_email'], $conf['email_name']);
                 $this->email->to($conf['email_contact']); /// $conf['email_contact']
                 $this->email->subject("Góp ý");
                 $html = "<p><strong>Tên: </strong>$name</p>"
-                        . "<p><strong>Email: </strong>$email</p>"
-                        . "<p><strong>Số điện thoại: </strong>$phone</p>"
-                        . "<p><strong>Nội dung: </strong>$content</p>";
+                    . "<p><strong>Email: </strong>$email</p>"
+                    . "<p><strong>Số điện thoại: </strong>$phone</p>"
+                    . "<p><strong>Nội dung: </strong>$content</p>";
                 $this->email->message($html);
                 if ($this->email->send()) {
                     echo json_encode(array('code' => 400, 'msg' => lang('alert_400')));
@@ -525,7 +566,8 @@ class Ajax extends MY_Controller {
         }
     }
 
-    function modalfeedback() {
+    function modalfeedback()
+    {
         $this->load->model("customersimba_model");
         $this->load->model("productsimba_model");
         $this->data['customers'] = $this->customersimba_model->where(array('deleted' => 0))->limit(10)->as_array()->get_all();
@@ -533,7 +575,8 @@ class Ajax extends MY_Controller {
         echo $this->blade->view()->make('ajax/modalfeedback', $this->data)->render();
     }
 
-    function feedback() {
+    function feedback()
+    {
         $this->load->model("feedback_model");
         $this->load->model("option_model");
         if (isset($_POST['content'])) {
@@ -548,12 +591,12 @@ class Ajax extends MY_Controller {
             /*
              * Mail setting
              */
-//            $this->load->config('ion_auth', TRUE);
+            //            $this->load->config('ion_auth', TRUE);
 
             $feedback = $this->feedback_model->where("id", $id)->with_product()->with_customer()->order_by("date", "DESC")->as_object()->get();
 
             $conf = $this->option_model->get_setting_mail();
-//            $this->load->config('ion_auth', TRUE);
+            //            $this->load->config('ion_auth', TRUE);
             $config = array(
                 'mailtype' => 'html',
                 'protocol' => "smtp",
@@ -569,17 +612,17 @@ class Ajax extends MY_Controller {
             );
             $this->load->library("email", $config);
 
-//            /*
-//             * Send mail
-//             */
-//            $this->email->clear();
+            //            /*
+            //             * Send mail
+            //             */
+            //            $this->email->clear();
             $this->email->from($conf['email_email'], $conf['email_name']);
             $this->email->to($conf['email_contact']); /// $conf['email_contact']
             $this->email->subject("Góp ý về khách hàng và sản phẩm");
             $html = "<p><strong>Tên: </strong>" . $feedback->name . "</p>"
-                    . "<p><strong>Khách hàng: </strong>" . (isset($feedback->customer) ? $feedback->customer->code . "-" . $feedback->customer->name : "") . "</p>"
-                    . "<p><strong>Sản phẩm: </strong>" . (isset($feedback->product) ? $feedback->product->code . "-" . $feedback->product->name_vi : "") . "</p>"
-                    . "<p><strong>Nội dung: </strong>" . $feedback->content . "</p>";
+                . "<p><strong>Khách hàng: </strong>" . (isset($feedback->customer) ? $feedback->customer->code . "-" . $feedback->customer->name : "") . "</p>"
+                . "<p><strong>Sản phẩm: </strong>" . (isset($feedback->product) ? $feedback->product->code . "-" . $feedback->product->name_vi : "") . "</p>"
+                . "<p><strong>Nội dung: </strong>" . $feedback->content . "</p>";
             $this->email->message($html);
             if ($this->email->send()) {
                 echo json_encode(array('code' => 400, 'msg' => lang('alert_400')));
@@ -591,7 +634,8 @@ class Ajax extends MY_Controller {
         }
     }
 
-    function feedbackcustomer() {
+    function feedbackcustomer()
+    {
         $this->load->model("customersimba_model");
         $search = $this->input->post("data");
         $search = $search['q'];
@@ -603,7 +647,8 @@ class Ajax extends MY_Controller {
         echo json_encode(array('q' => $search, 'results' => $results));
     }
 
-    function feedbackproduct() {
+    function feedbackproduct()
+    {
         $this->load->model("productsimba_model");
         $search = $this->input->post("data");
         $search = $search['q'];
@@ -615,7 +660,8 @@ class Ajax extends MY_Controller {
         echo json_encode(array('q' => $search, 'results' => $results));
     }
 
-    function updatemenu() {
+    function updatemenu()
+    {
         $this->load->model("menu_model");
         $array = json_decode($_POST["data"], true);
         $this->menu_model->delete(array('deleted' => 0));
@@ -625,12 +671,14 @@ class Ajax extends MY_Controller {
         echo json_encode($return);
     }
 
-    function setlanguage() {
+    function setlanguage()
+    {
         $_SESSION['language_current'] = $_POST['language'];
         echo 1;
     }
 
-    function downloadfile() {
+    function downloadfile()
+    {
         $this->load->model("user_model");
         $this->load->model("hinhanh_model");
         $is_logged_in = $this->user_model->logged_in();

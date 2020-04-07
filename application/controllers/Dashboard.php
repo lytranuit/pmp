@@ -16,12 +16,14 @@ class Dashboard extends MY_Controller
         $version = $this->config->item("version");
         $this->data['stylesheet_tag'] = array(
             base_url() . "public/assets/css/main.css?v=" . $version,
+            base_url() . "public/assets/css/custom.css?v=" . $version,
             base_url() . "public/admin/vendor/fonts/fontawesome/css/fontawesome-all.css"
         );
         $this->data['javascript_tag'] = array(
             base_url() . 'public/assets/scripts/jquery.min.js',
             base_url() . "public/assets/scripts/main.js?v=" . $version,
             base_url() . "public/lib/jquery-validation/jquery.validate.js",
+            base_url() . "public/lib/mustache/mustache.min.js",
             base_url() . "public/admin/vendor/inputmask/js/jquery.inputmask.bundle.js",
             base_url() . "public/admin/libs/js/moment.js",
             base_url() . "public/assets/scripts/jquery.cookies.2.2.0.min.js",
@@ -149,6 +151,82 @@ class Dashboard extends MY_Controller
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
+    public function view()
+    {
+        /////// trang ca nhan
+        $this->load->model("factory_model");
+        $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
+
+        $this->load->model("workshop_model");
+        $factory_id = isset($this->data['factory'][0]->id) ? $this->data['factory'][0]->id : 0;
+        $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $factory_id))->as_object()->get_all();
+
+        $this->load->model("area_model");
+        $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
+        $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+
+        $this->load->model("department_model");
+        $area_id = isset($this->data['area'][0]->id) ? $this->data['area'][0]->id : 0;
+        $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $area_id))->as_object()->get_all();
+
+
+
+
+        $this->load->model("target_model");
+        $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+        load_daterangepicker($this->data);
+        echo $this->blade->view()->make('page/page', $this->data)->render();
+    }
+    public function savechart()
+    {
+        $this->load->model("workshop_model");
+        $this->load->model("result_model");
+        $this->load->model("limit_model");
+
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
+        $workshop_id = $this->input->get('workshop_id', TRUE);
+        $type = $this->input->get('type', TRUE);
+        $selector = $this->input->get('selector', TRUE);
+        $daterange = $this->input->get('daterange', TRUE);
+        $params = array(
+            'type' => $type,
+            'selector' => $selector,
+            'daterange' => $daterange,
+            'workshop_id' => $workshop_id
+        );
+        $params = input_params($params);
+        $this->data['params'] = $params;
+
+        $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by("target_id")->get_all();
+
+        $results = array();
+        for ($i = 0; $i < count($target_list); $i++) {
+            $target = $target_list[$i]->target;
+            $area_results =  $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
+            $area_list = array();
+            for ($j = 0; $j < count($area_results); $j++) {
+                $area = $area_results[$j]->area;
+
+                $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
+                $department_list = array();
+                for ($k = 0; $k < count($department_results); $k++) {
+                    $department = $department_results[$k]->department;
+                    $params['department_id'] = $department->id;
+                    $params['target_id'] = $target->id;
+                    $params['area_id'] = $area->id;
+                    $department->params = $params;
+                    $department->data = $this->result_model->chart_data($params);
+                    $department_list[] = $department;
+                }
+                $area->department_list = $department_list;
+                $area_list[] = $area;
+            }
+            $target->area_list = $area_list;
+            $results[] = $target;
+        }
+        $this->data['results'] = $results;
+        echo $this->blade->view()->make('page/page', $this->data)->render();
+    }
     public function chartdata()
     {
 
@@ -167,91 +245,15 @@ class Dashboard extends MY_Controller
             'daterange' => $daterange
         );
         $params = input_params($params);
-        // echo "<pre>";
-        // print_r($params);
-        // die();
 
         $department = $this->department_model->where(array('id' => $department_id))->as_object()->get();
         $area_id = $department->area_id;
-        //        echo $department_id;
-        $results = array('labels' => array(), 'datasets' => array());
-        $data_limit = $this->limit_model->where(array('deleted' => 0, 'area_id' => $area_id, 'target_id' => $target_id))->as_array()->get();
-
-
+        $params['area_id'] = $area_id;
         $params['department_id'] = $department_id;
         $params['target_id'] = $target_id;
-        $data = $this->result_model->chartdata($params);
-        // $data = $this->result_model->where(array('deleted' => 0, 'department_id' => $department_id, 'target_id' => $target_id))->with_position()->as_object()->get_all();
-        $labels = array();
-        // $labels[] = array()
-        $position_list = array();
-        $datatmp = array();
-        $datasets = array();
-        $datasets[] = array(
-            'backgroundColor' => 'red',
-            'borderColor' => 'red',
-            'label' => "Action Limit",
-            'data' => array(),
-            'pointRadius' => 0,
-            'fill' => 'false'
-        );
-        $datasets[] = array(
-            'backgroundColor' => 'orange',
-            'borderColor' => 'orange',
-            'label' => "Alert Limit",
-            'data' => array(),
-            'pointRadius' => 0,
-            'fill' => 'false'
-        );
-        // echo "<pre>";
-        // print_r($params);
-        // die();
-        $lineAtIndex = null;
-        foreach ($data as $row) {
-            $date = $row->date;
-            $position = $row->position_string_id;
-            $value = $row->value;
-            if (!in_array($date, $labels)) {
-                $labels[] = $date;
-                ///CHECK MỐC 
-                if ($lineAtIndex === null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
-                    $lineAtIndex = count($labels) - 1;
-                }
-            }
-            if (!in_array($position, $position_list)) {
-                $position_list[] = $position;
-                $color = getRandomColor();
-                $datasets[] = array(
-                    'backgroundColor' => $color,
-                    'borderColor' => $color,
-                    'label' => $position,
-                    'data' => array(),
-                    'fill' => 'false'
-                );
-            }
-            $datatmp[$date][$position] = $value;
-        }
-        foreach ($labels as $date) {
-            foreach ($datasets as &$position) {
-                $position_string_id = $position['label'];
-                $value = isset($datatmp[$date][$position_string_id]) ? $datatmp[$date][$position_string_id] : 0;
-                if ($position_string_id == "Action Limit") {
-                    $value = $data_limit['action_limit'];
-                } else if ($position_string_id == "Alert Limit") {
-                    $value = $data_limit['alert_limit'];
-                }
-                $position['data'][] = $value;
-                //                $index = array_search($position_string_id, $position_list);
-            }
-        }
-        $results = array(
-            'labels' => $labels,
-            'datasets' => $datasets,
-            'lineAtIndex' => $lineAtIndex
-        );
-        //        echo "<Pre>";
-        //        print_r($results);
-        //        die();
+
+        $results = $this->result_model->chart_data($params);
+
         echo json_encode($results);
     }
 
@@ -544,6 +546,48 @@ class Dashboard extends MY_Controller
     }
     function getalldatachart()
     {
-        
+        $this->load->model("workshop_model");
+        $this->load->model("result_model");
+        $this->load->model("limit_model");
+
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
+        $workshop_id = $this->input->get('workshop_id', TRUE);
+        $type = $this->input->get('type', TRUE);
+        $selector = $this->input->get('selector', TRUE);
+        $daterange = $this->input->get('daterange', TRUE);
+        $params = array(
+            'type' => $type,
+            'selector' => $selector,
+            'daterange' => $daterange
+        );
+        $params = input_params($params);
+        $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by("target_id")->get_all();
+
+        $results = array();
+        for ($i = 0; $i < count($target_list); $i++) {
+            $target = $target_list[$i]->target;
+            $area_results =  $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
+            $area_list = array();
+            for ($j = 0; $j < count($area_results); $j++) {
+                $area = $area_results[$j]->area;
+
+                $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
+                $department_list = array();
+                for ($k = 0; $k < count($department_results); $k++) {
+                    $department = $department_results[$k]->department;
+                    $params['department_id'] = $department->id;
+                    $params['target_id'] = $target->id;
+                    $params['area_id'] = $area->id;
+                    $department->params = $params;
+                    $department->data = $this->result_model->chart_data($params);
+                    $department_list[] = $department;
+                }
+                $area->department_list = $department_list;
+                $area_list[] = $area;
+            }
+            $target->area_list = $area_list;
+            $results[] = $target;
+        }
+        echo json_encode($results);
     }
 }
