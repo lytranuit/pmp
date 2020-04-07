@@ -28,39 +28,8 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
-                        <div class="pt-1">
-                            <select class="form-control form-control-sm" name="area_id">
-                                @foreach ($area as $area)
-                                <option value="{{$area->id}}">{{$area->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Phòng/Thiết bị/Nhân viên:<i class="text-danger">*</i></b>
-                        <div class="pt-1">
-                            <select class="form-control form-control-sm" name="department_id">
-                                @foreach ($department as $dep)
-                                <option value="{{$dep->id}}">{{$dep->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Phương pháp:<i class="text-danger">*</i></b>
-                        <div class="pt-1">
-                            <select class="form-control form-control-sm" name="target_id">
-                                @foreach ($target as $row)
-                                <option value="{{$row->id}}">{{$row->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
         <div class="card">
@@ -99,57 +68,115 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="chart-container">
-                    <canvas id="myChart" height="80vh"></canvas>
+                <div class="col-md-12">
+                    <div id="accordion" class="accordion-wrapper mb-3">
+                        <div class="card">
+                            <div id="headingOne" class="card-header">
+                                <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="true" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block">
+                                    <h5 class="m-0 p-0">Collapsible Group Item #1</h5>
+                                </button>
+                            </div>
+                            <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse show">
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="myChart" height="80vh"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div id="headingTwo" class="b-radius-0 card-header">
+                                <button type="button" data-toggle="collapse" data-target="#collapseOne2" aria-expanded="false" aria-controls="collapseTwo" class="text-left m-0 p-0 btn btn-link btn-block">
+                                    <h5 class="m-0 p-0">Collapsible Group Item
+                                        #2</h5>
+                                </button>
+                            </div>
+                            <div data-parent="#accordion" id="collapseOne2" class="collapse">
+                                <div class="card-body">2. Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa
+                                    nesciunt
+                                    laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
+                                    sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable
+                                    VHS.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div id="headingThree" class="card-header">
+                                <button type="button" data-toggle="collapse" data-target="#collapseOne3" aria-expanded="false" aria-controls="collapseThree" class="text-left m-0 p-0 btn btn-link btn-block">
+                                    <h5 class="m-0 p-0">Collapsible Group
+                                        Item #3</h5>
+                                </button>
+                            </div>
+                            <div data-parent="#accordion" id="collapseOne3" class="collapse">
+                                <div class="card-body">3. Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa
+                                    nesciunt
+                                    laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
+                                    sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable
+                                    VHS.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
-
+<!-- <a id="url" href="">download</a> -->
 <script type="text/javascript">
     var date_from = moment();
     var date_to = moment();
     var date_from_prev, date_from_to;
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var originalLineDraw = Chart.controllers.line.prototype.draw;
-    Chart.helpers.extend(Chart.controllers.line.prototype, {
-        draw: function() {
-            originalLineDraw.apply(this, arguments);
+    if (document.getElementById('myChart')) {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var originalLineDraw = Chart.controllers.line.prototype.draw;
+        Chart.helpers.extend(Chart.controllers.line.prototype, {
+            draw: function() {
+                originalLineDraw.apply(this, arguments);
 
-            var chart = this.chart;
-            var ctx = chart.chart.ctx;
+                var chart = this.chart;
+                var ctx = chart.chart.ctx;
 
-            var index = chart.config.data.lineAtIndex;
-            if (index) {
-                var xaxis = chart.scales['x-axis-0'];
-                var yaxis = chart.scales['y-axis-0'];
+                var index = chart.config.data.lineAtIndex;
+                if (index) {
+                    var xaxis = chart.scales['x-axis-0'];
+                    var yaxis = chart.scales['y-axis-0'];
 
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(xaxis.getPixelForValue(undefined, index), yaxis.top);
-                ctx.strokeStyle = 'gray';
-                ctx.lineTo(xaxis.getPixelForValue(undefined, index), yaxis.bottom);
-                ctx.stroke();
-                ctx.restore();
-            }
-        }
-    });
-    var chart = new Chart(ctx, {
-        type: 'line',
-        data: [],
-        options: {
-            legend: {
-                position: 'right'
-            },
-            elements: {
-                line: {
-                    tension: 0.0000001
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(xaxis.getPixelForValue(undefined, index), yaxis.top);
+                    ctx.strokeStyle = 'gray';
+                    ctx.lineTo(xaxis.getPixelForValue(undefined, index), yaxis.bottom);
+                    ctx.stroke();
+                    ctx.restore();
                 }
             }
-        }
-    });
+        });
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: [],
+            options: {
+                legend: {
+                    position: 'right'
+                },
+                elements: {
+                    line: {
+                        tension: 0.0000001
+                    }
+                },
+                bezierCurve: false,
+                animation: {
+                    onComplete: done
+                }
+            }
+        });
+    }
 
+    function done() {
+        var url = chart.toBase64Image();
+        $("#url").attr("href", url);
+    }
     $(document).ready(function() {
         ////DATE RANGE
         $("#export_report").click(function() {
@@ -180,11 +207,14 @@
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
         });
         ///EVENT
-        $("[name=department_id],[name=target_id]").change(function() {
-            drawChart();
-        })
+        // $("[name=department_id],[name=target_id]").change(function() {
+        //     drawChart();
+        // });
+        $("[name=workshop_id]").change(function() {
+            get_all_data();
+        });
         $("#the_selector,#daterange").change(function() {
-            drawChart();
+            get_all_data();
         });
         $(".type_data").click(async function() {
             let value = $("input", this).val();
@@ -210,7 +240,26 @@
                 $("#the_selector").trigger("change");
             }
         });
+        async function get_all_data() {
+            var workshop_id = $("[name=workshop_id]").val();
+            let type = $(".type_data.active input").val();
+            let selector = $("#the_selector").val();
+            let daterange = $("#daterange").val();
+            var data = await $.ajax({
+                url: path + 'dashboard/getalldatachart',
+                data: {
+                    workshop_id: workshop_id,
+                    target_id: target_id,
+                    type: type,
+                    selector: selector,
+                    daterange: daterange
+                },
+                dataType: "JSON"
+            });
+        }
         async function drawChart() {
+            if (!document.getElementById('myChart'))
+                return;
             var department_id = $("[name=department_id]").val();
             var target_id = $("[name=target_id]").val();
             let type = $(".type_data.active input").val();

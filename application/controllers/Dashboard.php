@@ -268,6 +268,8 @@ class Dashboard extends MY_Controller
         // print_r($_COOKIE);
         // die();
         $this->load->model("workshop_model");
+        $this->load->model("result_model");
+        $this->load->model("limit_model");
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
         $object_name = isset($_COOKIE['SELECT_NAME']) ? $_COOKIE['SELECT_NAME'] : "";
         if ($object_id == 3) {
@@ -282,35 +284,225 @@ class Dashboard extends MY_Controller
             $params = array(
                 'type' => $type,
                 'selector' => $selector,
-                'daterange' => $daterange
+                'daterange' => $daterange,
             );
-            $params = input_params($params);
 
+            $params = input_params($params);
+            $params['workshop_id'] = $workshop_id;
+            $params['object_id'] = $object_id;
+            ///////DATA
+            $area_all = $this->result_model->area_export($params);
+            $nhanvien_all = $this->result_model->nhanvien_export($params);
+            foreach ($area_all as &$row) {
+                $new_array = array_values(array_filter($nhanvien_all, function ($obj) use ($row) {
+                    return $obj->area_id == $row->id;
+                }));
+                $row->nhanvien =  $new_array;
+            }
+            // echo "<pre>";
+            // print_r($area_all);
+            // die();
             $file = APPPATH . '../public/upload/template/template_nhan_vien.docx';
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
 
-            $templateProcessor->setValue('date_from', $params['date_from']);
-            $templateProcessor->setValue('date_from_prev', $params['date_from_prev']);
-            $templateProcessor->setValue('date_to', $params['date_to']);
-            $templateProcessor->setValue('date_to_prev', $params['date_to_prev']);
+            $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
+            $templateProcessor->setValue('date_from_prev',  date("d/m/y", strtotime($params['date_from_prev'])));
+            $templateProcessor->setValue('date_to',  date("d/m/y", strtotime($params['date_to'])));
+            $templateProcessor->setValue('date_to_prev',  date("d/m/y", strtotime($params['date_to_prev'])));
             $templateProcessor->setValue('workshop_name', $workshop_name);
             $templateProcessor->setValue('factory_name', $factory_name);
-            $replacements = array(
-                array('customer_name' => 'Batman', 'customer_address' => 'Gotham City'),
-                array('customer_name' => 'Superman', 'customer_address' => 'Metropolis'),
-            );
-            $templateProcessor->cloneBlock('block_name', 3, true, true);
 
-            $table = new Table(array('borderSize' => 12, 'borderColor' => 'green', 'width' => 6000, 'unit' => TblWidth::TWIP));
+
+            ////STYLE
+            $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
+            $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+            $cellHCenteredLEFT = array('alignment' => 'left');
+
+            $styleCell = array('valign' => 'center');
+            $fontCell = array('align' => 'center');
+            $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
+            $cellRowContinue = array('vMerge' => 'continue');
+            $cellVCentered = array('valign' => 'center');
+            ////TABLE VITRI
+
+            $table = new Table(array('borderSize' => 13, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
             $table->addRow();
-            $table->addCell(150)->addText('Cell A1');
-            $table->addCell(150)->addText('Cell A2');
-            $table->addCell(150)->addText('Cell A3');
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Vị trí lấy mẫu', array(), $fontCell);
+            $textrun->addText('Sampling locations', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Tên nhân viên', array(), $fontCell);
+            $textrun->addText('Name of personnel', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Mã số nhân viên', array(), $fontCell);
+            $textrun->addText('ID No.', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Tần suất', array(), $fontCell);
+            $textrun->addText('Frequency', array('italic' => true), $fontCell);
+
+            foreach ($area_all as $row2) {
+                ///DATA
+                $table->addRow();
+                $cell1 = $table->addCell(8000, $cellColSpan);
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row2->name, array('bold' => true));
+                $table->addRow();
+                $cell1 = $table->addCell(2000, $cellRowSpan);
+                $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                $textrun1->addText("Đầu / ");
+                $textrun1->addText('Head', array('italic' => true));
+                $textrun1->addTextBreak();
+                $textrun1->addText("Mũi / ");
+                $textrun1->addText('Nose', array('italic' => true));
+                $textrun1->addTextBreak();
+                $textrun1->addText("Ngực / ");
+                $textrun1->addText('Chest', array('italic' => true));
+                $textrun1->addTextBreak();
+                $textrun1->addText("Cẳng tay trái / ");
+                $textrun1->addText('Left forearm', array('italic' => true));
+                $textrun1->addTextBreak();
+                $textrun1->addText("Cẳng tay phải / ");
+                $textrun1->addText('Right forearm', array('italic' => true));
+                $textrun1->addTextBreak();
+                $textrun1->addText("Dấu găng tay trái / ");
+                $textrun1->addText('Left glove print 5 fingers', array('italic' => true));
+                $textrun1->addTextBreak();
+                $textrun1->addText("Dấu găng tay phải / ");
+                $textrun1->addText('Right glove print 5 fingers', array('italic' => true));
+                $textrun1->addTextBreak();
+                $nhanvien = $row2->nhanvien;
+                // echo "<pre>";
+                // print_r($nhanvien);
+                // die();
+                if (count($nhanvien)) {
+                    $list = explode("_", $nhanvien[0]->string_id);
+                    $table->addCell(2000, $cellVCentered)->addText($nhanvien[0]->name, null, $cellHCentered);
+                    $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
+                }
+
+                $cell1 = $table->addCell(2000, $cellRowSpan);
+                $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                $textrun1->addText("Nhân viên phải được lấy mẫu sau khi hoàn tất hoạt động trong ngày và trước khi nhân viên ra khỏi khu vực vô trùng.");
+                $textrun1->addTextBreak();
+                $textrun1->addText('Samples shall be collected after completion of operations for that day, before personnel go out of the aseptic areas.', array('italic' => true));
+                for ($i = 1; $i <= count($nhanvien) - 1; $i++) {
+                    $table->addRow();
+                    $table->addCell(null, $cellRowContinue);
+                    $list = explode("_", $nhanvien[$i]->string_id);
+                    $table->addCell(2000, $cellVCentered)->addText($nhanvien[$i]->name, null, $cellHCentered);
+                    $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
+                    $table->addCell(null, $cellRowContinue);
+                }
+            }
+
+            $templateProcessor->setComplexBlock('table_vitri', $table);
+            ////END TABLE VI TRI
+
+            ///TABLE LIMIT
+            $table = new Table(array('borderSize' => 13, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
             $table->addRow();
-            $table->addCell(150)->addText('Cell B1');
-            $table->addCell(150)->addText('Cell B2');
-            $table->addCell(150)->addText('Cell B3');
-            $templateProcessor->setComplexBlock('table', $table);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Vị trí lấy mẫu', array(), $fontCell);
+            $textrun->addText('Sampling locations', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Đầu', array(), $fontCell);
+            $textrun->addText('Head', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Mũi', array(), $fontCell);
+            $textrun->addText('Nose', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Ngực', array(), $fontCell);
+            $textrun->addText('Chest', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Cẳng tay trái', array(), $fontCell);
+            $textrun->addText('Left forearm', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Cẳng tay phải', array(), $fontCell);
+            $textrun->addText('Right forearm', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Dấu găng tay trái', array(), $fontCell);
+            $textrun->addText('Left glove print 5 fingers', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(2000, $styleCell);
+            $textrun->addText('Dấu găng tay phải', array(), $fontCell);
+            $textrun->addText('Right glove print 5 fingers', array('italic' => true), $fontCell);
+
+            foreach ($area_all as $row2) {
+
+                $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' => 6))->as_object()->get();
+                // print_r($limit);
+                // die();  
+                //     ///DATA
+                $table->addRow();
+                $cell1 = $table->addCell(8000, array('gridSpan' => 8, 'valign' => 'center'));
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row2->name, array('bold' => true));
+                $table->addRow();
+                $textrun = $table->addCell(2000, $styleCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
+                $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                $textrun = $table->addCell(2000, array('gridSpan' => 7, 'valign' => 'center'));
+                $textrun->addText($limit->standard_limit, array(), $fontCell);
+                $table->addRow();
+                $textrun = $table->addCell(2000, $styleCell);
+                $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
+                $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                $textrun = $table->addCell(2000, array('gridSpan' => 7, 'valign' => 'center'));
+                $textrun->addText($limit->alert_limit, array(), $fontCell);
+                $table->addRow();
+                $textrun = $table->addCell(2000, $styleCell);
+                $textrun->addText('Giới hạn hành động', array(), $fontCell);
+                $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                $textrun = $table->addCell(2000, array('gridSpan' => 7, 'valign' => 'center'));
+                $textrun->addText($limit->action_limit, array(), $fontCell);
+                //     $cell1 = $table->addCell(2000, $cellRowSpan);
+                //     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                //     $textrun1->addText("Đầu / ");
+                //     $textrun1->addText('Head', array('italic' => true));
+                //     $textrun1->addTextBreak();
+                //     $textrun1->addText("Mũi / ");
+                //     $textrun1->addText('Nose', array('italic' => true));
+                //     $textrun1->addTextBreak();
+                //     $textrun1->addText("Ngực / ");
+                //     $textrun1->addText('Chest', array('italic' => true));
+                //     $textrun1->addTextBreak();
+                //     $textrun1->addText("Cẳng tay trái / ");
+                //     $textrun1->addText('Left forearm', array('italic' => true));
+                //     $textrun1->addTextBreak();
+                //     $textrun1->addText("Cẳng tay phải / ");
+                //     $textrun1->addText('Right forearm', array('italic' => true));
+                //     $textrun1->addTextBreak();
+                //     $textrun1->addText("Dấu găng tay trái / ");
+                //     $textrun1->addText('Left glove print 5 fingers', array('italic' => true));
+                //     $textrun1->addTextBreak();
+                //     $textrun1->addText("Dấu găng tay phải / ");
+                //     $textrun1->addText('Right glove print 5 fingers', array('italic' => true));
+                //     $textrun1->addTextBreak();
+                //     $nhanvien = $row2->nhanvien;
+                //     // echo "<pre>";
+                //     // print_r($nhanvien);
+                //     // die();
+                //     if (count($nhanvien)) {
+                //         $list = explode("_", $nhanvien[0]->string_id);
+                //         $table->addCell(2000, $cellVCentered)->addText($nhanvien[0]->name, null, $cellHCentered);
+                //         $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
+                //     }
+
+                //     $cell1 = $table->addCell(2000, $cellRowSpan);
+                //     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                //     $textrun1->addText("Nhân viên phải được lấy mẫu sau khi hoàn tất hoạt động trong ngày và trước khi nhân viên ra khỏi khu vực vô trùng.");
+                //     $textrun1->addTextBreak();
+                //     $textrun1->addText('Samples shall be collected after completion of operations for that day, before personnel go out of the aseptic areas.', array('italic' => true));
+                //     for ($i = 1; $i <= count($nhanvien) - 1; $i++) {
+                //         $table->addRow();
+                //         $table->addCell(null, $cellRowContinue);
+                //         $list = explode("_", $nhanvien[$i]->string_id);
+                //         $table->addCell(2000, $cellVCentered)->addText($nhanvien[$i]->name, null, $cellHCentered);
+                //         $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
+                //         $table->addCell(null, $cellRowContinue);
+                //     }
+            }
+
+            $templateProcessor->setComplexBlock('table_limit', $table);
             $templateProcessor->saveAs('MyWordFile.docx');
             redirect("MyWordFile.docx", 'refresh');
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
@@ -350,14 +542,8 @@ class Dashboard extends MY_Controller
         // save to file because we can exit();
         // - See more at: http://webeasystep.com/blog/view_article/codeigniter_tutorial_pdf_to_create_your_reports#sthash.QFCyVGLu.dpuf
     }
-
-    function wordtest()
+    function getalldatachart()
     {
-
-        $file = APPPATH . '../public/upload/template/1.docx';
-        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
-
-        $templateProcessor->setValue('date', date("d-m-Y"));
-        $templateProcessor->saveAs('MyWordFile.docx');
+        
     }
 }

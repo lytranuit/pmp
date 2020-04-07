@@ -72,7 +72,7 @@
                 <li>
                     <a href="{{base_url()}}dashboard/" class="">
                         <i class="metismenu-icon far fa-chart-bar"></i>
-                        Báo cáo
+                        Biểu đồ
                     </a>
                 </li>
                 <li class="app-sidebar__heading">Nhập dữ liệu</li>
