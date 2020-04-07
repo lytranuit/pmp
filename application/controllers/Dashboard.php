@@ -3,11 +3,9 @@
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\SimpleType\TblWidth;
 
-class Dashboard extends MY_Controller
-{
+class Dashboard extends MY_Controller {
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -31,8 +29,7 @@ class Dashboard extends MY_Controller
         );
     }
 
-    public function _remap($method, $params = array())
-    {
+    public function _remap($method, $params = array()) {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -48,8 +45,7 @@ class Dashboard extends MY_Controller
         }
     }
 
-    private function has_right($method, $params = array())
-    {
+    private function has_right($method, $params = array()) {
 
         /*
          * SET PERMISSION
@@ -124,8 +120,7 @@ class Dashboard extends MY_Controller
         return true;
     }
 
-    public function index()
-    {
+    public function index() {
         /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
@@ -151,8 +146,7 @@ class Dashboard extends MY_Controller
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function view()
-    {
+    public function view() {
         /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
@@ -177,8 +171,8 @@ class Dashboard extends MY_Controller
         load_daterangepicker($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
-    public function savechart()
-    {
+
+    public function savechart() {
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -202,7 +196,7 @@ class Dashboard extends MY_Controller
         $results = array();
         for ($i = 0; $i < count($target_list); $i++) {
             $target = $target_list[$i]->target;
-            $area_results =  $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
+            $area_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
             $area_list = array();
             for ($j = 0; $j < count($area_results); $j++) {
                 $area = $area_results[$j]->area;
@@ -227,8 +221,8 @@ class Dashboard extends MY_Controller
         $this->data['results'] = $results;
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
-    public function chartdata()
-    {
+
+    public function chartdata() {
 
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -257,16 +251,15 @@ class Dashboard extends MY_Controller
         echo json_encode($results);
     }
 
-    public function datedata()
-    {
+    public function datedata() {
 
         $type = $this->input->get('type', TRUE);
         $this->load->model("result_model");
         $data = $this->result_model->get_date_has_data($type);
         echo json_encode($data);
     }
-    public function export()
-    {
+
+    public function export() {
         // print_r($_COOKIE);
         // die();
         $this->load->model("workshop_model");
@@ -297,9 +290,9 @@ class Dashboard extends MY_Controller
             $nhanvien_all = $this->result_model->nhanvien_export($params);
             foreach ($area_all as &$row) {
                 $new_array = array_values(array_filter($nhanvien_all, function ($obj) use ($row) {
-                    return $obj->area_id == $row->id;
-                }));
-                $row->nhanvien =  $new_array;
+                            return $obj->area_id == $row->id;
+                        }));
+                $row->nhanvien = $new_array;
             }
             // echo "<pre>";
             // print_r($area_all);
@@ -308,9 +301,9 @@ class Dashboard extends MY_Controller
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
 
             $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
-            $templateProcessor->setValue('date_from_prev',  date("d/m/y", strtotime($params['date_from_prev'])));
-            $templateProcessor->setValue('date_to',  date("d/m/y", strtotime($params['date_to'])));
-            $templateProcessor->setValue('date_to_prev',  date("d/m/y", strtotime($params['date_to_prev'])));
+            $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
+            $templateProcessor->setValue('date_to', date("d/m/y", strtotime($params['date_to'])));
+            $templateProcessor->setValue('date_to_prev', date("d/m/y", strtotime($params['date_to_prev'])));
             $templateProcessor->setValue('workshop_name', $workshop_name);
             $templateProcessor->setValue('factory_name', $factory_name);
 
@@ -399,7 +392,6 @@ class Dashboard extends MY_Controller
 
             $templateProcessor->setComplexBlock('table_vitri', $table);
             ////END TABLE VI TRI
-
             ///TABLE LIMIT
             $table = new Table(array('borderSize' => 13, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
             $table->addRow();
@@ -488,7 +480,6 @@ class Dashboard extends MY_Controller
                 //         $table->addCell(2000, $cellVCentered)->addText($nhanvien[0]->name, null, $cellHCentered);
                 //         $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
                 //     }
-
                 //     $cell1 = $table->addCell(2000, $cellRowSpan);
                 //     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                 //     $textrun1->addText("Nhân viên phải được lấy mẫu sau khi hoàn tất hoạt động trong ngày và trước khi nhân viên ra khỏi khu vực vô trùng.");
@@ -505,13 +496,19 @@ class Dashboard extends MY_Controller
             }
 
             $templateProcessor->setComplexBlock('table_limit', $table);
+
+            $templateProcessor->cloneBlock("table", 3, true, true);
+
+            $templateProcessor->cloneRow("result_block#1", 3);
+
+
             $templateProcessor->saveAs('MyWordFile.docx');
             redirect("MyWordFile.docx", 'refresh');
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
         }
     }
-    function printyear()
-    {
+
+    function printyear() {
         //          echo "<pre>";
         //        print_r($tin);
         //        die();
@@ -544,8 +541,8 @@ class Dashboard extends MY_Controller
         // save to file because we can exit();
         // - See more at: http://webeasystep.com/blog/view_article/codeigniter_tutorial_pdf_to_create_your_reports#sthash.QFCyVGLu.dpuf
     }
-    function getalldatachart()
-    {
+
+    function getalldatachart() {
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -566,7 +563,7 @@ class Dashboard extends MY_Controller
         $results = array();
         for ($i = 0; $i < count($target_list); $i++) {
             $target = $target_list[$i]->target;
-            $area_results =  $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
+            $area_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
             $area_list = array();
             for ($j = 0; $j < count($area_results); $j++) {
                 $area = $area_results[$j]->area;
@@ -590,4 +587,5 @@ class Dashboard extends MY_Controller
         }
         echo json_encode($results);
     }
+
 }
