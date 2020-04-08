@@ -3,9 +3,11 @@
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\SimpleType\TblWidth;
 
-class Dashboard extends MY_Controller {
+class Dashboard extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -29,7 +31,8 @@ class Dashboard extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -45,7 +48,8 @@ class Dashboard extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
@@ -120,7 +124,8 @@ class Dashboard extends MY_Controller {
         return true;
     }
 
-    public function index() {
+    public function index()
+    {
         /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
@@ -146,7 +151,8 @@ class Dashboard extends MY_Controller {
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function view() {
+    public function view()
+    {
         /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
@@ -172,7 +178,8 @@ class Dashboard extends MY_Controller {
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function savechart() {
+    public function savechart()
+    {
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -222,7 +229,8 @@ class Dashboard extends MY_Controller {
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function chartdata() {
+    public function chartdata()
+    {
 
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -251,7 +259,8 @@ class Dashboard extends MY_Controller {
         echo json_encode($results);
     }
 
-    public function datedata() {
+    public function datedata()
+    {
 
         $type = $this->input->get('type', TRUE);
         $this->load->model("result_model");
@@ -259,7 +268,9 @@ class Dashboard extends MY_Controller {
         echo json_encode($data);
     }
 
-    public function export() {
+    public function export()
+    {
+        set_time_limit(-1);
         // print_r($_COOKIE);
         // die();
         $this->load->model("workshop_model");
@@ -290,8 +301,8 @@ class Dashboard extends MY_Controller {
             $nhanvien_all = $this->result_model->nhanvien_export($params);
             foreach ($area_all as &$row) {
                 $new_array = array_values(array_filter($nhanvien_all, function ($obj) use ($row) {
-                            return $obj->area_id == $row->id;
-                        }));
+                    return $obj->area_id == $row->id;
+                }));
                 $row->nhanvien = $new_array;
             }
             // echo "<pre>";
@@ -497,9 +508,65 @@ class Dashboard extends MY_Controller {
 
             $templateProcessor->setComplexBlock('table_limit', $table);
 
-            $templateProcessor->cloneBlock("table", 3, true, true);
+            $templateProcessor->cloneBlock("area_block", count($area_all), true, true);
+            foreach ($area_all as $key => $area) {
+                $templateProcessor->setValue("area_name#" . ($key + 1), $area->name);
+                $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
+                $department_list = array();
+                $length_department = count($department_results);
+                $templateProcessor->cloneBlock("department_block#" . ($key + 1), $length_department, true, true);
+                for ($key1 = 0; $key1 < $length_department; $key1++) {
+                    $department = $department_results[$key1]->department;
+                    $list = explode("_", $department->string_id);
+                    $id = $list[1];
+                    $target_id = 6;
+                    $name_chart = $target_id . "_" . $department->id . "_" . $params['type'] . "_" . $params['selector'] . ".png";
+                    $position_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('area_id' => $area->id))->where(array('department_id' => $department->id))->with_position()->get_all();
+                    $positions = array_map(function ($item) {
+                        return $item->position;
+                    }, $position_results);
+                    $data = $this->result_model->get_data_table($department->id, $positions, $params);
+                    $data_min_max = $this->result_model->get_data_minmax($department->id, $positions, $params);
+                    $templateProcessor->cloneRow("stt#" . ($key + 1) . "#" . ($key1 + 1), count($data));
 
-            $templateProcessor->cloneRow("result_block#1", 3);
+
+                    foreach ($data as $keystt => $stt) {
+                        $templateProcessor->setValue("stt#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), ($keystt + 1));
+                        $templateProcessor->setValue("date#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt['date']);
+                        $templateProcessor->setValue("value_H#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_H"]);
+                        $templateProcessor->setValue("value_N#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_N"]);
+                        $templateProcessor->setValue("value_C#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_C"]);
+                        $templateProcessor->setValue("value_LF#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_LF"]);
+                        $templateProcessor->setValue("value_RF#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_RF"]);
+                        $templateProcessor->setValue("value_LG#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_LG"]);
+                        $templateProcessor->setValue("value_RG#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_RG"]);
+                    }
+                    //MAX
+                    $templateProcessor->setValue("max_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_H"]);
+                    $templateProcessor->setValue("max_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_N"]);
+                    $templateProcessor->setValue("max_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_C"]);
+                    $templateProcessor->setValue("max_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_LF"]);
+                    $templateProcessor->setValue("max_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_RF"]);
+                    $templateProcessor->setValue("max_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_LG"]);
+                    $templateProcessor->setValue("max_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_RG"]);
+
+                    //MIN
+                    $templateProcessor->setValue("min_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_H"]);
+                    $templateProcessor->setValue("min_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_N"]);
+                    $templateProcessor->setValue("min_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_C"]);
+                    $templateProcessor->setValue("min_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_LF"]);
+                    $templateProcessor->setValue("min_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_RF"]);
+                    $templateProcessor->setValue("min_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_LG"]);
+                    $templateProcessor->setValue("min_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_RG"]);
+
+
+                    $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 700, 'height' => 300, 'ratio' => false));
+                    $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), $department->name);
+                    $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), $id);
+                }
+            }
+
+            // $templateProcessor->cloneRow("result_block#1", 3);
 
 
             $templateProcessor->saveAs('MyWordFile.docx');
@@ -508,7 +575,8 @@ class Dashboard extends MY_Controller {
         }
     }
 
-    function printyear() {
+    function printyear()
+    {
         //          echo "<pre>";
         //        print_r($tin);
         //        die();
@@ -542,7 +610,8 @@ class Dashboard extends MY_Controller {
         // - See more at: http://webeasystep.com/blog/view_article/codeigniter_tutorial_pdf_to_create_your_reports#sthash.QFCyVGLu.dpuf
     }
 
-    function getalldatachart() {
+    function getalldatachart()
+    {
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -587,5 +656,4 @@ class Dashboard extends MY_Controller {
         }
         echo json_encode($results);
     }
-
 }

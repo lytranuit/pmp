@@ -196,4 +196,44 @@ class Result_model extends MY_Model
         );
         return $results;
     }
+    function get_data_table($department_id, $position_list, $params)
+    {
+        $subsql = "";
+        foreach ($position_list as $position) {
+            $subsql .= ",SUM(IF(position_id = $position->id,value,0)) as $position->string_id";
+        }
+        $where = "WHERE deleted = 0 and department_id IN ($department_id)";
+        $where .= " AND date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
+        $sql = "SELECT date $subsql FROM
+                    pmp_result 
+                $where  
+                GROUP BY DATE ";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result_array();
+        return $result;
+    }
+    function get_data_minmax($department_id, $position_list, $params)
+    {
+        $subsql = "";
+        foreach ($position_list as $position) {
+            $subsql .= ",MIN(IF(position_id = $position->id,value,0)) as min_$position->string_id,MAX(IF(position_id = $position->id,value,0)) as max_$position->string_id";
+        }
+        $where = "WHERE deleted = 0 and department_id IN ($department_id)";
+        $where .= " AND date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
+        $sql = "SELECT date $subsql FROM
+                    pmp_result 
+                $where";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result_array();
+        $result = isset($result[0]) ? $result[0] : array();
+        return $result;
+    }
 }
