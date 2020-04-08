@@ -276,9 +276,11 @@ class Dashboard extends MY_Controller
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
+        $this->load->model("object_model");
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
         $object_name = isset($_COOKIE['SELECT_NAME']) ? $_COOKIE['SELECT_NAME'] : "";
         if ($object_id == 3) {
+            $object =  $this->object_model->where(array('id' => $object_id))->as_object()->get();
             $workshop_id = $this->input->get('workshop_id', TRUE);
 
             $workshop = $this->workshop_model->where(array('id' => $workshop_id))->with_factory()->as_object()->get();
@@ -510,6 +512,7 @@ class Dashboard extends MY_Controller
 
             $templateProcessor->cloneBlock("area_block", count($area_all), true, true);
             foreach ($area_all as $key => $area) {
+                $templateProcessor->setValue("area_heading#" . ($key + 1), "5." . ($key + 1));
                 $templateProcessor->setValue("area_name#" . ($key + 1), $area->name);
                 $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
                 $department_list = array();
@@ -532,14 +535,14 @@ class Dashboard extends MY_Controller
 
                     foreach ($data as $keystt => $stt) {
                         $templateProcessor->setValue("stt#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), ($keystt + 1));
-                        $templateProcessor->setValue("date#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt['date']);
-                        $templateProcessor->setValue("value_H#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_H"]);
-                        $templateProcessor->setValue("value_N#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_N"]);
-                        $templateProcessor->setValue("value_C#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_C"]);
-                        $templateProcessor->setValue("value_LF#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_LF"]);
-                        $templateProcessor->setValue("value_RF#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_RF"]);
-                        $templateProcessor->setValue("value_LG#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_LG"]);
-                        $templateProcessor->setValue("value_RG#" . ($key + 1) . "#" . ($key1 + 1), $stt["$department->string_id" . "_RG"]);
+                        $templateProcessor->setValue("date#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), date("d/m/y", strtotime($stt['date'])));
+                        $templateProcessor->setValue("value_H#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_H"]);
+                        $templateProcessor->setValue("value_N#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_N"]);
+                        $templateProcessor->setValue("value_C#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_C"]);
+                        $templateProcessor->setValue("value_LF#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_LF"]);
+                        $templateProcessor->setValue("value_RF#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_RF"]);
+                        $templateProcessor->setValue("value_LG#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_LG"]);
+                        $templateProcessor->setValue("value_RG#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_RG"]);
                     }
                     //MAX
                     $templateProcessor->setValue("max_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_H"]);
@@ -561,16 +564,25 @@ class Dashboard extends MY_Controller
 
 
                     $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 700, 'height' => 300, 'ratio' => false));
+
+                    $templateProcessor->setValue("department_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), $department->name);
                     $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), $id);
                 }
             }
-
+            $name_file = "Bao_cao_" . implode("_", explode(" ", $object->name)) . "_" . $workshop_id . "_" . $params['type'] . "_" . $params['selector'] . "_" . time() . ".docx";
             // $templateProcessor->cloneRow("result_block#1", 3);
+            $this->load->model("report_model");
+            $data_up = array(
+                'object_id'=>$object_id,
+                'workshop_id'=>$workshop_id,
+                'date'=>date("Y-m-d H:i:s"),
+                'name'=>$name_file,
+                
+            );
 
-
-            $templateProcessor->saveAs('MyWordFile.docx');
-            redirect("MyWordFile.docx", 'refresh');
+            $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
+            redirect("dashboard", 'refresh');
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
         }
     }

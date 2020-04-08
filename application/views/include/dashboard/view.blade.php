@@ -67,7 +67,7 @@
             <div class="card-header">
                 Biểu đồ xu hướng
                 <div style="margin-left:auto">
-                   
+
                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
 
                         <label class="btn btn-light type_data">
@@ -143,6 +143,13 @@
                 line: {
                     tension: 0.0000001
                 }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        suggestedMin: 0,
+                    }
+                }]
             }
         }
     });

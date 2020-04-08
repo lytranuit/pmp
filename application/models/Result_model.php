@@ -200,7 +200,7 @@ class Result_model extends MY_Model
     {
         $subsql = "";
         foreach ($position_list as $position) {
-            $subsql .= ",SUM(IF(position_id = $position->id,value,0)) as $position->string_id";
+            $subsql .= ",SUM(IF(position_id = $position->id,value,NULL)) as $position->string_id";
         }
         $where = "WHERE deleted = 0 and department_id IN ($department_id)";
         $where .= " AND date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
