@@ -18,7 +18,7 @@
                                     <div class="custom-control custom-radio custom-control-inline">
                                         <input type="radio" id="customRadioInline1" name="type" class="custom-control-input" value="1">
                                         <label class="custom-control-label" for="customRadioInline1">Phòng sạch</label>
-                                    </div> 
+                                    </div>
                                     <div class="custom-control custom-radio custom-control-inline">
                                         <input type="radio" id="customRadioInline2" name="type" class="custom-control-input" value="2">
                                         <label class="custom-control-label" for="customRadioInline2">Thiết bị</label>
@@ -39,6 +39,12 @@
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name" required="" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên tiếng anh:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='text' name="name_en" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -79,7 +85,7 @@
     </div>
 </div>
 <script type='text/javascript'>
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         var tin = <?= json_encode($tin) ?>;
         fillForm($("#form-dang-tin"), tin);
@@ -89,16 +95,16 @@
             success: "valid"
         });
         $("#form-dang-tin").validate({
-            highlight: function (input) {
+            highlight: function(input) {
                 $(input).parents('.form-line').addClass('error');
             },
-            unhighlight: function (input) {
+            unhighlight: function(input) {
                 $(input).parents('.form-line').removeClass('error');
             },
-            errorPlacement: function (error, element) {
+            errorPlacement: function(error, element) {
                 $(element).parents('.form-group').append(error);
             },
-            submitHandler: function (form) {
+            submitHandler: function(form) {
                 form.submit();
                 return false;
             }

@@ -3,9 +3,11 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Object_model extends MY_Model {
+class Object_model extends MY_Model
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->table = 'pmp_object';
         $this->primary_key = 'id';
         parent::__construct();
@@ -37,9 +39,10 @@ class Object_model extends MY_Model {
         );
     }
 
-    function create_object($data) {
+    function create_object($data)
+    {
         $array = array(
-            'name', 'parent_id', 'deleted'
+            'name', 'name_en', 'parent_id', 'deleted'
         );
         $obj = array();
         foreach ($array as $key) {
@@ -51,5 +54,4 @@ class Object_model extends MY_Model {
 
         return $obj;
     }
-
 }

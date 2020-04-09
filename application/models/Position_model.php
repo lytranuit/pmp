@@ -3,9 +3,11 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Position_model extends MY_Model {
+class Position_model extends MY_Model
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->table = 'pmp_position';
         $this->primary_key = 'id';
         parent::__construct();
@@ -18,9 +20,10 @@ class Position_model extends MY_Model {
         $this->has_one['target'] = array('foreign_model' => 'Target_model', 'foreign_table' => 'pmp_target', 'foreign_key' => 'id', 'local_key' => 'target_id');
     }
 
-    function create_object($data) {
+    function create_object($data)
+    {
         $array = array(
-            'name', 'deleted', 'string_id', 'frequency_id', 'department_id', 'frequency_name', 'target_id', 'area_id', 'factory_id', 'workshop_id', 'object_id'
+            'name', 'name_en', 'deleted', 'string_id', 'frequency_id', 'department_id', 'frequency_name', 'target_id', 'area_id', 'factory_id', 'workshop_id', 'object_id'
         );
         $obj = array();
         foreach ($array as $key) {
@@ -32,5 +35,4 @@ class Position_model extends MY_Model {
 
         return $obj;
     }
-
 }

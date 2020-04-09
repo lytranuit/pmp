@@ -31,7 +31,7 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#quanlytin').DataTable({
             "processing": true,
             "serverSide": true,

@@ -114,9 +114,8 @@
 
 <script id="department_template" type="x-tmpl-mustache">
     <div>
-    <h5 class="text-center"><?= '{{name}}' ?></h5>
     <div class='chart-container'>
-    <canvas id="myChart<?= '{{id}}{{target_id}}' ?>" class='myChart' height="80vh"></canvas>
+    <div id="myChart<?= '{{id}}{{target_id}}' ?>" class='myChart'></div>
     <input id="value_<?= '{{id}}{{target_id}}' ?>" type="hidden" data-target_id='<?= '{{target_id}}' ?>' data-department_id='<?= '{{id}}' ?>' />
     </div>
     </div>
@@ -128,7 +127,7 @@
     var date_from_prev, date_from_to;
     var originalLineDraw = Chart.controllers.line.prototype.draw;
     Chart.helpers.extend(Chart.controllers.line.prototype, {
-        draw: function () {
+        draw: function() {
             originalLineDraw.apply(this, arguments);
 
             var chart = this.chart;
@@ -154,10 +153,10 @@
         var url = chart.toBase64Image();
         $("#url").attr("href", url);
     }
-    $(document).ready(function () {
+    $(document).ready(function() {
         $(".page-loader-wrapper").show();
         ////DATE RANGE
-        $("#export_report").click(function () {
+        $("#export_report").click(function() {
             let html_loading = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
             $(this).prop("disabled", true).html(html_loading);
 
@@ -186,20 +185,20 @@
             "startDate": moment().startOf("Y"),
             "endDate": moment(),
             maxDate: moment()
-        }, function (start, end, label) {
+        }, function(start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
         });
         ///EVENT
         // $("[name=department_id],[name=target_id]").change(function() {
         //     drawChart();
         // });
-        $("[name=workshop_id]").change(function () {
+        $("[name=workshop_id]").change(function() {
             get_all_data();
         });
-        $("#the_selector,#daterange").change(function () {
+        $("#the_selector,#daterange").change(function() {
             get_all_data();
         });
-        $(".type_data").click(async function () {
+        $(".type_data").click(async function() {
             let value = $("input", this).val();
             $("#daterange").addClass("d-none");
             $("#the_selector").addClass("d-none");
@@ -216,7 +215,7 @@
                     dataType: "JSON"
                 });
                 let html = "";
-                $.each(data, function (k, v) {
+                $.each(data, function(k, v) {
                     html += "<option value='" + v.value + "'>" + v.value + "</option>";
                 })
                 $("#the_selector").html(html);
@@ -263,43 +262,28 @@
                         let department_html = $('#department_template').html();
                         let rendered = Mustache.render(department_html, department);
                         $("#area_" + area['id'] + area['target_id'] + "_body").append(rendered);
-                        let ctx = document.getElementById('myChart' + department['id'] + department['target_id']).getContext('2d');
+                        let options = {
+                            // title: {
+                            //     text: 'Solar Employment Growth by Sector, 2010-2016'
+                            // },
 
-                        let chart = new Chart(ctx, {
-                            type: 'line',
-                            data: data,
-                            options: {
-                                legend: {
-                                    position: 'right'
-                                },
-                                elements: {
-                                    line: {
-                                        tension: 0.0000001
-                                    }
-                                },
-                                scales: {
-                                    yAxes: [{
-                                            ticks: {
-                                                suggestedMin: 0,
-                                            }
-                                        }]
-                                },
-                                target_id: department['target_id'],
-                                department_id: department['id'],
-                                bezierCurve: false,
-                                animation: {
-                                    onComplete: function () {
-                                        let chart = this.chart;
-                                        let target_id = this.options['target_id'];
-                                        let department_id = this.options['department_id'];
-                                        var image = chart.toBase64Image();
-                                        if (image != "data:,") {
-                                            $("#value_" + department_id + target_id).val(image)
-                                        }
-                                    }
-                                }
+                            // subtitle: {
+                            //     text: 'Source: thesolarfoundation.com'
+                            // },
+                            legend: {
+                                layout: 'vertical',
+                                align: 'right',
+                                verticalAlign: 'middle'
+                            },
+                            exporting: {
+                                enabled: false
                             }
-                        });
+                        }
+                        options = {
+                            ...options,
+                            ...data
+                        };
+                        $('#myChart' + department['id'] + department['target_id']).highcharts(options);
 
                     }
                 }

@@ -196,6 +196,103 @@ class Result_model extends MY_Model
         );
         return $results;
     }
+    function chart_datav2($params)
+    {
+        $results = array('labels' => array(), 'datasets' => array());
+        $data = $this->chartdata($params);
+        $data_limit = $this->chartdata_limit($params);
+        $department = $params['department'];
+        // echo "<pre>";
+        // print_r($data_limit);
+        // die();
+        $max = 1;
+        $labels = array();
+        // $labels[] = array()
+        $position_list = array();
+        $datatmp = array();
+        $datasets = array();
+        $datasets[] = array(
+            'marker' => array(
+                'enabled' => false
+            ),
+            'name' => "Action Limit",
+            'data' => array(),
+        );
+        $datasets[] = array(
+            'marker' => array(
+                'enabled' => false
+            ),
+            'name' => "Alert Limit",
+            'data' => array(),
+        );
+        // echo "<pre>";
+        // print_r($params);
+        // die();
+        $lineAtIndex = null;
+        foreach ($data as $row) {
+            $date = $row->date;
+            $position = $row->position_string_id;
+            $value = $row->value;
+            if (!in_array($date, $labels)) {
+                $labels[] = $date;
+                ///CHECK MỐC 
+                if ($lineAtIndex === null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
+                    $lineAtIndex = count($labels) - 1;
+                }
+            }
+            if (!in_array($position, $position_list)) {
+                $position_list[] = $position;
+                $color = getRandomColor();
+                $datasets[] = array(
+                    'name' => $position,
+                    'data' => array(),
+                );
+            }
+            $datatmp[$date][$position] = $value;
+        }
+        foreach ($labels as $date) {
+            foreach ($datasets as &$position) {
+                $position_string_id = $position['name'];
+                $value = isset($datatmp[$date][$position_string_id]) ? (float) $datatmp[$date][$position_string_id] : 0;
+                if ($position_string_id == "Action Limit") {
+                    $value = isset($data_limit['action_limit']) ? (float) $data_limit['action_limit'] : 0;
+                } else if ($position_string_id == "Alert Limit") {
+                    $value = isset($data_limit['alert_limit']) ? (float) $data_limit['alert_limit'] : 0;
+                }
+                if ($value > $max) {
+                    $max = $value;
+                }
+                $position['data'][] = $value;
+                //                $index = array_search($position_string_id, $position_list);
+            }
+        }
+        $title = $department->name;
+        if ($department->type == 3) {
+            $list = explode("_", $department->string_id);
+            $id = $list[1];
+            $title = $department->name . " / " . $id;
+        }
+
+        $results = array(
+            'title' => array('text' => $title),
+            'xAxis' => array(
+                'categories' => $labels,
+                'plotLines' => array(array(
+                    'color' => '#FF0000', // Red
+                    'width' => 2,
+                    'value' => $lineAtIndex
+                ))
+            ),
+            'yAxis' => array(
+                'min' => 0,
+                'max' => $max,
+                'startOnTick' => false,
+                'endOnTick' => false
+            ),
+            'series' => $datasets,
+        );
+        return $results;
+    }
     function get_data_table($department_id, $position_list, $params)
     {
         $subsql = "";
@@ -216,14 +313,17 @@ class Result_model extends MY_Model
         $result = $query->result_array();
         return $result;
     }
-    function get_data_minmax($department_id, $position_list, $params)
+    function get_data_minmax($department_id, $position_list, $date_from, $date_to)
     {
         $subsql = "";
         foreach ($position_list as $position) {
             $subsql .= ",MIN(IF(position_id = $position->id,value,0)) as min_$position->string_id,MAX(IF(position_id = $position->id,value,0)) as max_$position->string_id";
         }
         $where = "WHERE deleted = 0 and department_id IN ($department_id)";
-        $where .= " AND date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
+        if ($date_from == "") {
+            $date_from = $date_to = date("Y-m-d");
+        }
+        $where .= " AND date between '" . $date_from . "' and '" . $date_to . "'";
         $sql = "SELECT date $subsql FROM
                     pmp_result 
                 $where";

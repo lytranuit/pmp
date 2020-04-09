@@ -1,8 +1,10 @@
 <?php
 
-class Report extends MY_Controller {
+class Report extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -24,7 +26,8 @@ class Report extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -40,7 +43,8 @@ class Report extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
@@ -115,12 +119,14 @@ class Report extends MY_Controller {
         return true;
     }
 
-    public function index() { /////// trang ca nhan
+    public function index()
+    { /////// trang ca nhan
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function table() {
+    public function table()
+    {
         $this->load->model("report_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
@@ -149,18 +155,25 @@ class Report extends MY_Controller {
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
+                $url = base_url() . "public/export/" . urlencode($post->name);
                 $nestedData['object_name'] = isset($post->object->name) ? $post->object->name : "";
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
                 $nestedData['date'] = $post->date;
-                $nestedData['name'] = '<a href="' . base_url() . "public/export/" . $post->name . '">' . $post->name . '</a>';
+                $nestedData['name'] = '<a href="' . $url . '">' . $post->name . '</a>';
                 $nestedData['type'] = $post->type;
                 $nestedData['selector'] = $post->selector;
-                $nestedData['status'] = $post->status == 1 ? '<div class="spinner-border"></div>' : '<span class="text-success" style="font-size:20px;"><i class="fas fa-check"></i></span>';
+                $status =  '<div class="spinner-border" style="width: 1rem;height: 1rem;"></div> Loading...';
+                if ($post->status == 2) {
+                    $status = '<div class="spinner-border" style="width: 1rem;height: 1rem;"></div> Processing...';
+                } elseif ($post->status == 3) {
+                    $status = '<span class="text-success" style="font-size:20px;"><i class="fas fa-check"></i></span>';
+                }
+                $nestedData['status'] = $status;
                 $nestedData['user_name'] = isset($post->user->last_name) ? $post->user->last_name : "";
-//                $nestedData['action'] = '<a href="' . base_url() . 'result/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
-//                        . '<i class="far fa-trash-alt">'
-//                        . '</i>'
-//                        . '</a>';
+                //                $nestedData['action'] = '<a href="' . base_url() . 'result/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                //                        . '<i class="far fa-trash-alt">'
+                //                        . '</i>'
+                //                        . '</a>';
                 $nestedData['action'] = '';
                 $data[] = $nestedData;
             }
@@ -175,5 +188,4 @@ class Report extends MY_Controller {
 
         echo json_encode($json_data);
     }
-
 }
