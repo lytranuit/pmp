@@ -3,11 +3,9 @@
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\SimpleType\TblWidth;
 
-class Dashboard extends MY_Controller
-{
+class Dashboard extends MY_Controller {
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -27,12 +25,13 @@ class Dashboard extends MY_Controller
             base_url() . "public/admin/vendor/inputmask/js/jquery.inputmask.bundle.js",
             base_url() . "public/admin/libs/js/moment.js",
             base_url() . "public/assets/scripts/jquery.cookies.2.2.0.min.js",
+            "https://code.highcharts.com/highcharts.js",
+            "https://code.highcharts.com/modules/exporting.js",
             base_url() . "public/assets/scripts/custom.js?v=" . $version
         );
     }
 
-    public function _remap($method, $params = array())
-    {
+    public function _remap($method, $params = array()) {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -48,8 +47,7 @@ class Dashboard extends MY_Controller
         }
     }
 
-    private function has_right($method, $params = array())
-    {
+    private function has_right($method, $params = array()) {
 
         /*
          * SET PERMISSION
@@ -124,8 +122,7 @@ class Dashboard extends MY_Controller
         return true;
     }
 
-    public function index()
-    {
+    public function index() {
         /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
@@ -151,8 +148,7 @@ class Dashboard extends MY_Controller
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function view()
-    {
+    public function view() {
         /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
@@ -178,8 +174,8 @@ class Dashboard extends MY_Controller
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function savechart()
-    {
+    public function savechart() {
+        $this->load->model("report_model");
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -189,6 +185,19 @@ class Dashboard extends MY_Controller
         $type = $this->input->get('type', TRUE);
         $selector = $this->input->get('selector', TRUE);
         $daterange = $this->input->get('daterange', TRUE);
+        if ($type == "Custom") {
+            $selector = $daterange;
+        }
+        $data_up = array(
+            'type' => $type,
+            'selector' => $selector,
+            'workshop_id' => $workshop_id,
+            'object_id' => $object_id,
+            'status' => 1,
+            'date' => date("Y-m-d H:i:s"),
+            'user_id' => $this->data['userdata']['user_id']
+        );
+        $this->report_model->insert($data_up);
         $params = array(
             'type' => $type,
             'selector' => $selector,
@@ -229,8 +238,7 @@ class Dashboard extends MY_Controller
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function chartdata()
-    {
+    public function chartdata() {
 
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -259,8 +267,7 @@ class Dashboard extends MY_Controller
         echo json_encode($results);
     }
 
-    public function datedata()
-    {
+    public function datedata() {
 
         $type = $this->input->get('type', TRUE);
         $this->load->model("result_model");
@@ -268,27 +275,32 @@ class Dashboard extends MY_Controller
         echo json_encode($data);
     }
 
-    public function export()
-    {
+    public function export() {
         set_time_limit(-1);
+
+        $id_record = $this->input->get('id_record', TRUE);
+
         // print_r($_COOKIE);
         // die();
+        $this->load->model("report_model");
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
         $this->load->model("object_model");
-        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
-        $object_name = isset($_COOKIE['SELECT_NAME']) ? $_COOKIE['SELECT_NAME'] : "";
+        $record = $this->report_model->where(array("id" => $id_record))->get();
+        $object_id = $record->object_id;
+//        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
+//        $object_name = isset($_COOKIE['SELECT_NAME']) ? $_COOKIE['SELECT_NAME'] : "";
         if ($object_id == 3) {
-            $object =  $this->object_model->where(array('id' => $object_id))->as_object()->get();
-            $workshop_id = $this->input->get('workshop_id', TRUE);
+            $object = $this->object_model->where(array('id' => $object_id))->as_object()->get();
+            $workshop_id = $record->workshop_id;
 
             $workshop = $this->workshop_model->where(array('id' => $workshop_id))->with_factory()->as_object()->get();
             $workshop_name = $workshop->name;
             $factory_name = isset($workshop->factory->name) ? $workshop->factory->name : "";
-            $type = $this->input->get('type', TRUE);
-            $selector = $this->input->get('selector', TRUE);
-            $daterange = $this->input->get('daterange', TRUE);
+            $type = $record->type;
+            $selector = $record->selector;
+            $daterange = $record->selector;
             $params = array(
                 'type' => $type,
                 'selector' => $selector,
@@ -303,8 +315,8 @@ class Dashboard extends MY_Controller
             $nhanvien_all = $this->result_model->nhanvien_export($params);
             foreach ($area_all as &$row) {
                 $new_array = array_values(array_filter($nhanvien_all, function ($obj) use ($row) {
-                    return $obj->area_id == $row->id;
-                }));
+                            return $obj->area_id == $row->id;
+                        }));
                 $row->nhanvien = $new_array;
             }
             // echo "<pre>";
@@ -570,25 +582,24 @@ class Dashboard extends MY_Controller
                     $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), $id);
                 }
             }
-            $name_file = "Bao_cao_" . implode("_", explode(" ", $object->name)) . "_" . $workshop_id . "_" . $params['type'] . "_" . $params['selector'] . "_" . time() . ".docx";
-            // $templateProcessor->cloneRow("result_block#1", 3);
-            $this->load->model("report_model");
-            $data_up = array(
-                'object_id'=>$object_id,
-                'workshop_id'=>$workshop_id,
-                'date'=>date("Y-m-d H:i:s"),
-                'name'=>$name_file,
-                
-            );
 
+
+            $name_file = "Bao_cao_" . implode("_", explode(" ", $object->name)) . "_" . $workshop_id . "_" . $params['type'] . "_" . $params['selector'] . "_" . time() . ".docx";
             $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
+
+            // $templateProcessor->cloneRow("result_block#1", 3);
+            $data_up = array(
+                'name' => $name_file,
+                'status' => 2
+            );
+            $this->report_model->update($data_up, $id_record);
+
             redirect("dashboard", 'refresh');
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
         }
     }
 
-    function printyear()
-    {
+    function printyear() {
         //          echo "<pre>";
         //        print_r($tin);
         //        die();
@@ -622,8 +633,7 @@ class Dashboard extends MY_Controller
         // - See more at: http://webeasystep.com/blog/view_article/codeigniter_tutorial_pdf_to_create_your_reports#sthash.QFCyVGLu.dpuf
     }
 
-    function getalldatachart()
-    {
+    function getalldatachart() {
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
@@ -668,4 +678,5 @@ class Dashboard extends MY_Controller
         }
         echo json_encode($results);
     }
+
 }

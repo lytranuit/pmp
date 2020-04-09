@@ -83,42 +83,42 @@
 </div>
 <script id="target_template" type="x-tmpl-mustache">
     <div class="card">
-        <div id="target_<?= '{{id}}' ?>" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapse<?= '{{id}}' ?>" aria-expanded="true" class="text-left m-0 p-0 btn btn-link btn-block">
-               <?= '{{name}}' ?>
-            </button>
-        </div>
-        <div data-parent="#target_accordion" id="collapse<?= '{{id}}' ?>" aria-labelledby="target_<?= '{{id}}' ?>" class="collapse">
-            <div class="card-body">
-                <div id="area_<?= '{{id}}' ?>_accordion">
+    <div id="target_<?= '{{id}}' ?>" class="card-header">
+    <button type="button" data-toggle="collapse" data-target="#collapse<?= '{{id}}' ?>" aria-expanded="true" class="text-left m-0 p-0 btn btn-link btn-block">
+    <?= '{{name}}' ?>
+    </button>
+    </div>
+    <div data-parent="#target_accordion" id="collapse<?= '{{id}}' ?>" aria-labelledby="target_<?= '{{id}}' ?>" class="collapse">
+    <div class="card-body">
+    <div id="area_<?= '{{id}}' ?>_accordion">
 
-                </div>
-            </div>
-        </div>
+    </div>
+    </div>
+    </div>
     </div>
 </script>
 <script id="area_template" type="x-tmpl-mustache">
     <div class="card">
-        <div id="area_<?= '{{id}}{{target_id}}' ?>" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapse<?= '{{id}}{{target_id}}' ?>" aria-expanded="true" class="text-left m-0 p-0 btn btn-link btn-block">
-              <?= '{{name}}' ?>
-            </button>
-        </div>
-        <div data-parent="#area_<?= '{{target_id}}' ?>_accordion" id="collapse<?= '{{id}}{{target_id}}' ?>" aria-labelledby="area_<?= '{{id}}{{target_id}}' ?>" class="collapse">
-            <div class="card-body" id="area_<?= '{{id}}{{target_id}}' ?>_body">
-                
-            </div>
-        </div>
+    <div id="area_<?= '{{id}}{{target_id}}' ?>" class="card-header">
+    <button type="button" data-toggle="collapse" data-target="#collapse<?= '{{id}}{{target_id}}' ?>" aria-expanded="true" class="text-left m-0 p-0 btn btn-link btn-block">
+    <?= '{{name}}' ?>
+    </button>
+    </div>
+    <div data-parent="#area_<?= '{{target_id}}' ?>_accordion" id="collapse<?= '{{id}}{{target_id}}' ?>" aria-labelledby="area_<?= '{{id}}{{target_id}}' ?>" class="collapse">
+    <div class="card-body" id="area_<?= '{{id}}{{target_id}}' ?>_body">
+
+    </div>
+    </div>
     </div>
 </script>
 
 <script id="department_template" type="x-tmpl-mustache">
     <div>
-        <h5 class="text-center"><?= '{{name}}' ?></h5>
-        <div class='chart-container'>
-            <canvas id="myChart<?= '{{id}}{{target_id}}' ?>" class='myChart' height="80vh"></canvas>
-            <input id="value_<?= '{{id}}{{target_id}}' ?>" type="hidden" data-target_id='<?= '{{target_id}}' ?>' data-department_id='<?= '{{id}}' ?>' />
-        </div>
+    <h5 class="text-center"><?= '{{name}}' ?></h5>
+    <div class='chart-container'>
+    <canvas id="myChart<?= '{{id}}{{target_id}}' ?>" class='myChart' height="80vh"></canvas>
+    <input id="value_<?= '{{id}}{{target_id}}' ?>" type="hidden" data-target_id='<?= '{{target_id}}' ?>' data-department_id='<?= '{{id}}' ?>' />
+    </div>
     </div>
 </script>
 <!-- <a id="url" href="">download</a> -->
@@ -128,7 +128,7 @@
     var date_from_prev, date_from_to;
     var originalLineDraw = Chart.controllers.line.prototype.draw;
     Chart.helpers.extend(Chart.controllers.line.prototype, {
-        draw: function() {
+        draw: function () {
             originalLineDraw.apply(this, arguments);
 
             var chart = this.chart;
@@ -154,10 +154,10 @@
         var url = chart.toBase64Image();
         $("#url").attr("href", url);
     }
-    $(document).ready(function() {
+    $(document).ready(function () {
         $(".page-loader-wrapper").show();
         ////DATE RANGE
-        $("#export_report").click(function() {
+        $("#export_report").click(function () {
             let html_loading = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
             $(this).prop("disabled", true).html(html_loading);
 
@@ -186,20 +186,20 @@
             "startDate": moment().startOf("Y"),
             "endDate": moment(),
             maxDate: moment()
-        }, function(start, end, label) {
+        }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
         });
         ///EVENT
         // $("[name=department_id],[name=target_id]").change(function() {
         //     drawChart();
         // });
-        $("[name=workshop_id]").change(function() {
+        $("[name=workshop_id]").change(function () {
             get_all_data();
         });
-        $("#the_selector,#daterange").change(function() {
+        $("#the_selector,#daterange").change(function () {
             get_all_data();
         });
-        $(".type_data").click(async function() {
+        $(".type_data").click(async function () {
             let value = $("input", this).val();
             $("#daterange").addClass("d-none");
             $("#the_selector").addClass("d-none");
@@ -216,7 +216,7 @@
                     dataType: "JSON"
                 });
                 let html = "";
-                $.each(data, function(k, v) {
+                $.each(data, function (k, v) {
                     html += "<option value='" + v.value + "'>" + v.value + "</option>";
                 })
                 $("#the_selector").html(html);
@@ -277,11 +277,18 @@
                                         tension: 0.0000001
                                     }
                                 },
+                                scales: {
+                                    yAxes: [{
+                                            ticks: {
+                                                suggestedMin: 0,
+                                            }
+                                        }]
+                                },
                                 target_id: department['target_id'],
                                 department_id: department['id'],
                                 bezierCurve: false,
                                 animation: {
-                                    onComplete: function() {
+                                    onComplete: function () {
                                         let chart = this.chart;
                                         let target_id = this.options['target_id'];
                                         let department_id = this.options['department_id'];

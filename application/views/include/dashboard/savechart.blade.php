@@ -2,11 +2,11 @@
 
 <script id="department_template" type="x-tmpl-mustache">
     <div>
-        <h5 class="text-center"><?= '{{name}}' ?></h5>
-        <div class='chart-container'>
-            <canvas id="myChart<?= '{{id}}{{target_id}}' ?>" class='myChart' height="80vh"></canvas>
-            <input id="value_<?= '{{id}}{{target_id}}' ?>" type="hidden" data-target_id='<?= '{{target_id}}' ?>' data-department_id='<?= '{{id}}' ?>' />
-        </div>
+    <h5 class="text-center"><?= '{{name}}' ?></h5>
+    <div class='chart-container'>
+    <canvas id="myChart<?= '{{id}}{{target_id}}' ?>" class='myChart' height="80vh"></canvas>
+    <input id="value_<?= '{{id}}{{target_id}}' ?>" type="hidden" data-target_id='<?= '{{target_id}}' ?>' data-department_id='<?= '{{id}}' ?>' />
+    </div>
     </div>
 </script>
 <!-- <a id="url" href="">download</a> -->
@@ -18,7 +18,7 @@
     var date_from_prev, date_from_to;
     var originalLineDraw = Chart.controllers.line.prototype.draw;
     Chart.helpers.extend(Chart.controllers.line.prototype, {
-        draw: function() {
+        draw: function () {
             originalLineDraw.apply(this, arguments);
 
             var chart = this.chart;
@@ -39,7 +39,7 @@
             }
         }
     });
-    $(document).ready(function() {
+    $(document).ready(function () {
         var count_chart = 0;
         var count_upload = 0;
         $(".page-loader-wrapper").show();
@@ -77,8 +77,15 @@
                             target_id: department['target_id'],
                             department_id: department['id'],
                             bezierCurve: false,
+                            scales: {
+                                yAxes: [{
+                                        ticks: {
+                                            suggestedMin: 0,
+                                        }
+                                    }]
+                            },
                             animation: {
-                                onComplete: function() {
+                                onComplete: function () {
                                     let chart = this.chart;
                                     let target_id = this.options['target_id'];
                                     let department_id = this.options['department_id'];
@@ -105,23 +112,10 @@
                                                 name: name,
                                                 image: image
                                             },
-                                            success: function() {
+                                            success: function () {
                                                 count_upload++;
                                                 if (count_upload >= count_chart) {
-                                                    let obj = {
-                                                        workshop_id: params['workshop_id'],
-                                                        type: params['type'],
-                                                        selector: params['selector'],
-                                                        daterange: params['daterange']
-                                                    }
-                                                    var str = "";
-                                                    for (var key in obj) {
-                                                        if (str != "") {
-                                                            str += "&";
-                                                        }
-                                                        str += key + "=" + encodeURIComponent(obj[key]);
-                                                    }
-                                                    location.href = path + "dashboard/export?" + str;
+                                                    location.href = path + "report/";
                                                 }
                                             }
                                         })

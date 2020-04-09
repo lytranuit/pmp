@@ -75,6 +75,12 @@
                         Biểu đồ
                     </a>
                 </li>
+                <li>
+                    <a href="{{base_url()}}report/" class="">
+                        <i class="metismenu-icon fas fa-file-word"></i>
+                        Báo cáo
+                    </a>
+                </li>
                 <li class="app-sidebar__heading">Nhập dữ liệu</li>
                 <li>
                     <a href="{{base_url()}}result/" class="">
