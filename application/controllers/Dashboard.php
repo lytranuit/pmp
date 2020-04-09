@@ -25,6 +25,7 @@ class Dashboard extends MY_Controller {
             base_url() . "public/admin/vendor/inputmask/js/jquery.inputmask.bundle.js",
             base_url() . "public/admin/libs/js/moment.js",
             base_url() . "public/assets/scripts/jquery.cookies.2.2.0.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/canvg/1.5/canvg.min.js",
             "https://code.highcharts.com/highcharts.js",
             "https://code.highcharts.com/modules/exporting.js",
             base_url() . "public/assets/scripts/custom.js?v=" . $version
