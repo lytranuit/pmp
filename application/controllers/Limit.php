@@ -186,26 +186,46 @@ class Limit extends MY_Controller {
     }
 
     public function table() {
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $this->load->model("object_model");
         $this->load->model("limit_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
-        $where = $this->limit_model;
-
-        $totalData = $where->count_rows();
-        $totalFiltered = $totalData;
-
-        if (empty($this->input->post('search')['value'])) {
-            //            $max_page = ceil($totalFiltered / $limit);
-
-            $where = $this->limit_model->where(array("deleted" => 0));
+        $object = $this->object_model->where("id", $object_id)->with_targets()->get();
+        if (!empty($object->targets)) {
+            $list = array_keys((array) $object->targets);
         } else {
-            $search = $this->input->post('search')['value'];
-            $sWhere = "deleted = 0";
-            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
-            $totalFiltered = $where->count_rows();
-            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+            $json_data = array(
+                "draw" => intval($this->input->post('draw')),
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => array()
+            );
+
+            echo json_encode($json_data);
+            die();
         }
+        $sWhere = "deleted = 0 and target_id IN(" . implode(",", $list) . ")";
+        $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+        $totalFiltered = $where->count_rows();
+        $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+//        echo "<pre>";
+//        print_r($object);
+//        die();
+//        if (empty($this->input->post('search')['value'])) {
+//            //            $max_page = ceil($totalFiltered / $limit);
+//
+//            $where = $this->limit_model->where(array("deleted" => 0));
+//            $totalFiltered = $where->count_rows();
+//            $where = $this->limit_model->where(array("deleted" => 0));
+//        } else {
+//            $search = $this->input->post('search')['value'];
+//            $sWhere = "deleted = 0";
+//            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+//            $totalFiltered = $where->count_rows();
+//            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+//        }
 
         $posts = $where->order_by("id", "DESC")->with_area()->with_target()->paginate($limit, NULL, $page);
         //        echo "<pre>";
@@ -236,7 +256,7 @@ class Limit extends MY_Controller {
 
         $json_data = array(
             "draw" => intval($this->input->post('draw')),
-            "recordsTotal" => intval($totalData),
+            "recordsTotal" => intval($totalFiltered),
             "recordsFiltered" => intval($totalFiltered),
             "data" => $data
         );

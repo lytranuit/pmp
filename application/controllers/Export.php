@@ -1,25 +1,19 @@
 <?php
 
-
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\SimpleType\TblWidth;
 
-class Export extends MY_Controller
-{
+class Export extends MY_Controller {
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
     }
 
-
-    public function export($params)
-    {
+    public function export($params) {
         set_time_limit(-1);
 
         $id_record = $params[0];
         // $id_record = $this->input->get('id_record', TRUE);
-
         // print_r($_COOKIE);
         // die();
         $this->load->model("report_model");
@@ -57,8 +51,8 @@ class Export extends MY_Controller
             $nhanvien_all = $this->result_model->nhanvien_export($params);
             foreach ($area_all as &$row) {
                 $new_array = array_values(array_filter($nhanvien_all, function ($obj) use ($row) {
-                    return $obj->area_id == $row->id;
-                }));
+                            return $obj->area_id == $row->id;
+                        }));
                 $row->nhanvien = $new_array;
             }
             // echo "<pre>";
@@ -296,7 +290,7 @@ class Export extends MY_Controller
                     $list = explode("_", $department->string_id);
                     $id = $list[1];
                     $target_id = 6;
-                    $name_chart = $target_id . "_" . $department->id . "_" . $params['type'] . "_" . $params['selector'] . ".png";
+                    $name_chart = $target_id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
                     $position_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('area_id' => $area->id))->where(array('department_id' => $department->id))->with_position()->get_all();
                     $positions = array_map(function ($item) {
                         return $item->position;
@@ -364,7 +358,7 @@ class Export extends MY_Controller
             }
 
 
-            $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . $params['selector'] . "_" . time() . ".docx";
+            $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . "_" . time() . ".docx";
             $name_file = urlencode($name_file);
             $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
 
@@ -379,8 +373,8 @@ class Export extends MY_Controller
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
         }
     }
-    function cronjob()
-    {
+
+    function cronjob() {
         $this->load->model("report_model");
         $report = $this->report_model->where(array('deleted' => 0, 'status' => 1))->order_by("id", "ASC")->limit(1)->get();
         if (!empty($report)) {
@@ -390,5 +384,6 @@ class Export extends MY_Controller
         }
         echo 1;
     }
+
     ////////////
 }

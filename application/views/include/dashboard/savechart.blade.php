@@ -18,7 +18,7 @@
     var date_from_prev, date_from_to;
     var originalLineDraw = Chart.controllers.line.prototype.draw;
     Chart.helpers.extend(Chart.controllers.line.prototype, {
-        draw: function() {
+        draw: function () {
             originalLineDraw.apply(this, arguments);
 
             var chart = this.chart;
@@ -39,9 +39,9 @@
             }
         }
     });
-    $(document).ready(function() {
-        var count_chart = 0;
-        var count_upload = 0;
+    var count_chart = 0;
+    var count_upload = 0;
+    $(document).ready(function () {
         $(".page-loader-wrapper").show();
         $("#target_accordion").empty();
 
@@ -105,7 +105,7 @@
                             name = [target_id,
                                 department_id,
                                 params['type'],
-                                params['daterange']
+                                params['daterange'].split(" ").join("_").split("/").join("_")
                             ].join("_");
                         }
                         $.ajax({
@@ -116,8 +116,10 @@
                                 name: name,
                                 image: image
                             },
-                            success: function() {
+                            success: function () {
                                 count_upload++;
+                                console.log(count_upload)
+                                console.log(count_chart)
                                 if (count_upload >= count_chart) {
                                     location.href = path + "report/";
                                 }

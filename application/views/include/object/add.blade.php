@@ -33,17 +33,17 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <b class="col-12 col-sm-3 col-form-label text-sm-right">Phương pháp/Chi tiêu:</b>
-                                                            <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                                                <select name="targets[]"  style="width: 500px;" multiple="">
-                                                                    @foreach($targets as $target)
-                                                                    <option value="{{$target->id}}">{{$target->name}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
                                                         </div>-->
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phương pháp/Chi tiêu:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select name="targets[]"  style="width: 500px;" multiple="">
+                                        @foreach($targets as $target)
+                                        <option value="{{$target->id}}">{{$target->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -53,23 +53,23 @@
     </div>
 </div>
 <script type='text/javascript'>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("select[multiple]").chosen();
         $.validator.setDefaults({
             debug: true,
             success: "valid"
         });
         $("#form-dang-tin").validate({
-            highlight: function(input) {
+            highlight: function (input) {
                 $(input).parents('.form-line').addClass('error');
             },
-            unhighlight: function(input) {
+            unhighlight: function (input) {
                 $(input).parents('.form-line').removeClass('error');
             },
-            errorPlacement: function(error, element) {
+            errorPlacement: function (error, element) {
                 $(element).parents('.form-group').append(error);
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 form.submit();
                 return false;
             }

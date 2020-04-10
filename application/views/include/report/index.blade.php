@@ -11,6 +11,7 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Xưởng</th>
                             <th>Đối tượng</th>
                             <th>Loại báo cáo</th>
@@ -41,6 +42,8 @@
                 "type": "POST",
             },
             "columns": [{
+                    "data": "id"
+                },{
                     "data": "workshop_name"
                 },
                 {

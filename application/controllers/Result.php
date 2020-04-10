@@ -121,6 +121,7 @@ class Result extends MY_Controller {
     }
 
     public function add() { /////// trang ca nhan
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("result_model");
@@ -133,7 +134,7 @@ class Result extends MY_Controller {
 
             load_chossen($this->data);
             $this->load->model("position_model");
-            $this->data['positions'] = $this->position_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->data['positions'] = $this->position_model->where(array('deleted' => 0, 'object_id' => $object_id))->as_object()->get_all();
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
@@ -147,22 +148,22 @@ class Result extends MY_Controller {
     }
 
     public function table() {
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $this->load->model("result_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
-        $where = $this->result_model;
 
-        $totalData = $where->count_rows();
-        $totalFiltered = $totalData;
 
         if (empty($this->input->post('search')['value'])) {
             //            $max_page = ceil($totalFiltered / $limit);
 
-            $where = $this->result_model->where(array("deleted" => 0));
+            $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id));
+            $totalFiltered = $where->count_rows();
+            $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id));
         } else {
             $search = $this->input->post('search')['value'];
-            $sWhere = "deleted = 0";
+            $sWhere = "deleted = 0 and object_id = " . $this->db->escape($object_id);
             $where = $this->result_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
             $totalFiltered = $where->count_rows();
             $where = $this->result_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
@@ -193,7 +194,7 @@ class Result extends MY_Controller {
 
         $json_data = array(
             "draw" => intval($this->input->post('draw')),
-            "recordsTotal" => intval($totalData),
+            "recordsTotal" => intval($totalFiltered),
             "recordsFiltered" => intval($totalFiltered),
             "data" => $data
         );

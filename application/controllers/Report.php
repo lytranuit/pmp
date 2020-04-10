@@ -156,6 +156,7 @@ class Report extends MY_Controller
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $url = base_url() . "public/export/" . urlencode($post->name);
+                $nestedData['id'] = $post->id;
                 $nestedData['object_name'] = isset($post->object->name) ? $post->object->name : "";
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
                 $nestedData['date'] = $post->date;
