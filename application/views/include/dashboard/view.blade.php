@@ -199,8 +199,16 @@
         //         name: 'Other',
         //         data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
         //     }],
+
         // });
-        // canvg(document.getElementById('chart-canvas'), chart1.getSVG())
+        // var chart_svg = chart1.getSVG({
+        //     exporting: {
+        //         sourceHeight: 300,
+        //         sourceWidth: 1000,
+        //     }
+        // });
+
+        // canvg(document.getElementById('chart-canvas'), chart_svg)
 
 
         // var canvas = document.getElementById("chart-canvas");

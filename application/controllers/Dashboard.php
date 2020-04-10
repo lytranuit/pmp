@@ -185,7 +185,7 @@ class Dashboard extends MY_Controller
         $this->load->model("result_model");
         $this->load->model("limit_model");
 
-        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $workshop_id = $this->input->get('workshop_id', TRUE);
         $type = $this->input->get('type', TRUE);
         $selector = $this->input->get('selector', TRUE);
@@ -229,8 +229,8 @@ class Dashboard extends MY_Controller
                     $params['department_id'] = $department->id;
                     $params['target_id'] = $target->id;
                     $params['area_id'] = $area->id;
-                    $department->params = $params;
-                    $department->data = $this->result_model->chart_data($params);
+                    $params['department'] = $department;
+                    $department->data = $this->result_model->chart_datav2($params);
                     $department_list[] = $department;
                 }
                 $area->department_list = $department_list;
@@ -351,7 +351,7 @@ class Dashboard extends MY_Controller
         $this->load->model("result_model");
         $this->load->model("limit_model");
 
-        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $workshop_id = $this->input->get('workshop_id', TRUE);
         $type = $this->input->get('type', TRUE);
         $selector = $this->input->get('selector', TRUE);
@@ -380,7 +380,7 @@ class Dashboard extends MY_Controller
                     $params['target_id'] = $target->id;
                     $params['area_id'] = $area->id;
                     $params['department'] = $department;
-                    
+
                     // $department->params = $params;
                     $department->data = $this->result_model->chart_datav2($params);
                     $department_list[] = $department;

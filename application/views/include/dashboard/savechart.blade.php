@@ -4,8 +4,8 @@
     <div>
     <h5 class="text-center"><?= '{{name}}' ?></h5>
     <div class='chart-container'>
-    <canvas id="myChart<?= '{{id}}{{target_id}}' ?>" class='myChart' height="80vh"></canvas>
-    <input id="value_<?= '{{id}}{{target_id}}' ?>" type="hidden" data-target_id='<?= '{{target_id}}' ?>' data-department_id='<?= '{{id}}' ?>' />
+    <div id="myChart<?= '{{id}}{{target_id}}' ?>" class='myChart'></div>
+    <canvas id="value_<?= '{{id}}{{target_id}}' ?>"></canvas>
     </div>
     </div>
 </script>
@@ -18,7 +18,7 @@
     var date_from_prev, date_from_to;
     var originalLineDraw = Chart.controllers.line.prototype.draw;
     Chart.helpers.extend(Chart.controllers.line.prototype, {
-        draw: function () {
+        draw: function() {
             originalLineDraw.apply(this, arguments);
 
             var chart = this.chart;
@@ -39,7 +39,7 @@
             }
         }
     });
-    $(document).ready(function () {
+    $(document).ready(function() {
         var count_chart = 0;
         var count_upload = 0;
         $(".page-loader-wrapper").show();
@@ -60,71 +60,70 @@
                     let rendered = Mustache.render(department_html, department);
                     $("#target_accordion").append(rendered);
                     count_chart++;
-                    let ctx = document.getElementById('myChart' + department['id'] + department['target_id']).getContext('2d');
+                    let options = {
+                        // title: {
+                        //     text: 'Solar Employment Growth by Sector, 2010-2016'
+                        // },
 
-                    let chart = new Chart(ctx, {
-                        type: 'line',
-                        data: data,
-                        options: {
-                            legend: {
-                                position: 'right'
+                        // subtitle: {
+                        //     text: 'Source: thesolarfoundation.com'
+                        // },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'right',
+                            verticalAlign: 'middle'
+                        },
+                        exporting: {
+                            enabled: false
+                        }
+                    }
+                    options = {
+                        ...options,
+                        ...data
+                    };
+                    $('#myChart' + department['id'] + department['target_id']).highcharts(options);
+                    let chart_svg = $('#myChart' + department['id'] + department['target_id']).highcharts().getSVG({
+                        exporting: {
+                            sourceHeight: 300,
+                            sourceWidth: 1000,
+                        }
+                    })
+                    canvg(document.getElementById('value_' + department['id'] + department['target_id']), chart_svg)
+                    var canvas = document.getElementById('value_' + department['id'] + department['target_id']);
+                    var image = canvas.toDataURL("image/png");
+
+                    let target_id = department['target_id'];
+                    let department_id = department['id'];
+                    if (image != "data:,") {
+                        if (params['type'] != "Custom") {
+                            name = [target_id,
+                                department_id,
+                                params['type'],
+                                params['selector']
+                            ].join("_");
+                        } else {
+                            name = [target_id,
+                                department_id,
+                                params['type'],
+                                params['daterange']
+                            ].join("_");
+                        }
+                        $.ajax({
+                            url: path + 'ajax/uploadchart',
+                            type: "POST",
+                            dataType: "JSON",
+                            data: {
+                                name: name,
+                                image: image
                             },
-                            elements: {
-                                line: {
-                                    tension: 0.0000001
-                                }
-                            },
-                            target_id: department['target_id'],
-                            department_id: department['id'],
-                            bezierCurve: false,
-                            scales: {
-                                yAxes: [{
-                                        ticks: {
-                                            suggestedMin: 0,
-                                        }
-                                    }]
-                            },
-                            animation: {
-                                onComplete: function () {
-                                    let chart = this.chart;
-                                    let target_id = this.options['target_id'];
-                                    let department_id = this.options['department_id'];
-                                    var image = chart.toBase64Image();
-                                    if (image != "data:,") {
-                                        if (params['type'] != "Custom") {
-                                            name = [target_id,
-                                                department_id,
-                                                params['type'],
-                                                params['selector']
-                                            ].join("_");
-                                        } else {
-                                            name = [target_id,
-                                                department_id,
-                                                params['type'],
-                                                params['daterange']
-                                            ].join("_");
-                                        }
-                                        $.ajax({
-                                            url: path + 'ajax/uploadchart',
-                                            type: "POST",
-                                            dataType: "JSON",
-                                            data: {
-                                                name: name,
-                                                image: image
-                                            },
-                                            success: function () {
-                                                count_upload++;
-                                                if (count_upload >= count_chart) {
-                                                    location.href = path + "report/";
-                                                }
-                                            }
-                                        })
-                                    }
+                            success: function() {
+                                count_upload++;
+                                if (count_upload >= count_chart) {
+                                    location.href = path + "report/";
                                 }
                             }
-                        }
-                    });
-
+                        })
+                    }
                 }
             }
         }

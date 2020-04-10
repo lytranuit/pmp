@@ -68,8 +68,8 @@ $(document).ready(function () {
 })
 
 function init() {
-    var select_id = $.cookies.get('SELECT_ID') || "1";
-    var object_name = $.cookies.get('SELECT_NAME') || "";
+    var select_id = $.cookies.get('SELECT_ID') || "3";
+    var object_name = $.cookies.get('SELECT_NAME') || "Vi sinh nhân viên";
 
     $(".object_select").addClass("btn-success").removeClass("btn-primary");
     $(".object_select[data-id=" + select_id + "]").removeClass("btn-success").addClass("btn-primary");
