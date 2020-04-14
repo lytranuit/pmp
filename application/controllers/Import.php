@@ -345,7 +345,8 @@ class Import extends MY_Controller
                     'department_id' => $nhanvien_id,
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
-                    'factory_id' => $area['factory_id']
+                    'factory_id' => $area['factory_id'],
+                    'object_id' => 3
                 );
                 ///Mũi
                 $data_nhanvien[] = array(
@@ -356,7 +357,8 @@ class Import extends MY_Controller
                     'department_id' => $nhanvien_id,
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
-                    'factory_id' => $area['factory_id']
+                    'factory_id' => $area['factory_id'],
+                    'object_id' => 3
                 );
                 ///Ngực
                 $data_nhanvien[] = array(
@@ -367,7 +369,8 @@ class Import extends MY_Controller
                     'department_id' => $nhanvien_id,
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
-                    'factory_id' => $area['factory_id']
+                    'factory_id' => $area['factory_id'],
+                    'object_id' => 3
                 );
                 ///Cẳng tay trái
                 $data_nhanvien[] = array(
@@ -378,7 +381,8 @@ class Import extends MY_Controller
                     'department_id' => $nhanvien_id,
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
-                    'factory_id' => $area['factory_id']
+                    'factory_id' => $area['factory_id'],
+                    'object_id' => 3
                 );
                 ///Cẳng tay phải
                 $data_nhanvien[] = array(
@@ -389,7 +393,8 @@ class Import extends MY_Controller
                     'department_id' => $nhanvien_id,
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
-                    'factory_id' => $area['factory_id']
+                    'factory_id' => $area['factory_id'],
+                    'object_id' => 3
                 );
                 ///Dấu găng tay trái
                 $data_nhanvien[] = array(
@@ -400,7 +405,8 @@ class Import extends MY_Controller
                     'department_id' => $nhanvien_id,
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
-                    'factory_id' => $area['factory_id']
+                    'factory_id' => $area['factory_id'],
+                    'object_id' => 3
                 );
                 ///Dấu găng tay phải
                 $data_nhanvien[] = array(
@@ -411,7 +417,9 @@ class Import extends MY_Controller
                     'department_id' => $nhanvien_id,
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
-                    'factory_id' => $area['factory_id']
+                    'factory_id' => $area['factory_id'],
+                    'object_id' => 3
+
                 );
                 $this->position_model->insert($data_nhanvien);
             }
@@ -713,7 +721,8 @@ class Import extends MY_Controller
                             'workshop_id' => $position_H->workshop_id,
                             'date' => $date,
                             'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name
+                            'from_file' => $sheet_name,
+                            'object_id' => $position_H->object_id,
                             //                        'workshop_id' => $area['workshop_id'],
                             //                        'factory_id' => $area['factory_id']
                         );
@@ -730,7 +739,8 @@ class Import extends MY_Controller
                             'workshop_id' => $position_N->workshop_id,
                             'date' => $date,
                             'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name
+                            'from_file' => $sheet_name,
+                            'object_id' => $position_N->object_id,
                             //                        'workshop_id' => $area['workshop_id'],
                             //                        'factory_id' => $area['factory_id']
                         );
@@ -747,7 +757,8 @@ class Import extends MY_Controller
                             'workshop_id' => $position_C->workshop_id,
                             'date' => $date,
                             'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name
+                            'from_file' => $sheet_name,
+                            'object_id' => $position_C->object_id,
                             //                        'workshop_id' => $area['workshop_id'],
                             //                        'factory_id' => $area['factory_id']
                         );
@@ -764,7 +775,8 @@ class Import extends MY_Controller
                             'workshop_id' => $position_LF->workshop_id,
                             'date' => $date,
                             'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name
+                            'from_file' => $sheet_name,
+                            'object_id' => $position_LF->object_id,
                             //                        'workshop_id' => $area['workshop_id'],
                             //                        'factory_id' => $area['factory_id']
                         );
@@ -781,7 +793,8 @@ class Import extends MY_Controller
                             'workshop_id' => $position_RF->workshop_id,
                             'date' => $date,
                             'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name
+                            'from_file' => $sheet_name,
+                            'object_id' => $position_RF->object_id,
                             //                        'workshop_id' => $area['workshop_id'],
                             //                        'factory_id' => $area['factory_id']
                         );
@@ -815,7 +828,9 @@ class Import extends MY_Controller
                             'workshop_id' => $position_RG->workshop_id,
                             'date' => $date,
                             'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name
+                            'from_file' => $sheet_name,
+                            'object_id' => $position_RG->object_id,
+
                             //                        'workshop_id' => $area['workshop_id'],
                             //                        'factory_id' => $area['factory_id']
                         );

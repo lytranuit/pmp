@@ -1,8 +1,10 @@
 <?php
 
-class Result extends MY_Controller {
+class Result extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -24,7 +26,8 @@ class Result extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -40,7 +43,8 @@ class Result extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
@@ -115,17 +119,23 @@ class Result extends MY_Controller {
         return true;
     }
 
-    public function index() { /////// trang ca nhan
+    public function index()
+    { /////// trang ca nhan
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function add() { /////// trang ca nhan
+    public function add()
+    { /////// trang ca nhan
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("result_model");
             $data['created_at'] = date("Y-m-d H:i:s");
+            $position_id = $data['position_id'];
+            $date = $data['date'];
+            $max_stt = $this->result_model->max_stt_in_day($position_id, $date);
+            $data['stt_in_day'] = $max_stt;
             $data_up = $this->result_model->create_object($data);
             $id = $this->result_model->insert($data_up);
 
@@ -139,7 +149,8 @@ class Result extends MY_Controller {
         }
     }
 
-    public function remove($params) { /////// trang ca nhan
+    public function remove($params)
+    { /////// trang ca nhan
         $this->load->model("result_model");
         $id = $params[0];
         $this->result_model->update(array("deleted" => 1), $id);
@@ -147,7 +158,8 @@ class Result extends MY_Controller {
         exit;
     }
 
-    public function table() {
+    public function table()
+    {
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $this->load->model("result_model");
         $limit = $this->input->post('length');
@@ -184,9 +196,9 @@ class Result extends MY_Controller {
                 $nestedData['date'] = $post->date;
                 $nestedData['value'] = $post->value;
                 $nestedData['action'] = '<a href="' . base_url() . 'result/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
-                        . '<i class="far fa-trash-alt">'
-                        . '</i>'
-                        . '</a>';
+                    . '<i class="far fa-trash-alt">'
+                    . '</i>'
+                    . '</a>';
 
                 $data[] = $nestedData;
             }
@@ -201,5 +213,4 @@ class Result extends MY_Controller {
 
         echo json_encode($json_data);
     }
-
 }
