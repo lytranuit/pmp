@@ -18,7 +18,7 @@
     var date_from_prev, date_from_to;
     var originalLineDraw = Chart.controllers.line.prototype.draw;
     Chart.helpers.extend(Chart.controllers.line.prototype, {
-        draw: function () {
+        draw: function() {
             originalLineDraw.apply(this, arguments);
 
             var chart = this.chart;
@@ -41,7 +41,7 @@
     });
     var count_chart = 0;
     var count_upload = 0;
-    $(document).ready(function () {
+    $(document).ready(function() {
         $(".page-loader-wrapper").show();
         $("#target_accordion").empty();
 
@@ -87,7 +87,7 @@
                             sourceHeight: 300,
                             sourceWidth: 1000,
                         }
-                    })
+                    });
                     canvg(document.getElementById('value_' + department['id'] + department['target_id']), chart_svg)
                     var canvas = document.getElementById('value_' + department['id'] + department['target_id']);
                     var image = canvas.toDataURL("image/png");
@@ -116,7 +116,7 @@
                                 name: name,
                                 image: image
                             },
-                            success: function () {
+                            success: function() {
                                 count_upload++;
                                 console.log(count_upload)
                                 console.log(count_chart)

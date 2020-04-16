@@ -2,3 +2,5 @@ application/cache/
 public/uploads
 downloads/
 nbproject/
+public/upload/chart/
+public/export/

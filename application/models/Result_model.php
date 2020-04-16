@@ -24,7 +24,7 @@ class Result_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'deleted','stt_in_day', 'target_id', 'object_id', 'position_id', 'department_id', 'area_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
+            'deleted', 'stt_in_day', 'target_id', 'object_id', 'position_id', 'department_id', 'area_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
         );
         $obj = array();
         foreach ($array as $key) {
@@ -293,6 +293,53 @@ class Result_model extends MY_Model
         );
         return $results;
     }
+    function get_data_table_v2($position_list, $params)
+    {
+        $subsql = "";
+        $list_id = array();
+        foreach ($position_list as $position) {
+            $list_id[] =  $position->id;
+            $subsql .= ",SUM(IF(position_id = $position->id,value,NULL)) as $position->string_id";
+        }
+        $where = "WHERE deleted = 0 and position_id IN (" . implode(",", $list_id) . ")";
+        $where .= " AND date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
+        $sql = "SELECT date $subsql FROM
+                    pmp_result 
+                $where  
+                GROUP BY date,stt_in_day ";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result_array();
+        return $result;
+    }
+    function get_data_minmax_v2($position_list, $date_from, $date_to)
+    {
+        $subsql = "";
+        $list_id = array();
+        foreach ($position_list as $position) {
+            $list_id[] =  $position->id;
+            $subsql .= ",MIN(IF(position_id = $position->id,value,0)) as min_$position->string_id,MAX(IF(position_id = $position->id,value,0)) as max_$position->string_id";
+        }
+        $where = "WHERE deleted = 0 and department_id IN (" . implode(",", $list_id) . ")";
+        if ($date_from == "") {
+            $date_from = $date_to = date("Y-m-d");
+        }
+        $where .= " AND date between '" . $date_from . "' and '" . $date_to . "'";
+        $sql = "SELECT date $subsql FROM
+                    pmp_result 
+                $where";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result_array();
+        $result = isset($result[0]) ? $result[0] : array();
+        return $result;
+    }
     function get_data_table($department_id, $position_list, $params)
     {
         $subsql = "";
@@ -348,11 +395,10 @@ class Result_model extends MY_Model
         $query = $this->db->query($sql);
         $result = $query->result_array();
         $result = isset($result[0]['max_stt']) ? (int) $result[0]['max_stt'] + 1 : 1;
-        
+
         // echo "<pre>";
         // print_r($result);
         // die();
         return $result;
-        
     }
 }
