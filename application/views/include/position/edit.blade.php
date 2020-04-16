@@ -96,6 +96,17 @@
                                     <input class="form-control" type='text' name="frequency_name" required="" />
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Báo cáo:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="type_bc">
+                                        <option value="Year">Năm</option>
+                                        <option value="HalfYear">Nửa Năm</option>
+                                        <option value="Quarter">Quý</option>
+                                        <option value="Month">Tháng</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

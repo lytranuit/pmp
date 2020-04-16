@@ -346,7 +346,8 @@ class Import extends MY_Controller
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
                     'factory_id' => $area['factory_id'],
-                    'object_id' => 3
+                    'object_id' => 3,
+                    'type_bc' => "Year"
                 );
                 ///Mũi
                 $data_nhanvien[] = array(
@@ -358,7 +359,8 @@ class Import extends MY_Controller
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
                     'factory_id' => $area['factory_id'],
-                    'object_id' => 3
+                    'object_id' => 3,
+                    'type_bc' => "Year"
                 );
                 ///Ngực
                 $data_nhanvien[] = array(
@@ -370,7 +372,8 @@ class Import extends MY_Controller
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
                     'factory_id' => $area['factory_id'],
-                    'object_id' => 3
+                    'object_id' => 3,
+                    'type_bc' => "Year"
                 );
                 ///Cẳng tay trái
                 $data_nhanvien[] = array(
@@ -382,7 +385,8 @@ class Import extends MY_Controller
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
                     'factory_id' => $area['factory_id'],
-                    'object_id' => 3
+                    'object_id' => 3,
+                    'type_bc' => "Year"
                 );
                 ///Cẳng tay phải
                 $data_nhanvien[] = array(
@@ -394,7 +398,8 @@ class Import extends MY_Controller
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
                     'factory_id' => $area['factory_id'],
-                    'object_id' => 3
+                    'object_id' => 3,
+                    'type_bc' => "Year"
                 );
                 ///Dấu găng tay trái
                 $data_nhanvien[] = array(
@@ -406,7 +411,8 @@ class Import extends MY_Controller
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
                     'factory_id' => $area['factory_id'],
-                    'object_id' => 3
+                    'object_id' => 3,
+                    'type_bc' => "Year"
                 );
                 ///Dấu găng tay phải
                 $data_nhanvien[] = array(
@@ -418,7 +424,8 @@ class Import extends MY_Controller
                     'area_id' => $area['area_id'],
                     'workshop_id' => $area['workshop_id'],
                     'factory_id' => $area['factory_id'],
-                    'object_id' => 3
+                    'object_id' => 3,
+                    'type_bc' => "Year"
 
                 );
                 $this->position_model->insert($data_nhanvien);
