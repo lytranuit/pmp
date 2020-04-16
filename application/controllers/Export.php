@@ -1020,11 +1020,14 @@ class Export extends MY_Controller
     function cronjob2()
     {
         $this->load->model("report_model");
-        $report = $this->report_model->where(array('deleted' => 0, 'status' => 1))->order_by("id", "ASC")->limit(1)->get();
+        $time = date("Y-m-d H:i:s", strtotime("-3 hours"));
+        $reports = $this->report_model->where(array('deleted' => 0, 'status' => 2))->where('date', '<', $time)->order_by("id", "ASC")->get_all();
         if (!empty($report)) {
-            $id_record = $report->id;
-            $this->report_model->update(array('status' => 2), $id_record);
-            $this->export($id_record);
+            foreach ($reports as $report) {
+                $id_record = $report->id;
+                $this->report_model->update(array('status' => 2), $id_record);
+                $this->export($id_record);
+            }
         }
         echo 1;
     }
