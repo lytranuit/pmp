@@ -17,7 +17,7 @@
                             <th>Khu vực</th>
                             <th>Xưởng</th>
                             <th>Nhà máy</th>
-                            <th>Tần suất</th>
+                            <th>Báo cáo</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -59,7 +59,7 @@
                     "data": "factory_name"
                 },
                 {
-                    "data": "frequency_name"
+                    "data": "type_bc"
                 },
                 {
                     "data": "action"

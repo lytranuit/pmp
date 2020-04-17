@@ -254,6 +254,7 @@ class Position extends MY_Controller
                 $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
                 $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
+                $nestedData['type_bc'] = $post->type_bc;
                 $nestedData['action'] = '<a href="' . base_url() . 'position/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'
