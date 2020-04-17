@@ -47,7 +47,9 @@ class Ajax extends MY_Controller
         } else {
             throw new \Exception('did not match data URI with image data');
         }
-
+        if (!file_exists(APPPATH . '../public/upload/chart')) {
+            mkdir(APPPATH . '../public/upload/chart', 0777, true);
+        }
         file_put_contents(APPPATH . '../public/upload/chart/' . $name . "." . $type, $data);
         echo 1;
     }

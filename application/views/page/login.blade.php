@@ -72,10 +72,10 @@
                 <div class="card-body">
                     <form id="form-login" method="POST">
                         <div class="form-group">
-                            <input class="form-control form-control-lg" id="username" name="identity" type="text" placeholder="<?= lang('login_identity_label') ?>" autocomplete="off">
+                            <input class="form-control" id="username" name="identity" type="text" placeholder="<?= lang('login_identity_label') ?>" autocomplete="off">
                         </div>
                         <div class="form-group">
-                            <input class="form-control form-control-lg" id="password" name="password" type="password" placeholder="<?= lang('login_password_label') ?>">
+                            <input class="form-control" id="password" name="password" type="password" placeholder="<?= lang('login_password_label') ?>">
                         </div>
                         <div class="form-group">
                             <label class="custom-control custom-checkbox">

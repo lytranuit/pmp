@@ -236,6 +236,7 @@ class Limit extends MY_Controller {
             foreach ($posts as $post) {
                 $target = $post->target;
                 $area = $post->area;
+                $nestedData['year'] = $post->year;
                 $nestedData['target_name'] = $target->name;
                 $nestedData['area_name'] = $area->name;
                 $nestedData['standard_limit'] = $post->standard_limit;

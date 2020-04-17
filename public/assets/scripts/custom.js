@@ -23,6 +23,13 @@ $(document).ready(function () {
         location.reload();
     });
     //// Lấy data
+    $(".clean_cache").click(async function () {
+        await $.ajax({
+            url: path + "dashboard/cleancache/",
+            dataType: "JSON"
+        });
+        location.reload();
+    });
     $("#form-dang-tin [name=area_id]").change(async function () {
         let value = $(this).val();
         let department = await $.ajax({
@@ -74,6 +81,7 @@ function init() {
     $(".object_select").addClass("btn-success").removeClass("btn-primary");
     $(".object_select[data-id=" + select_id + "]").removeClass("btn-success").addClass("btn-primary");
     $("#btn_object_select").text(object_name);
+
 }
 var fillForm = function (form, data) {
     $('input, select, textarea', form).not("[type=file]").each(function () {

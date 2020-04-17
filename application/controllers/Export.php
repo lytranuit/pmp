@@ -427,16 +427,20 @@ class Export extends MY_Controller
                 $type_bc = "Hàng Quý";
                 $type_bc_en = "Quarter";
             }
-            $templateProcessor->setValue('type_bc', $type_bc);
-            $templateProcessor->setValue('type_bc_en', $type_bc_en);
             $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
             $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
             $templateProcessor->setValue('date_to', date("d/m/y", strtotime($params['date_to'])));
             $templateProcessor->setValue('date_to_prev', date("d/m/y", strtotime($params['date_to_prev'])));
+            $templateProcessor->setValue('type_bc', $type_bc);
+            $templateProcessor->setValue('type_bc_en', $type_bc_en);
             $templateProcessor->setValue('workshop_name', $workshop_name);
-            $templateProcessor->setValue('factory_name', $factory_name);
             $templateProcessor->setValue('workshop_name_en', $workshop_name_en);
-            $templateProcessor->setValue('factory_name_en', $factory_name_en);
+            $templateProcessor->setValue('type_bc_cap', mb_strtoupper($type_bc, 'UTF-8'));
+            $templateProcessor->setValue('type_bc_cap_en', mb_strtoupper($type_bc_en, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap', mb_strtoupper($workshop_name, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap_en', mb_strtoupper($workshop_name_en, 'UTF-8'));
+            // $templateProcessor->setValue('factory_name', $factory_name);
+            // $templateProcessor->setValue('factory_name_en', $factory_name_en);
 
 
             ////STYLE
@@ -526,16 +530,7 @@ class Export extends MY_Controller
                     $templateProcessor->setValue("area_heading#" . ($key + 1) . "#" . ($key1 + 1), "5.1." . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("area_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name));
                     $templateProcessor->setValue("area_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name_en));
-                    // $textrun1 = $table->addCell(1000, $styleCell);
-                    // $textrun1->addText(htmlspecialchars("Tên phòng:"), $fontCell);
-                    // $textrun1->addText(htmlspecialchars('Room name:'), array('italic' => true), $fontCell);
-                    // $textrun1 = $table->addCell(1000, $styleCell);
-                    // $textrun1->addText(htmlspecialchars("Tên phòng:"), $fontCell);
-                    // $textrun1->addText(htmlspecialchars('Room name:'), array('italic' => true), $fontCell);
-                    // $textrun1 = $table->addCell(1000, $styleCell);
-                    // $textrun1->addText(htmlspecialchars("Tên phòng:"), $fontCell);
-                    // $textrun1->addText(htmlspecialchars('Room name:'), array('italic' => true), $fontCell);
-                    // $position_list = array();
+
                     $number_position = 0;
                     $list_department_tmp = array();
                     $table_data = array();
@@ -572,36 +567,38 @@ class Export extends MY_Controller
                     $templateProcessor->cloneBlock("group_block#" . ($key + 1) . "#" . ($key1 + 1), count($table_data), true, true);
                     foreach ($table_data as $key2 => $t_data) {
                         ///TABLE
-                        $table = new Table(array('borderSize' => 3, 'width' => 10000, 'size' => 10, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
-                        $table->addRow();
-                        $cell1 = $table->addCell(2000, $cellRowSpan);
+                        $table = new Table(array('borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+                        $table->addRow(null, array('tblHeader' => true));
+                        $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                         $textrun1->addText(htmlspecialchars("Tên phòng:"), array('size' => 10, 'bold' => true));
                         $textrun1->addTextBreak();
                         $textrun1->addText(htmlspecialchars('Room name:'), array('size' => 10, 'bold' => true, 'italic' => true));
                         $position_list = array();
                         foreach ($t_data as $key3 => $department) {
-                            $textrun1 = $table->addCell(1200, array('gridSpan' => count($department->list_position), 'valign' => 'center'));
+                            $textrun1 = $table->addCell(null, array('gridSpan' => count($department->list_position), 'valign' => 'center'));
                             $textrun1->addText(htmlspecialchars($department->name), array('size' => 10), $fontCell);
-                            $textrun1->addText(htmlspecialchars($department->name_en), array('size' => 10, 'italic' => true), $fontCell);
+                            if ($department->name != $department->name_en)
+                                $textrun1->addText(htmlspecialchars($department->name_en), array('size' => 10, 'italic' => true), $fontCell);
+                            $textrun1->addText(htmlspecialchars("(" . $department->string_id . ")"), array('size' => 10, 'italic' => true), $fontCell);
                             $position_list = array_merge($position_list, $department->list_position);
                         }
-                        $table->addRow();
-                        $cell1 = $table->addCell(2000, $cellRowSpan);
+                        $table->addRow(null, array('tblHeader' => true));
+                        $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                         $textrun1->addText(htmlspecialchars("Vị trí lấy mẫu:"), array('size' => 10, 'bold' => true));
                         $textrun1->addTextBreak();
                         $textrun1->addText(htmlspecialchars('Sampling location:'), array('size' => 10, 'bold' => true, 'italic' => true));
                         foreach ($position_list as $key3 => $position) {
-                            $textrun1 = $table->addCell(625, $styleCell);
+                            $textrun1 = $table->addCell(null, $styleCell);
                             $textrun1->addText(htmlspecialchars($position->string_id), array('size' => 10), $fontCell);
                         }
-                        $table->addRow();
-                        $cell1 = $table->addCell(2000, $cellRowSpan);
+                        $table->addRow(null, array('tblHeader' => true));
+                        $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText(htmlspecialchars("Ngày / "), array('size' => 10, 'bold' => true));
                         $textrun1->addText(htmlspecialchars("Date"), array('size' => 10, 'bold' => true, 'italic' => true));
-                        $cell1 = $table->addCell(8000, array('gridSpan' => count($position_list), 'valign' => 'center'));
+                        $cell1 = $table->addCell(null, array('gridSpan' => count($position_list), 'valign' => 'center'));
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText(htmlspecialchars("Kết quả / "), array('size' => 10, 'bold' => true));
                         $textrun1->addText(htmlspecialchars("Results"), array('size' => 10, 'bold' => true, 'italic' => true));
@@ -614,15 +611,19 @@ class Export extends MY_Controller
                             $date = date("d/m/y", strtotime($stt['date']));
 
                             $table->addRow();
-                            $cell1 = $table->addCell(2000, $cellRowSpan);
+                            $cell1 = $table->addCell(null, $cellRowSpan);
                             $textrun1 = $cell1->addTextRun($cellHCentered);
                             $textrun1->addText(htmlspecialchars($date), array('size' => 10));
                             foreach ($position_list as $position) {
                                 $string_id = $position->string_id;
                                 $value = $stt[$string_id];
-                                $cell1 = $table->addCell(625, $cellRowSpan);
-                                $textrun1 = $cell1->addTextRun($cellHCentered);
-                                $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                                if ($value == "") {
+                                    $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                } else {
+                                    $cell1 = $table->addCell(null, $cellRowSpan);
+                                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                                    $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                                }
                             }
                         }
                         // print_r($position_list);
@@ -678,6 +679,9 @@ class Export extends MY_Controller
             // die();
             $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . "_" . time() . ".docx";
             $name_file = urlencode($name_file);
+            if (!file_exists(APPPATH . '../public/export')) {
+                mkdir(APPPATH . '../public/export', 0777, true);
+            }
             $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
             // die();
             // $templateProcessor->cloneRow("result_block#1", 3);
@@ -740,16 +744,19 @@ class Export extends MY_Controller
                 $type_bc = "Hàng Quý";
                 $type_bc_en = "Quarter";
             }
-            $templateProcessor->setValue('type_bc', $type_bc);
-            $templateProcessor->setValue('type_bc_en', $type_bc_en);
+
             $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
             $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
             $templateProcessor->setValue('date_to', date("d/m/y", strtotime($params['date_to'])));
             $templateProcessor->setValue('date_to_prev', date("d/m/y", strtotime($params['date_to_prev'])));
+            $templateProcessor->setValue('type_bc', $type_bc);
+            $templateProcessor->setValue('type_bc_en', $type_bc_en);
             $templateProcessor->setValue('workshop_name', $workshop_name);
-            $templateProcessor->setValue('factory_name', $factory_name);
             $templateProcessor->setValue('workshop_name_en', $workshop_name_en);
-            $templateProcessor->setValue('factory_name_en', $factory_name_en);
+            $templateProcessor->setValue('type_bc_cap', mb_strtoupper($type_bc, 'UTF-8'));
+            $templateProcessor->setValue('type_bc_cap_en', mb_strtoupper($type_bc_en, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap', mb_strtoupper($workshop_name, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap_en', mb_strtoupper($workshop_name_en, 'UTF-8'));
 
 
             ////STYLE
@@ -839,16 +846,7 @@ class Export extends MY_Controller
                     $templateProcessor->setValue("area_heading#" . ($key + 1) . "#" . ($key1 + 1), "5.1." . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("area_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name));
                     $templateProcessor->setValue("area_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name_en));
-                    // $textrun1 = $table->addCell(1000, $styleCell);
-                    // $textrun1->addText(htmlspecialchars("Tên phòng:"), $fontCell);
-                    // $textrun1->addText(htmlspecialchars('Room name:'), array('italic' => true), $fontCell);
-                    // $textrun1 = $table->addCell(1000, $styleCell);
-                    // $textrun1->addText(htmlspecialchars("Tên phòng:"), $fontCell);
-                    // $textrun1->addText(htmlspecialchars('Room name:'), array('italic' => true), $fontCell);
-                    // $textrun1 = $table->addCell(1000, $styleCell);
-                    // $textrun1->addText(htmlspecialchars("Tên phòng:"), $fontCell);
-                    // $textrun1->addText(htmlspecialchars('Room name:'), array('italic' => true), $fontCell);
-                    // $position_list = array();
+
                     $number_position = 0;
                     $list_department_tmp = array();
                     $table_data = array();
@@ -885,36 +883,38 @@ class Export extends MY_Controller
                     $templateProcessor->cloneBlock("group_block#" . ($key + 1) . "#" . ($key1 + 1), count($table_data), true, true);
                     foreach ($table_data as $key2 => $t_data) {
                         ///TABLE
-                        $table = new Table(array('borderSize' => 3, 'width' => 10000, 'size' => 10, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
-                        $table->addRow();
-                        $cell1 = $table->addCell(2000, $cellRowSpan);
+                        $table = new Table(array('borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+                        $table->addRow(null, array('tblHeader' => true));
+                        $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                         $textrun1->addText(htmlspecialchars("Tên phòng:"), array('size' => 10, 'bold' => true));
                         $textrun1->addTextBreak();
                         $textrun1->addText(htmlspecialchars('Room name:'), array('size' => 10, 'bold' => true, 'italic' => true));
                         $position_list = array();
                         foreach ($t_data as $key3 => $department) {
-                            $textrun1 = $table->addCell(1200, array('gridSpan' => count($department->list_position), 'valign' => 'center'));
+                            $textrun1 = $table->addCell(null, array('gridSpan' => count($department->list_position), 'valign' => 'center'));
                             $textrun1->addText(htmlspecialchars($department->name), array('size' => 10), $fontCell);
-                            $textrun1->addText(htmlspecialchars($department->name_en), array('size' => 10, 'italic' => true), $fontCell);
+                            if ($department->name != $department->name_en)
+                                $textrun1->addText(htmlspecialchars($department->name_en), array('size' => 10, 'italic' => true), $fontCell);
+                            $textrun1->addText(htmlspecialchars("(" . $department->string_id . ")"), array('size' => 10, 'italic' => true), $fontCell);
                             $position_list = array_merge($position_list, $department->list_position);
                         }
-                        $table->addRow();
-                        $cell1 = $table->addCell(2000, $cellRowSpan);
+                        $table->addRow(null, array('tblHeader' => true));
+                        $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                         $textrun1->addText(htmlspecialchars("Vị trí lấy mẫu:"), array('size' => 10, 'bold' => true));
                         $textrun1->addTextBreak();
                         $textrun1->addText(htmlspecialchars('Sampling location:'), array('size' => 10, 'bold' => true, 'italic' => true));
                         foreach ($position_list as $key3 => $position) {
-                            $textrun1 = $table->addCell(625, $styleCell);
+                            $textrun1 = $table->addCell(null, $styleCell);
                             $textrun1->addText(htmlspecialchars($position->string_id), array('size' => 10), $fontCell);
                         }
-                        $table->addRow();
-                        $cell1 = $table->addCell(2000, $cellRowSpan);
+                        $table->addRow(null, array('tblHeader' => true));
+                        $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText(htmlspecialchars("Ngày / "), array('size' => 10, 'bold' => true));
                         $textrun1->addText(htmlspecialchars("Date"), array('size' => 10, 'bold' => true, 'italic' => true));
-                        $cell1 = $table->addCell(8000, array('gridSpan' => count($position_list), 'valign' => 'center'));
+                        $cell1 = $table->addCell(null, array('gridSpan' => count($position_list), 'valign' => 'center'));
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText(htmlspecialchars("Kết quả / "), array('size' => 10, 'bold' => true));
                         $textrun1->addText(htmlspecialchars("Results"), array('size' => 10, 'bold' => true, 'italic' => true));
@@ -927,15 +927,19 @@ class Export extends MY_Controller
                             $date = date("d/m/y", strtotime($stt['date']));
 
                             $table->addRow();
-                            $cell1 = $table->addCell(2000, $cellRowSpan);
+                            $cell1 = $table->addCell(null, $cellRowSpan);
                             $textrun1 = $cell1->addTextRun($cellHCentered);
                             $textrun1->addText(htmlspecialchars($date), array('size' => 10));
                             foreach ($position_list as $position) {
                                 $string_id = $position->string_id;
                                 $value = $stt[$string_id];
-                                $cell1 = $table->addCell(625, $cellRowSpan);
-                                $textrun1 = $cell1->addTextRun($cellHCentered);
-                                $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                                if ($value == "") {
+                                    $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                } else {
+                                    $cell1 = $table->addCell(null, $cellRowSpan);
+                                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                                    $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                                }
                             }
                         }
                         // print_r($position_list);
@@ -991,6 +995,9 @@ class Export extends MY_Controller
             // die();
             $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . "_" . time() . ".docx";
             $name_file = urlencode($name_file);
+            if (!file_exists(APPPATH . '../public/export')) {
+                mkdir(APPPATH . '../public/export', 0777, true);
+            }
             $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
             // die();
             // $templateProcessor->cloneRow("result_block#1", 3);

@@ -1,5 +1,7 @@
 <?php
 
+use function GuzzleHttp\json_decode;
+
 class Dashboard extends MY_Controller
 {
 
@@ -214,7 +216,6 @@ class Dashboard extends MY_Controller
         $this->data['params'] = $params;
 
         $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by("target_id")->get_all();
-
         $results = array();
         for ($i = 0; $i < count($target_list); $i++) {
             $target = $target_list[$i]->target;
@@ -348,15 +349,36 @@ class Dashboard extends MY_Controller
 
     function getalldatachart()
     {
+
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
 
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $is_cache = true;
         $workshop_id = $this->input->get('workshop_id', TRUE);
         $type = $this->input->get('type', TRUE);
         $selector = $this->input->get('selector', TRUE);
         $daterange = $this->input->get('daterange', TRUE);
+        if ($type == "Custom") {
+            $selector = $daterange;
+        }
+        $params_cache = array(
+            'object_id' => $object_id,
+            'workshop_id' => $workshop_id,
+            'type' => $type,
+            'selector' => $selector
+        );
+
+        $encrypted_string = md5(json_encode($params_cache));
+        $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+        if (!$is_cache)
+            $this->cache->clean();
+        ////CHECK CACHE 
+        $results = $this->cache->get($encrypted_string);
+        if (!empty($results)) {
+            goto end;
+        }
         $params = array(
             'type' => $type,
             'selector' => $selector,
@@ -392,6 +414,18 @@ class Dashboard extends MY_Controller
             $target->area_list = $area_list;
             $results[] = $target;
         }
-        echo json_encode($results);
+        $results = json_encode($results);
+        if ($is_cache) {
+            // Save into the cache for 5 minutes
+            $this->cache->save($encrypted_string, $results, 2592000);
+        }
+
+        end: echo $results;
+    }
+    function cleancache()
+    {
+        $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+        $this->cache->clean();
+        echo 1;
     }
 }

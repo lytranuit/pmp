@@ -198,9 +198,11 @@ class Result_model extends MY_Model
     }
     function chart_datav2($params)
     {
+        $this->load->model("target_model");
         $results = array('labels' => array(), 'datasets' => array());
         $data = $this->chartdata($params);
         $data_limit = $this->chartdata_limit($params);
+        $target = $this->target_model->where("id", $params['target_id'])->get();
         $department = $params['department'];
         // echo "<pre>";
         // print_r($data_limit);
@@ -215,6 +217,7 @@ class Result_model extends MY_Model
             'marker' => array(
                 'enabled' => false
             ),
+            'color' => 'red',
             'name' => "Action Limit",
             'data' => array(),
         );
@@ -222,6 +225,7 @@ class Result_model extends MY_Model
             'marker' => array(
                 'enabled' => false
             ),
+            'color' => 'orange',
             'name' => "Alert Limit",
             'data' => array(),
         );
@@ -230,7 +234,7 @@ class Result_model extends MY_Model
         // die();
         $lineAtIndex = null;
         foreach ($data as $row) {
-            $date = $row->date;
+            $date = date("d/m/Y", strtotime($row->date));
             $position = $row->position_string_id;
             $value = $row->value;
             if (!in_array($date, $labels)) {
@@ -267,25 +271,50 @@ class Result_model extends MY_Model
             }
         }
         $title = $department->name;
+        $subtitle = "";
+        $yAxis_title = "CFU/Plate";
         if ($department->type == 3) {
             $list = explode("_", $department->string_id);
             $id = $list[1];
             $title = $department->name . " / " . $id;
+            $title = "Biểu đồ xu hướng vi sinh nhân viên $department->name ($id)";
+            $subtitle = "Trend chart of microbiological monitoring of Personnel  $department->name ($id)";
+        } else if ($department->type == 2) {
+            $title = "Trend chart of microbiological monitoring";
+            $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
+        } else if ($department->type == 3) {
+            $title = "Trend chart of microbiological monitoring";
+            $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
         }
 
         $results = array(
             'title' => array('text' => $title),
+            'subtitle' => array('text' => $subtitle, 'style' => array("fontSize" => 18)),
             'xAxis' => array(
+                'title' => array(
+                    'align' => 'high',
+                    'offset' => 0,
+                    'text' => "Date",
+                    'rotation' => 0,
+                    'x' => 50
+                ),
                 'categories' => $labels,
                 'plotLines' => array(array(
-                    'color' => '#FF0000', // Red
+                    'color' => 'gray', // Red
                     'width' => 2,
                     'value' => $lineAtIndex
                 ))
             ),
             'yAxis' => array(
+                'title' => array(
+                    'align' => 'high',
+                    'offset' => 0,
+                    'text' => $yAxis_title,
+                    'rotation' => 0,
+                    'y' => -20
+                ),
                 'min' => 0,
-                'max' => $max,
+                'max' => $max + 1,
                 'startOnTick' => false,
                 'endOnTick' => false
             ),

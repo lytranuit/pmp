@@ -11,6 +11,7 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
+                            <th>Năm</th>
                             <th>Khu vực</th>
                             <th>Phương pháp lấy mẫu</th>
                             <th>Tiêu chuẩn chấp nhận</th>
@@ -38,7 +39,11 @@
                 "dataType": "json",
                 "type": "POST",
             },
-            "columns": [{
+            "columns": [
+                {
+                    "data": "year"
+                },
+                {
                     "data": "area_name"
                 },
                 {

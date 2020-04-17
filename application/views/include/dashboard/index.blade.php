@@ -3,6 +3,9 @@
         <div class="card mb-3">
             <div class="card-header">
                 Bộ lọc
+                <div style="margin-left:auto">
+                    <button class="btn btn-danger clean_cache">Clean cache</button>
+                </div>
 
             </div>
             <div class="card-body" id="form-dang-tin">
@@ -126,6 +129,7 @@
     var date_to = moment();
     var date_from_prev, date_from_to;
     var originalLineDraw = Chart.controllers.line.prototype.draw;
+
     Chart.helpers.extend(Chart.controllers.line.prototype, {
         draw: function() {
             originalLineDraw.apply(this, arguments);
