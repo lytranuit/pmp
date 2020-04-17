@@ -144,7 +144,7 @@ class Index extends MY_Controller
             // check for "remember me"
             $remember = (bool) $this->input->post('remember');
             if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember)) {
-                redirect('/dashboard', 'refresh');
+                redirect('/report', 'refresh');
             } else {
                 // if the login was un-successful
                 // redirect them back to the login page
