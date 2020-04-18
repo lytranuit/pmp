@@ -188,7 +188,6 @@ class MY_Model extends CI_Model {
           $this->before_update[]='add_updater';
          */
     }
-
     public function _get_table_fields() {
         if (empty($this->table_fields)) {
             $this->table_fields = $this->_database->list_fields($this->table);

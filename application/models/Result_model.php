@@ -76,6 +76,7 @@ class Result_model extends MY_Model
 
     function chartdata_limit($params)
     {
+
         $where = "WHERE a.deleted = 0 and a.area_id = " . $this->db->escape($params['area_id']) . " and a.target_id = " . $this->db->escape($params['target_id']) . "";
 
         $sql = "SELECT a.* FROM pmp_limit as a $where";
@@ -85,7 +86,6 @@ class Result_model extends MY_Model
         // die();
         $query = $this->db->query($sql);
         $result = $query->result_array();
-        $result = count($result) ? $result[0] : array();
         return $result;
     }
     function area_export($params)
@@ -240,7 +240,7 @@ class Result_model extends MY_Model
             if (!in_array($date, $labels)) {
                 $labels[] = $date;
                 ///CHECK MỐC 
-                if ($lineAtIndex === null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
+                if ($lineAtIndex === null && $params['date_from_prev'] != "" && $row->date >= $params['date_from']) {
                     $lineAtIndex = count($labels) - 1;
                 }
             }
@@ -259,9 +259,19 @@ class Result_model extends MY_Model
                 $position_string_id = $position['name'];
                 $value = isset($datatmp[$date][$position_string_id]) ? (float) $datatmp[$date][$position_string_id] : 0;
                 if ($position_string_id == "Action Limit") {
-                    $value = isset($data_limit['action_limit']) ? (float) $data_limit['action_limit'] : 0;
+                    $limit = array_values(array_filter($data_limit, function ($item) use ($date) {
+                        $list = explode("/", $date);
+                        $year = $list[2];
+                        return $item['year'] == $year;
+                    }));
+                    $value = isset($limit[0]['action_limit']) ? (float) $limit[0]['action_limit'] : 0;
                 } else if ($position_string_id == "Alert Limit") {
-                    $value = isset($data_limit['alert_limit']) ? (float) $data_limit['alert_limit'] : 0;
+                    $limit = array_values(array_filter($data_limit, function ($item) use ($date) {
+                        $list = explode("/", $date);
+                        $year = $list[2];
+                        return $item['year'] == $year;
+                    }));
+                    $value = isset($limit[0]['alert_limit']) ? (float) $limit[0]['alert_limit'] : 0;
                 }
                 if ($value > $max) {
                     $max = $value;
@@ -282,7 +292,7 @@ class Result_model extends MY_Model
         } else if ($department->type == 2) {
             $title = "Trend chart of microbiological monitoring";
             $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
-        } else if ($department->type == 3) {
+        } else if ($department->type == 1) {
             $title = "Trend chart of microbiological monitoring";
             $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
         }
@@ -352,7 +362,7 @@ class Result_model extends MY_Model
             $list_id[] =  $position->id;
             $subsql .= ",MIN(IF(position_id = $position->id,value,0)) as min_$position->string_id,MAX(IF(position_id = $position->id,value,0)) as max_$position->string_id";
         }
-        $where = "WHERE deleted = 0 and department_id IN (" . implode(",", $list_id) . ")";
+        $where = "WHERE deleted = 0 and position_id IN (" . implode(",", $list_id) . ")";
         if ($date_from == "") {
             $date_from = $date_to = date("Y-m-d");
         }
@@ -429,5 +439,17 @@ class Result_model extends MY_Model
         // print_r($result);
         // die();
         return $result;
+    }
+    function set_value_export($params)
+    {
+        if ($params['type'] == "Month") {
+            $this->where('type_bc', "Month");
+        } elseif ($params['type'] == "Quarter") {
+            $this->where('type_bc', "Quarter");
+        } elseif ($params['type'] == "HalfYear") {
+            $this->where('type_bc', "HalfYear");
+        }
+        $this->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $params['workshop_id'], 'deleted' => 0, 'object_id' => $params['object_id']));
+        return $this;
     }
 }

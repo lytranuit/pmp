@@ -428,4 +428,19 @@ class Dashboard extends MY_Controller
         $this->cache->clean();
         echo 1;
     }
+
+    // function test()
+    // {
+    //     $this->load->model("result_model");
+    //     $params = array(
+    //         'type' => "Quarter",
+    //         'date_from' => '2019-01-01',
+    //         'date_to' => '2019-12-31',
+    //         'workshop_id' => 4,
+    //         'object_id' => 11
+    //     );
+    //     $reports = $this->result_model->set_value_export($params);
+    //     $data = $reports->with_area()->with_department()->group_by("department_id")->get_all();
+    //     echo json_encode($data);
+    // }
 }

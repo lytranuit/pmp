@@ -4,12 +4,12 @@
             <div class="card-header">
                 Bộ lọc
                 <div style="margin-left:auto">
+                    <a class="btn btn-primary btn-sm" href="{{base_url()}}dashboard/view">Details</a>
                     <button class="btn btn-danger clean_cache">Clean cache</button>
                 </div>
 
             </div>
             <div class="card-body" id="form-dang-tin">
-
                 <div class="row">
                     <div class="col-md-3">
                         <b class="col-form-label text-sm-right">Nhà máy:</b>
@@ -69,6 +69,7 @@
                 Biểu đồ xu hướng
                 <div style="margin-left:auto">
                     <div class="btn-group">
+
                         <button class="btn btn-primary btn-sm" id="export_report"><i class="fas fa-print"></i></button>
                     </div>
                 </div>
