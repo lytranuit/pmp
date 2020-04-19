@@ -388,6 +388,7 @@ class Dashboard extends MY_Controller
         $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by("target_id")->get_all();
 
         $results = array();
+        $charts = array();
         for ($i = 0; $i < count($target_list); $i++) {
             $target = $target_list[$i]->target;
             $area_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
@@ -405,7 +406,7 @@ class Dashboard extends MY_Controller
                     $params['department'] = $department;
 
                     // $department->params = $params;
-                    $department->data = $this->result_model->chart_datav2($params);
+                    $charts[$department->id . "_" . $target->id] = $this->result_model->chart_datav2($params);
                     $department_list[] = $department;
                 }
                 $area->department_list = $department_list;
@@ -414,7 +415,9 @@ class Dashboard extends MY_Controller
             $target->area_list = $area_list;
             $results[] = $target;
         }
-        $results = json_encode($results);
+        $this->data['charts'] = $charts;
+        $this->data['results'] = $results;
+        $results = $this->blade->view()->make('template/chart', $this->data)->render();;
         if ($is_cache) {
             // Save into the cache for 5 minutes
             $this->cache->save($encrypted_string, $results, 2592000);

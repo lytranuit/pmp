@@ -76,7 +76,7 @@
             </div>
             <div class="card-body">
                 <div class="col-md-12">
-                    <div id="target_accordion">
+                    <div id="html">
 
                     </div>
                 </div>
@@ -242,57 +242,11 @@
                     selector: selector,
                     daterange: daterange
                 },
-                dataType: "JSON"
+                dataType: "html"
             });
 
             $(".page-loader-wrapper").hide();
-            $("#target_accordion").empty();
-            for (let i = 0; i < data.length; i++) {
-                let target = data[i];
-                let target_html = $('#target_template').html();
-                let rendered = Mustache.render(target_html, target);
-                $("#target_accordion").append(rendered)
-                let area_list = target['area_list'];
-                for (let j = 0; j < area_list.length; j++) {
-                    let area = area_list[j];
-                    area['target_id'] = target['id'];
-                    let area_html = $('#area_template').html();
-                    let rendered = Mustache.render(area_html, area);
-                    $("#area_" + area['target_id'] + "_accordion").append(rendered);
-                    let department_list = area['department_list'];
-                    for (let k = 0; k < department_list.length; k++) {
-                        let department = department_list[k];
-                        department['target_id'] = target['id'];
-                        let data = department['data'];
-                        let department_html = $('#department_template').html();
-                        let rendered = Mustache.render(department_html, department);
-                        $("#area_" + area['id'] + area['target_id'] + "_body").append(rendered);
-                        let options = {
-                            // title: {
-                            //     text: 'Solar Employment Growth by Sector, 2010-2016'
-                            // },
-
-                            // subtitle: {
-                            //     text: 'Source: thesolarfoundation.com'
-                            // },
-                            legend: {
-                                layout: 'vertical',
-                                align: 'right',
-                                verticalAlign: 'middle'
-                            },
-                            exporting: {
-                                enabled: false
-                            }
-                        }
-                        options = {
-                            ...options,
-                            ...data
-                        };
-                        $('#myChart' + department['id'] + department['target_id']).highcharts(options);
-
-                    }
-                }
-            }
+            $("#html").empty().html(data);
         }
         async function drawChart() {
             if (!document.getElementById('myChart'))
