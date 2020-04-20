@@ -31,6 +31,8 @@ $(document).ready(function () {
         location.reload();
     });
     $("#form-dang-tin [name=area_id]").change(async function () {
+
+        $(".page-loader-wrapper").show();
         let value = $(this).val();
         let department = await $.ajax({
             url: path + "department/getbyparent/" + value,
@@ -42,8 +44,11 @@ $(document).ready(function () {
         })
         $("#form-dang-tin [name=department_id]").html(html);
         $("#form-dang-tin [name=department_id]").trigger("change");
+
+        $(".page-loader-wrapper").hide();
     });
     $("#form-dang-tin [name=workshop_id]").change(async function () {
+        $(".page-loader-wrapper").show();
         let value = $(this).val();
         let area = await $.ajax({
             url: path + "area/getbyparent/" + value,
@@ -56,8 +61,11 @@ $(document).ready(function () {
         $("#form-dang-tin [name=area_id]").html(html);
         if ($("#form-dang-tin [name=department_id]").length)
             $("#form-dang-tin [name=area_id]").trigger("change");
+        else
+            $(".page-loader-wrapper").hide();
     });
     $("#form-dang-tin [name=factory_id]").change(async function () {
+        $(".page-loader-wrapper").show();
         let value = $(this).val();
         let workshop = await $.ajax({
             url: path + "workshop/getbyparent/" + value,
@@ -70,6 +78,8 @@ $(document).ready(function () {
         $("#form-dang-tin [name=workshop_id]").html(html);
         if ($("#form-dang-tin [name=area_id]").length)
             $("#form-dang-tin [name=workshop_id]").trigger("change");
+        else
+            $(".page-loader-wrapper").hide();
     });
     init();
 })

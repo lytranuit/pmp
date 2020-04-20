@@ -13,6 +13,7 @@ class Position extends MY_Controller
         $version = $this->config->item("version");
         $this->data['stylesheet_tag'] = array(
             base_url() . "public/assets/css/main.css?v=" . $version,
+            base_url() . "public/assets/css/custom.css?v=" . $version,
             base_url() . "public/admin/vendor/fonts/fontawesome/css/fontawesome-all.css"
         );
         $this->data['javascript_tag'] = array(
