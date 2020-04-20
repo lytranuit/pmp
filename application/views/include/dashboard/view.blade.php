@@ -61,7 +61,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">Khu vực:</b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm" name="area_id">
                                 @foreach ($area as $area)
@@ -71,7 +71,15 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Phòng/Thiết bị/Nhân viên:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">
+                            @if($object_id == 3)
+                            Nhân viên
+                            @elseif($object_id == 10)
+                            Thiết bị
+                            @elseif($object_id == 11)
+                            Phòng
+                            @endif
+                        </b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm" name="department_id">
                                 @foreach ($department as $dep)
@@ -224,7 +232,8 @@
         // var img = canvas.toDataURL("image/png");
         // console.log(img);
         $(document).ready(function() {
-
+            $(".page-loader-wrapper").show();
+            $("[name=factory_id]").change();
             //DATE RANGE
             $("#export_report").click(function() {
                 let html_loading = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
@@ -259,7 +268,7 @@
                 console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
             });
             ///EVENT
-            $("[name=department_id],[name=target_id]").change(function() {
+            $("[name=department_id]").change(function() {
                 drawChart();
             })
             $("#the_selector,#daterange").change(function() {
@@ -290,6 +299,8 @@
                 }
             });
             async function drawChart() {
+
+                $(".page-loader-wrapper").show();
                 var department_id = $("[name=department_id]").val();
                 // var target_id = $("[name=target_id]").val();
                 let type = $(".type_data.active input").val();
@@ -337,7 +348,7 @@
 
                     $('#chart-' + target['id']).highcharts(options);
                 }
-
+                $(".page-loader-wrapper").hide();
             }
 
 

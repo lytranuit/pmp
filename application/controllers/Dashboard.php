@@ -157,26 +157,13 @@ class Dashboard extends MY_Controller
     public function view()
     {
         /////// trang ca nhan
-        $this->load->model("factory_model");
-        $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
-
-        $this->load->model("workshop_model");
-        $factory_id = isset($this->data['factory'][0]->id) ? $this->data['factory'][0]->id : 0;
-        $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $factory_id))->as_object()->get_all();
-
-        $this->load->model("area_model");
-        $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
-        $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
-
-        $this->load->model("department_model");
-        $area_id = isset($this->data['area'][0]->id) ? $this->data['area'][0]->id : 0;
-        $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $area_id))->as_object()->get_all();
-
-
-
-
-        $this->load->model("target_model");
-        $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $this->load->model("result_model");
+        $this->data['factory'] = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id))->with_factory()->group_by("factory_id")->as_object()->get_all();
+        $this->data['factory'] = array_map(function ($item) {
+            return $item->factory;
+        }, $this->data['factory']);
+        $this->data['object_id'] = $object_id;
         load_daterangepicker($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
@@ -320,7 +307,10 @@ class Dashboard extends MY_Controller
             'daterange' => $daterange
         );
         $params = input_params($params);
-
+        if (!is_numeric($department_id)) {
+            echo json_encode(array());
+            die();
+        }
         $department = $this->department_model->where(array('id' => $department_id))->as_object()->get();
         $area_id = $department->area_id;
         $params['area_id'] = $area_id;

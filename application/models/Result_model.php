@@ -94,7 +94,7 @@ class Result_model extends MY_Model
 
         $where .= " AND a.date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
 
-        $sql = "SELECT b.* FROM pmp_result as a JOIN pmp_area as b ON a.area_id = b.id JOIN pmp_position as c ON a.position_id = c.id $where GROUP BY a.area_id";
+        $sql = "SELECT b.* FROM pmp_result as a JOIN pmp_area as b ON a.area_id = b.id JOIN pmp_position as c ON a.position_id = c.id $where GROUP BY a.area_id ORDER BY b.name ASC";
 
         // echo "<pre>";
         // print_r($sql);

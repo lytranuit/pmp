@@ -127,9 +127,20 @@ class Area extends MY_Controller
 
     public function getbyparent($params)
     {
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $id = $params[0];
-        $this->load->model("area_model");
-        $data = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $id))->as_array()->get_all();
+        if (!is_numeric($id)) {
+            echo json_encode(array());
+            die();
+        }
+        $this->load->model("result_model");
+        $area_list = $this->result_model->where(array("deleted" => 0, 'workshop_id' => $id, 'object_id' => $object_id))->with_area()->group_by("area_id")->as_object()->get_all();
+        $data = array_map(function ($item) {
+            return $item->area;
+        }, $area_list);
+        usort($data, function ($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
         echo json_encode($data);
     }
     public function add()

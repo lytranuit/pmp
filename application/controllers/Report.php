@@ -127,27 +127,16 @@ class Report extends MY_Controller
 
     public function table()
     {
+
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $this->load->model("report_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
-        $where = $this->report_model;
-
+        $where = $this->report_model->where(array("deleted" => 0, 'object_id' => $object_id));
         $totalData = $where->count_rows();
         $totalFiltered = $totalData;
-
-        if (empty($this->input->post('search')['value'])) {
-            //            $max_page = ceil($totalFiltered / $limit);
-
-            $where = $this->report_model->where(array("deleted" => 0));
-        } else {
-            $search = $this->input->post('search')['value'];
-            $sWhere = "deleted = 0";
-            $where = $this->report_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
-            $totalFiltered = $where->count_rows();
-            $where = $this->report_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
-        }
-
+        $where = $this->report_model->where(array("deleted" => 0, 'object_id' => $object_id));
         $posts = $where->order_by("id", "DESC")->with_object()->with_workshop()->with_user()->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);

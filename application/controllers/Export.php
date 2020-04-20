@@ -80,16 +80,18 @@ class Export extends MY_Controller
                 $type_bc = "Hàng Quý";
                 $type_bc_en = "Quarter";
             }
-            $templateProcessor->setValue('type_bc', $type_bc);
-            $templateProcessor->setValue('type_bc_en', $type_bc_en);
             $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
             $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
             $templateProcessor->setValue('date_to', date("d/m/y", strtotime($params['date_to'])));
             $templateProcessor->setValue('date_to_prev', date("d/m/y", strtotime($params['date_to_prev'])));
+            $templateProcessor->setValue('type_bc', $type_bc);
+            $templateProcessor->setValue('type_bc_en', $type_bc_en);
             $templateProcessor->setValue('workshop_name', $workshop_name);
-            $templateProcessor->setValue('factory_name', $factory_name);
             $templateProcessor->setValue('workshop_name_en', $workshop_name_en);
-            $templateProcessor->setValue('factory_name_en', $factory_name_en);
+            $templateProcessor->setValue('type_bc_cap', mb_strtoupper($type_bc, 'UTF-8'));
+            $templateProcessor->setValue('type_bc_cap_en', mb_strtoupper($type_bc_en, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap', mb_strtoupper($workshop_name, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap_en', mb_strtoupper($workshop_name_en, 'UTF-8'));
 
 
             ////STYLE
@@ -410,8 +412,11 @@ class Export extends MY_Controller
             $area_list = array_map(function ($item) {
                 return $item->area;
             }, $area_list);
+            usort($area_list, function ($a, $b) {
+                return strcmp($a->name, $b->name);
+            });
             // echo "<pre>";
-            // print_r($params);
+            // // print_r($params);
             // print_r($area_list);
             // die();
             $file = APPPATH . '../public/upload/template/template_phong.docx';
@@ -525,6 +530,9 @@ class Export extends MY_Controller
                 $templateProcessor->setValue("target_name#" . ($key + 1), $target->name);
                 $templateProcessor->setValue("target_name_en#" . ($key + 1), $target->name_en);
                 $area_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
+                usort($area_results, function ($a, $b) {
+                    return strcmp($a->area->name, $b->area->name);
+                });
                 $department_list = array();
                 $length_area = count($area_results);
                 $templateProcessor->cloneBlock("area_block#" . ($key + 1), $length_area, true, true);
@@ -719,8 +727,12 @@ class Export extends MY_Controller
                 $templateProcessor->setValue("target_name#" . ($key + 1), $target->name);
                 $templateProcessor->setValue("target_name_en#" . ($key + 1), $target->name_en);
                 $department_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->with_area()->with_department()->group_by("department_id")->get_all();
+                usort($department_results, function ($a, $b) {
+                    return strcmp($a->area->name, $b->area->name);
+                });
                 $department_list = array();
                 $length_department = count($department_results);
+
                 // $target_list[$key]->count = $length_department;
                 $templateProcessor->cloneBlock("chart_block#" . ($key + 1), $length_department, true, true);
                 for ($key1 = 0; $key1 < $length_department; $key1++) {
@@ -782,15 +794,18 @@ class Export extends MY_Controller
             $params['object_id'] = $object_id;
             // $year = date("Y", strtotime($params['date_from']));
             ///////DATA
-            $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by("target_id")->get_all();
+            $target_list = $this->result_model->set_value_export($params)->with_target()->group_by("target_id")->get_all();
             $target_list = array_map(function ($item) {
                 return $item->target;
             }, $target_list);
 
-            $area_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_area()->group_by("area_id")->get_all();
+            $area_list = $this->result_model->set_value_export($params)->with_area()->group_by("area_id")->get_all();
             $area_list = array_map(function ($item) {
                 return $item->area;
             }, $area_list);
+            usort($area_list, function ($a, $b) {
+                return strcmp($a->name, $b->name);
+            });
             // echo "<pre>";
             // print_r($area_list);
             // die();
@@ -903,13 +918,16 @@ class Export extends MY_Controller
                 $templateProcessor->setValue("target_heading#" . ($key + 1), "5.1." . ($key + 1));
                 $templateProcessor->setValue("target_name#" . ($key + 1), $target->name);
                 $templateProcessor->setValue("target_name_en#" . ($key + 1), $target->name_en);
-                $area_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
+                $area_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
+                usort($area_results, function ($a, $b) {
+                    return strcmp($a->area->name, $b->area->name);
+                });
                 $department_list = array();
                 $length_area = count($area_results);
                 $templateProcessor->cloneBlock("area_block#" . ($key + 1), $length_area, true, true);
                 for ($key1 = 0; $key1 < $length_area; $key1++) {
                     $area = $area_results[$key1]->area;
-                    $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
+                    $department_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
                     $length_department = count($department_results);
                     $templateProcessor->setValue("area_heading#" . ($key + 1) . "#" . ($key1 + 1), "5.1." . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("area_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name));
@@ -920,7 +938,7 @@ class Export extends MY_Controller
                     $table_data = array();
                     for ($key2 = 0; $key2 < $length_department; $key2++) {
                         $department = $department_results[$key2]->department;
-                        $position_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->where(array('department_id' => $department->id))->with_position()->group_by("position_id")->get_all();
+                        $position_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->where(array('department_id' => $department->id))->with_position()->group_by("position_id")->get_all();
                         $length_position = count($position_results);
                         $list_position = array();
                         for ($key3 = 0; $key3 < $length_position; $key3++) {
@@ -1104,7 +1122,10 @@ class Export extends MY_Controller
                 $templateProcessor->setValue("target_heading#" . ($key + 1), "5.2." . ($key + 1));
                 $templateProcessor->setValue("target_name#" . ($key + 1), $target->name);
                 $templateProcessor->setValue("target_name_en#" . ($key + 1), $target->name_en);
-                $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->with_department()->group_by("department_id")->get_all();
+                $department_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->with_area()->with_department()->group_by("department_id")->get_all();
+                usort($department_results, function ($a, $b) {
+                    return strcmp($a->area->name, $b->area->name);
+                });
                 $department_list = array();
                 $length_department = count($department_results);
                 // $target_list[$key]->count = $length_department;
