@@ -303,6 +303,42 @@ class Dashboard extends MY_Controller
 
         echo json_encode($results);
     }
+    public function chartdatav3()
+    {
+
+        $this->load->model("result_model");
+        $this->load->model("limit_model");
+        $this->load->model("department_model");
+
+        $department_id = $this->input->get('department_id', TRUE);
+        $type = $this->input->get('type', TRUE);
+        $selector = $this->input->get('selector', TRUE);
+        $daterange = $this->input->get('daterange', TRUE);
+        $params = array(
+            'type' => $type,
+            'selector' => $selector,
+            'daterange' => $daterange
+        );
+        $params = input_params($params);
+
+        $department = $this->department_model->where(array('id' => $department_id))->as_object()->get();
+        $area_id = $department->area_id;
+        $params['area_id'] = $area_id;
+        $params['department_id'] = $department_id;
+        $params['department'] = $department;
+        $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('department_id' => $params['department_id'], 'deleted' => 0))->with_target()->group_by("target_id")->get_all();
+        $results = [];
+        for ($i = 0; $i < count($target_list); $i++) {
+            $target = $target_list[$i]->target;
+
+            $params['target_id'] = $target->id;
+            $data = $this->result_model->chart_datav2($params);
+            $target->data = $data;
+            $results[] = $target;
+        }
+
+        echo json_encode($results);
+    }
     public function datedata()
     {
 

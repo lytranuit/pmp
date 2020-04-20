@@ -70,7 +70,7 @@
             <ul class="vertical-nav-menu">
                 <li class="app-sidebar__heading">Tổng quan</li>
                 <li>
-                    <a href="{{base_url()}}dashboard/" class="">
+                    <a href="{{base_url()}}dashboard/view" class="">
                         <i class="metismenu-icon far fa-chart-bar"></i>
                         Biểu đồ
                     </a>

@@ -28,6 +28,38 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <b class="col-form-label text-sm-right">Thời gian:<i class="text-danger">*</i></b>
+                        <div class="pt-1">
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+
+                                <label class="btn btn-light type_data">
+                                    <input type="radio" name="options" id="option4" value="Custom"> Tùy chỉnh
+                                </label>
+                                <label class="btn btn-light type_data">
+                                    <input type="radio" name="options" id="option4" value="Month"> Tháng
+                                </label>
+
+                                <label class="btn btn-light type_data">
+                                    <input type="radio" name="options" id="option4" value="Quarter"> Quý
+                                </label>
+
+                                <label class="btn btn-light type_data">
+                                    <input type="radio" name="options" id="option4" value="HalfYear"> Nửa năm
+                                </label>
+
+                                <label class="btn btn-light type_data active">
+                                    <input type="radio" name="options" id="option5" value="Year"> Năm
+                                </label>
+                            </div>
+                            <select style="width: 200px;" class="form-control form-control-sm btn-group" id="the_selector">
+                            </select>
+                            <input type="text" id="daterange" class="form-control form-control-sm btn-group" style="width: 200px;" />
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-3">
                         <b class="col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
                         <div class="pt-1">
@@ -48,18 +80,7 @@
                             </select>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Phương pháp:<i class="text-danger">*</i></b>
-                        <div class="pt-1">
-                            <select class="form-control form-control-sm" name="target_id">
-                                @foreach ($target as $row)
-                                <option value="{{$row->id}}">{{$row->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -70,46 +91,34 @@
                     <div class="btn-group">
                         <button class="btn btn-primary btn-sm" id="export_report"><i class="fas fa-print"></i></button>
                     </div>
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-
-                        <label class="btn btn-light type_data">
-                            <input type="radio" name="options" id="option4" value="Custom"> Tùy chỉnh
-                        </label>
-                        <label class="btn btn-light type_data">
-                            <input type="radio" name="options" id="option4" value="Month"> Tháng
-                        </label>
-
-                        <label class="btn btn-light type_data">
-                            <input type="radio" name="options" id="option4" value="Quarter"> Quý
-                        </label>
-
-                        <label class="btn btn-light type_data">
-                            <input type="radio" name="options" id="option4" value="HalfYear"> Nửa năm
-                        </label>
-
-                        <label class="btn btn-light type_data active">
-                            <input type="radio" name="options" id="option5" value="Year"> Năm
-                        </label>
-                    </div>
-                    <select style="width: 200px;" class="form-control form-control-sm btn-group" id="the_selector">
-                    </select>
-                    <input type="text" id="daterange" class="form-control form-control-sm btn-group" style="width: 200px;" />
 
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body" id="chart_template">
                 <!-- <div class="chart-container" class="d-none">
                     <canvas id="myChart" height="80vh"></canvas>
                 </div> -->
-                <div class="chart-container">
-                    <div id="chart-id">
-                    </div>
-                    <canvas id="chart-canvas"></canvas>
-                </div>
             </div>
         </div>
     </div>
 
+    <script id="target_html" type="x-tmpl-mustache">
+        <div class="card">
+            <div id="target_<?= '{{id}}' ?>" class="card-header">
+                <button type="button" data-toggle="collapse" data-target="#collapse<?= '{{id}}' ?>" aria-expanded="true" class="text-left m-0 p-0 btn btn-link btn-block">
+                <?= '{{name}}' ?>
+                </button>
+            </div>
+            <div data-parent="#chart_template" id="collapse<?= '{{id}}' ?>" aria-labelledby="target_<?= '{{id}}' ?>" class="collapse">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <div id="chart-<?= '{{id}}' ?>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
     <script type="text/javascript">
         var date_from = moment();
         var date_to = moment();
@@ -281,71 +290,58 @@
                 }
             });
             async function drawChart() {
-                $("#chart-id").remove();
-                $(".chart-container").prepend("<div id='chart-id'></div>");
                 var department_id = $("[name=department_id]").val();
-                var target_id = $("[name=target_id]").val();
+                // var target_id = $("[name=target_id]").val();
                 let type = $(".type_data.active input").val();
                 let selector = $("#the_selector").val();
                 let daterange = $("#daterange").val();
-                var data = await $.ajax({
-                    url: path + 'dashboard/chartdatav2',
+                $("#chart_template").empty();
+                var all_target = await $.ajax({
+                    url: path + 'dashboard/chartdatav3',
                     data: {
                         department_id: department_id,
-                        target_id: target_id,
+                        // target_id: target_id,
                         type: type,
                         selector: selector,
                         daterange: daterange
                     },
                     dataType: "JSON"
                 });
-                let options = {
-                    // title: {
-                    //     text: 'Solar Employment Growth by Sector, 2010-2016'
-                    // },
+                for (target of all_target) {
+                    let data = target['data'];
+                    let target_html = $('#target_html').html();
 
-                    // subtitle: {
-                    //     text: 'Source: thesolarfoundation.com'
-                    // },
-                    legend: {
-                        layout: 'vertical',
-                        align: 'right',
-                        verticalAlign: 'middle'
-                    },
-                    exporting: {
-                        enabled: false
+                    let rendered = Mustache.render(target_html, target);
+                    $("#chart_template").append(rendered);
+                    let options = {
+                        // title: {
+                        //     text: 'Solar Employment Growth by Sector, 2010-2016'
+                        // },
+
+                        // subtitle: {
+                        //     text: 'Source: thesolarfoundation.com'
+                        // },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'right',
+                            verticalAlign: 'middle'
+                        },
+                        exporting: {
+                            enabled: false
+                        }
                     }
+                    options = {
+                        ...options,
+                        ...data
+                    };
+
+                    $('#chart-' + target['id']).highcharts(options);
                 }
-                options = {
-                    ...options,
-                    ...data
-                };
 
-                $('#chart-id').highcharts(options);
-            }
-            async function drawChartOld() {
-                var department_id = $("[name=department_id]").val();
-                var target_id = $("[name=target_id]").val();
-                let type = $(".type_data.active input").val();
-                let selector = $("#the_selector").val();
-                let daterange = $("#daterange").val();
-                var data = await $.ajax({
-                    url: path + 'dashboard/chartdata',
-                    data: {
-                        department_id: department_id,
-                        target_id: target_id,
-                        type: type,
-                        selector: selector,
-                        daterange: daterange
-                    },
-                    dataType: "JSON"
-                });
-                // data['lineAtIndex'] = 5
-                chart.data = data;
-                chart.update();
             }
 
 
+            ///////
             $(".type_data.active").trigger("click");
         });
     </script>
