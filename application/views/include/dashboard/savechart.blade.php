@@ -68,6 +68,9 @@
                         // subtitle: {
                         //     text: 'Source: thesolarfoundation.com'
                         // },
+                        credits: {
+                            enabled: false
+                        },
                         legend: {
                             layout: 'vertical',
                             align: 'right',
