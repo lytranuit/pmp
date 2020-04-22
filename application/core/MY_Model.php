@@ -555,6 +555,7 @@ class MY_Model extends CI_Model {
             //exit;
             $this->_database->{$where_or . $not . '_in'}($this->table . '.' . $field_or_array, $operator_or_value);
         } elseif (isset($field_or_array) && isset($operator_or_value) && isset($value)) {
+            
             if (strtolower($operator_or_value) == 'like') {
                 if ($with_not === TRUE) {
                     $like = 'not_like';
@@ -566,6 +567,10 @@ class MY_Model extends CI_Model {
                 }
 
                 $this->_database->{$like}($field_or_array, $value);
+            } elseif (strtolower($operator_or_value) == 'in') {
+                $operator = 'where_in';
+                // print_r($operator);die();
+                $this->_database->{$operator}($field_or_array, $value);
             } else {
                 $this->_database->{$where_or}($field_or_array . ' ' . $operator_or_value, $value);
             }

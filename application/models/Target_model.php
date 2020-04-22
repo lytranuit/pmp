@@ -11,12 +11,13 @@ class Target_model extends MY_Model
         $this->table = 'pmp_target';
         $this->primary_key = 'id';
         parent::__construct();
+        $this->has_one['parent'] = array('foreign_model' => 'Target_model', 'foreign_table' => 'pmp_target', 'foreign_key' => 'id', 'local_key' => 'parent_id');
     }
 
     function create_object($data)
     {
         $array = array(
-            'name', 'name_en', 'deleted'
+            'name', 'name_en', 'parent_id', 'unit', 'deleted'
         );
         $obj = array();
         foreach ($array as $key) {

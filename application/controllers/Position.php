@@ -130,7 +130,7 @@ class Position extends MY_Controller
     {
         $id = $params[0];
         $this->load->model("position_model");
-        $json_data = $this->position_model->where(array('id' => $id))->with_department()->with_target()->as_object()->get();
+        $json_data = $this->position_model->where(array('id' => $id))->with_factory()->with_workshop()->with_area()->with_department()->with_target()->as_object()->get();
         echo json_encode($json_data);
     }
 

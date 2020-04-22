@@ -158,11 +158,19 @@ class Dashboard extends MY_Controller
     {
         /////// trang ca nhan
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
-        $this->load->model("result_model");
-        $this->data['factory'] = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id))->with_factory()->group_by("factory_id")->as_object()->get_all();
-        $this->data['factory'] = array_map(function ($item) {
-            return $item->factory;
-        }, $this->data['factory']);
+        if ($object_id == 3) {
+            $this->load->model("employeeresult_model");
+            $this->data['factory'] = $this->employeeresult_model->where(array('deleted' => 0))->with_factory()->group_by("factory_id")->as_object()->get_all();
+            $this->data['factory'] = array_map(function ($item) {
+                return $item->factory;
+            }, $this->data['factory']);
+        } else {
+            $this->load->model("result_model");
+            $this->data['factory'] = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id))->with_factory()->group_by("factory_id")->as_object()->get_all();
+            $this->data['factory'] = array_map(function ($item) {
+                return $item->factory;
+            }, $this->data['factory']);
+        }
         $this->data['object_id'] = $object_id;
         load_daterangepicker($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
@@ -172,6 +180,7 @@ class Dashboard extends MY_Controller
     {
         $this->load->model("report_model");
         $this->load->model("workshop_model");
+        $this->load->model("employeeresult_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
 
@@ -200,104 +209,66 @@ class Dashboard extends MY_Controller
             'workshop_id' => $workshop_id
         );
         $params = input_params($params);
+        $params['object_id'] = $object_id;
         $this->data['params'] = $params;
 
-        $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by("target_id")->get_all();
-        $results = array();
-        for ($i = 0; $i < count($target_list); $i++) {
-            $target = $target_list[$i]->target;
-            $area_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
-            $area_list = array();
-            for ($j = 0; $j < count($area_results); $j++) {
-                $area = $area_results[$j]->area;
+        if ($this->data['object_id'] == 3) {
+            $department_list = $this->employeeresult_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0))->with_employee()->group_by(array("employee_id", "area_id"))->get_all();
+            foreach ($department_list as $row) {
+                $employee = $row->employee;
+                $area_id = $row->area_id;
+                $target_id = $row->target_id;
+                $params['area_id'] = $area_id;
+                $params['employee_id'] = $employee->id;
+                $params['target_id'] = $target_id;
+                $title = "Biểu đồ xu hướng vi sinh nhân viên $employee->name ($employee->string_id)";
+                $subtitle = "Trend chart of microbiological monitoring of Personnel $employee->name ($employee->string_id)";
 
-                $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
-                $department_list = array();
-                for ($k = 0; $k < count($department_results); $k++) {
-                    $department = $department_results[$k]->department;
-                    $params['department_id'] = $department->id;
-                    $params['target_id'] = $target->id;
-                    $params['area_id'] = $area->id;
-                    $params['department'] = $department;
-                    $department->data = $this->result_model->chart_datav2($params);
-                    $department_list[] = $department;
-                }
-                $area->department_list = $department_list;
-                $area_list[] = $area;
+                $params['title'] = $title;
+                $params['subtitle'] = $subtitle;
+                $data = $this->employeeresult_model->chart_datav2($params);
+                $row->department = $employee;
+                $row->data = $data;
+                $results[] = $row;
             }
-            $target->area_list = $area_list;
-            $results[] = $target;
+        } else {
+            $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
+            foreach ($department_list as $row) {
+                $department = $row->department;
+                $area_id = $department->area_id;
+                $target = $row->target;
+                $params['area_id'] = $area_id;
+                $params['department_id'] = $department->id;
+                $params['target_id'] = $target->id;
+                $title = "Trend chart of microbiological monitoring";
+                $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
+
+                $params['title'] = $title;
+                $params['subtitle'] = $subtitle;
+                $data = $this->result_model->chart_datav2($params);
+
+                $row->data = $data;
+                $results[] = $row;
+            }
         }
+
+        // echo "<pre>";
+        // print_r($results);
+        // die();
         $this->data['results'] = $results;
         echo $this->blade->view()->make('page/page', $this->data)->render();
-    }
-
-    public function chartdata()
-    {
-
-        $this->load->model("result_model");
-        $this->load->model("limit_model");
-        $this->load->model("department_model");
-
-        $department_id = $this->input->get('department_id', TRUE);
-        $target_id = $this->input->get('target_id', TRUE);
-        $type = $this->input->get('type', TRUE);
-        $selector = $this->input->get('selector', TRUE);
-        $daterange = $this->input->get('daterange', TRUE);
-        $params = array(
-            'type' => $type,
-            'selector' => $selector,
-            'daterange' => $daterange
-        );
-        $params = input_params($params);
-
-        $department = $this->department_model->where(array('id' => $department_id))->as_object()->get();
-        $area_id = $department->area_id;
-        $params['area_id'] = $area_id;
-        $params['department_id'] = $department_id;
-        $params['target_id'] = $target_id;
-
-        $results = $this->result_model->chart_data($params);
-
-        echo json_encode($results);
-    }
-    public function chartdatav2()
-    {
-
-        $this->load->model("result_model");
-        $this->load->model("limit_model");
-        $this->load->model("department_model");
-
-        $department_id = $this->input->get('department_id', TRUE);
-        $target_id = $this->input->get('target_id', TRUE);
-        $type = $this->input->get('type', TRUE);
-        $selector = $this->input->get('selector', TRUE);
-        $daterange = $this->input->get('daterange', TRUE);
-        $params = array(
-            'type' => $type,
-            'selector' => $selector,
-            'daterange' => $daterange
-        );
-        $params = input_params($params);
-
-        $department = $this->department_model->where(array('id' => $department_id))->as_object()->get();
-        $area_id = $department->area_id;
-        $params['area_id'] = $area_id;
-        $params['department_id'] = $department_id;
-        $params['target_id'] = $target_id;
-        $params['department'] = $department;
-        $results = $this->result_model->chart_datav2($params);
-
-        echo json_encode($results);
     }
     public function chartdatav3()
     {
 
+        $this->load->model("employeeresult_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
+        $this->load->model("employee_model");
         $this->load->model("department_model");
 
         $department_id = $this->input->get('department_id', TRUE);
+        $area_id = $this->input->get('area_id', TRUE);
         $type = $this->input->get('type', TRUE);
         $selector = $this->input->get('selector', TRUE);
         $daterange = $this->input->get('daterange', TRUE);
@@ -311,18 +282,46 @@ class Dashboard extends MY_Controller
             echo json_encode(array());
             die();
         }
-        $department = $this->department_model->where(array('id' => $department_id))->as_object()->get();
-        $area_id = $department->area_id;
+        if ($this->data['object_id'] == 3) {
+            $department = $this->employee_model->where(array('id' => $department_id))->as_object()->get();
+            $params['employee_id'] = $department_id;
+        } else {
+            $department = $this->department_model->where(array('id' => $department_id))->as_object()->get();
+            $params['department_id'] = $department_id;
+        }
+        // echo "<pre>";
+        // print_r($department);
+        // die();
+        // $area_id = $department->area_id;
         $params['area_id'] = $area_id;
-        $params['department_id'] = $department_id;
-        $params['department'] = $department;
-        $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('department_id' => $params['department_id'], 'deleted' => 0))->with_target()->group_by("target_id")->get_all();
+
+        $title = "";
+        $subtitle = "";
+        if ($this->data['object_id'] == 3) {
+            $target_list = $this->employeeresult_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('employee_id' => $department_id, 'deleted' => 0))->with_target()->group_by("target_id")->get_all();
+        } else {
+            $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('department_id' => $department_id, 'deleted' => 0))->with_target()->group_by("target_id")->get_all();
+        }
         $results = [];
+
         for ($i = 0; $i < count($target_list); $i++) {
             $target = $target_list[$i]->target;
-
             $params['target_id'] = $target->id;
-            $data = $this->result_model->chart_datav2($params);
+            if ($this->data['object_id'] == 3) {
+                $title = "Biểu đồ xu hướng vi sinh nhân viên $department->name ($department->string_id)";
+                $subtitle = "Trend chart of microbiological monitoring of Personnel $department->name ($department->string_id)";
+            } else {
+                $title = "Trend chart of microbiological monitoring";
+                $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
+            }
+            $params['title'] = $title;
+            $params['subtitle'] = $subtitle;
+            // if()
+            if ($this->data['object_id'] == 3) {
+                $data = $this->employeeresult_model->chart_datav2($params);
+            } else {
+                $data = $this->result_model->chart_datav2($params);
+            }
             $target->data = $data;
             $results[] = $target;
         }
@@ -331,145 +330,89 @@ class Dashboard extends MY_Controller
     }
     public function datedata()
     {
-
         $type = $this->input->get('type', TRUE);
-        $this->load->model("result_model");
-        $data = $this->result_model->get_date_has_data($type);
+        if ($this->data['object_id'] == 3) {
+            $this->load->model("employeeresult_model");
+            $data = $this->employeeresult_model->get_date_has_data($type);
+        } else {
+            $this->load->model("result_model");
+            $data = $this->result_model->get_date_has_data($type);
+        }
+
         echo json_encode($data);
     }
 
-    function printyear()
+
+    function getworkshop($params)
     {
-        //          echo "<pre>";
-        //        print_r($tin);
-        //        die();
-        //            PRINT BILL
-        // boost the memory limit if it's low ;)
-        ini_set('memory_limit', '256M');
-        // load library
-        $this->load->library('pdf');
-        $pdf = $this->pdf->load();
-        // retrieve data from model
-        //        $this->data['cart'] = $tin;
-        $pdf->allow_charset_conversion = true;  // Set by default to TRUE
-        $pdf->charset_in = 'UTF-8';
-        //   $pdf->SetDirectionality('rtl');
-        $pdf->autoLangToFont = true;
-
-        $header = $this->blade->view()->make('pdf/header', $this->data)->render();
-        //        print_r($header);
-        //        die();
-        $pdf->SetHTMLHeader($header);
-        $footer = $this->blade->view()->make('pdf/footer', $this->data)->render();
-        $pdf->SetHTMLFooter($footer);
-        //        echo $html;die();
-        // render the view into HTML
-        $html = $this->blade->view()->make('pdf/year', $this->data)->render();
-        $pdf->WriteHTML($html);
-        // write the HTML into the PDF
-        $output = 'itemreport' . date('Y_m_d_H_i_s') . '_.pdf';
-        $pdf->Output("$output", 'I');
-        // save to file because we can exit();
-        // - See more at: http://webeasystep.com/blog/view_article/codeigniter_tutorial_pdf_to_create_your_reports#sthash.QFCyVGLu.dpuf
-    }
-
-    function getalldatachart()
-    {
-
-        $this->load->model("workshop_model");
-        $this->load->model("result_model");
-        $this->load->model("limit_model");
-
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
-        $is_cache = true;
-        $workshop_id = $this->input->get('workshop_id', TRUE);
-        $type = $this->input->get('type', TRUE);
-        $selector = $this->input->get('selector', TRUE);
-        $daterange = $this->input->get('daterange', TRUE);
-        if ($type == "Custom") {
-            $selector = $daterange;
+        $id = $params[0];
+        if ($object_id == 3) {
+            $this->load->model("employeeResult_model");
+            $data = $this->employeeResult_model->where(array('deleted' => 0, 'factory_id' => $id))->with_workshop()->group_by("workshop_id")->as_object()->get_all();
+            $data = array_map(function ($item) {
+                return $item->workshop;
+            }, $data);
+        } else {
+            $this->load->model("result_model");
+            $data = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id, 'factory_id' => $id))->with_workshop()->group_by("workshop_id")->as_object()->get_all();
+            $data = array_map(function ($item) {
+                return $item->workshop;
+            }, $data);
         }
-        $params_cache = array(
-            'object_id' => $object_id,
-            'workshop_id' => $workshop_id,
-            'type' => $type,
-            'selector' => $selector
-        );
-
-        $encrypted_string = md5(json_encode($params_cache));
-        $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
-        if (!$is_cache)
-            $this->cache->clean();
-        ////CHECK CACHE 
-        $results = $this->cache->get($encrypted_string);
-        if (!empty($results)) {
-            goto end;
-        }
-        $params = array(
-            'type' => $type,
-            'selector' => $selector,
-            'daterange' => $daterange
-        );
-        $params = input_params($params);
-        $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by("target_id")->get_all();
-
-        $results = array();
-        $charts = array();
-        for ($i = 0; $i < count($target_list); $i++) {
-            $target = $target_list[$i]->target;
-            $area_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
-            $area_list = array();
-            for ($j = 0; $j < count($area_results); $j++) {
-                $area = $area_results[$j]->area;
-
-                $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('target_id' => $target->id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
-                $department_list = array();
-                for ($k = 0; $k < count($department_results); $k++) {
-                    $department = $department_results[$k]->department;
-                    $params['department_id'] = $department->id;
-                    $params['target_id'] = $target->id;
-                    $params['area_id'] = $area->id;
-                    $params['department'] = $department;
-
-                    // $department->params = $params;
-                    $charts[$department->id . "_" . $target->id] = $this->result_model->chart_datav2($params);
-                    $department_list[] = $department;
-                }
-                $area->department_list = $department_list;
-                $area_list[] = $area;
-            }
-            $target->area_list = $area_list;
-            $results[] = $target;
-        }
-        $this->data['charts'] = $charts;
-        $this->data['results'] = $results;
-        $results = $this->blade->view()->make('template/chart', $this->data)->render();;
-        if ($is_cache) {
-            // Save into the cache for 5 minutes
-            $this->cache->save($encrypted_string, $results, 2592000);
-        }
-
-        end: echo $results;
+        usort($data, function ($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
+        echo json_encode($data);
     }
-    function cleancache()
+    function getarea($params)
     {
-        $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
-        $this->cache->clean();
-        echo 1;
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $id = $params[0];
+        if ($object_id == 3) {
+            $this->load->model("employeeResult_model");
+            $data = $this->employeeResult_model->where(array('deleted' => 0, 'workshop_id' => $id))->with_area()->group_by("area_id")->as_object()->get_all();
+            $data = array_map(function ($item) {
+                return $item->area;
+            }, $data);
+        } else {
+            $this->load->model("result_model");
+            $data = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id, 'workshop_id' => $id))->with_area()->group_by("area_id")->as_object()->get_all();
+            $data = array_map(function ($item) {
+                return $item->area;
+            }, $data);
+        }
+        usort($data, function ($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
+        echo json_encode($data);
     }
-
-    // function test()
-    // {
-    //     $this->load->model("result_model");
-    //     $params = array(
-    //         'type' => "Quarter",
-    //         'date_from' => '2019-01-01',
-    //         'date_to' => '2019-12-31',
-    //         'workshop_id' => 4,
-    //         'object_id' => 11
-    //     );
-    //     $reports = $this->result_model->set_value_export($params);
-    //     $data = $reports->with_area()->with_department()->group_by("department_id")->get_all();
-    //     echo json_encode($data);
-    // }
+    function getdepartment($params)
+    {
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $id = $params[0];
+        if ($object_id == 3) {
+            $this->load->model("employeeResult_model");
+            $data = $this->employeeResult_model->where(array('deleted' => 0, 'area_id' => $id))->with_employee()->group_by("employee_id")->as_object()->get_all();
+            $data = array_map(function ($item) {
+                return $item->employee;
+            }, $data);
+        } else {
+            $this->load->model("result_model");
+            $data = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id, 'area_id' => $id))->with_department()->group_by("department_id")->as_object()->get_all();
+            $data = array_map(function ($item) {
+                return $item->department;
+            }, $data);
+        }
+        usort($data, function ($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
+        echo json_encode($data);
+    }
+    function test()
+    {
+        $this->load->model("employeeResult_model");
+        $data = $this->employeeResult_model->where('id', 'IN', array(5, 6))->get_all();
+        echo json_encode($data);
+    }
 }

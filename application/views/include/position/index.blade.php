@@ -13,7 +13,7 @@
                         <tr>
                             <th>Mã vị trí</th>
                             <th>Tên vị trí</th>
-                            <th>Phòng/Thiết bị/Nhân viên</th>
+                            <th>Phòng/Thiết bị</th>
                             <th>Khu vực</th>
                             <th>Xưởng</th>
                             <th>Nhà máy</th>

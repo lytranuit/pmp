@@ -134,15 +134,9 @@ class Workshop extends MY_Controller
             echo json_encode(array());
             die();
         }
-        $this->load->model("result_model");
-        $list = $this->result_model->where(array("deleted" => 0, 'factory_id' => $id, 'object_id' => $object_id))->with_workshop()->group_by("workshop_id")->as_object()->get_all();
-        $data = array_map(function ($item) {
-            return $item->workshop;
-        }, $list);
-
-        usort($data, function ($a, $b) {
-            return strcmp($a->name, $b->name);
-        });
+        
+        $this->load->model("workshop_model");
+        $data = $this->workshop_model->where(array("deleted" => 0, 'factory_id' => $id))->as_object()->get_all();
         echo json_encode($data);
     }
     public function add()

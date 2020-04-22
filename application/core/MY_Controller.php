@@ -48,6 +48,8 @@ class MY_Controller extends CI_Controller
             $this->data['title'] = "";
         }
 
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $this->data['object_id'] = $object_id;
         $this->data['host'] = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         //        print_r($this->data['template']);
     }

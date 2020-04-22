@@ -11,7 +11,6 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12">
-
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
@@ -21,7 +20,23 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên tiếng anh:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="name_en" required="" />
+                                    <input class="form-control" type='text' name="name_en" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Đơn vị tính:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='text' name="unit" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Chỉ tiêu phụ:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select name="targets[]" style="width: 500px;" multiple="">
+                                        @foreach($targets as $target)
+                                        <option value="{{$target->id}}">{{$target->name}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -36,7 +51,7 @@
 
         var tin = <?= json_encode($tin) ?>;
         fillForm($("#form-dang-tin"), tin);
-
+        $("select[multiple]").chosen();
         $.validator.setDefaults({
             debug: true,
             success: "valid"

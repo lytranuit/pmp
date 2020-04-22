@@ -24,7 +24,7 @@ class Result_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'deleted', 'stt_in_day', 'target_id', 'object_id', 'position_id', 'department_id', 'area_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
+            'deleted', 'user_id', 'stt_in_day', 'target_id', 'object_id', 'position_id', 'department_id', 'area_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
         );
         $obj = array();
         foreach ($array as $key) {
@@ -41,19 +41,37 @@ class Result_model extends MY_Model
     }
     function get_date_has_data($type)
     {
+
         if ($type == "Year") {
-            $sql = "select YEAR(pmp_result.date) as value from pmp_result where deleted = 0 GROUP BY YEAR(pmp_result.date) ORDER BY date DESC";
+            $sql = "select YEAR(date) as value from pmp_result where deleted = 0 GROUP BY YEAR(date) ORDER BY date DESC";
         } else if ($type == "HalfYear") {
-            $sql = "select CONCAT(YEAR(pmp_result.date),'-',FLOOR(QUARTER(DATE) / 3) + 1) as value from pmp_result where deleted = 0 GROUP BY CONCAT(YEAR(pmp_result.date),'-',FLOOR(QUARTER(DATE) / 3) + 1) ORDER BY date DESC";
+            $sql = "select CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) as value from pmp_result where deleted = 0 GROUP BY CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) ORDER BY date DESC";
         } else if ($type == "Quarter") {
-            $sql = "select CONCAT(YEAR(pmp_result.date),'-',QUARTER(pmp_result.date)) as value from pmp_result where deleted = 0 GROUP BY CONCAT(YEAR(pmp_result.date),'-',QUARTER(pmp_result.date)) ORDER BY date DESC";
+            $sql = "select CONCAT(YEAR(date),'-',QUARTER(date)) as value from pmp_result where deleted = 0 GROUP BY CONCAT(YEAR(date),'-',QUARTER(date)) ORDER BY date DESC";
         } else if ($type == "Month") {
-            $sql = "select DATE_FORMAT(pmp_result.date,'%Y-%m') as value from pmp_result where deleted = 0 GROUP BY DATE_FORMAT(pmp_result.date,'%Y-%m') ORDER BY date DESC";
+            $sql = "select DATE_FORMAT(date,'%Y-%m') as value from pmp_result where deleted = 0 GROUP BY DATE_FORMAT(date,'%Y-%m') ORDER BY date DESC";
         } else {
             return array();
         }
         $query = $this->db->query($sql);
         $result = $query->result_array();
+        return $result;
+    }
+    function chartdataEmployee($params)
+    {
+        $where = "WHERE a.deleted = 0 and a.area_id = " . $this->db->escape($params['area_id']) . " and a.employee_id = " . $this->db->escape($params['employee_id']) . " and a.target_id = " . $this->db->escape($params['target_id']) . "";
+        if ($params['date_from_prev'] != "") {
+            $where .= " AND a.date between '" . $params['date_from_prev'] . "' and '" . $params['date_to'] . "'";
+        } else {
+            $where .= " AND a.date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
+        }
+        $sql = "SELECT a.*,b.string_id as position_string_id FROM pmp_employee_result as a JOIN pmp_employee as b ON a.employee_id = b.id $where ORDER BY a.date ASC";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result();
         return $result;
     }
     function chartdata($params)
@@ -73,7 +91,6 @@ class Result_model extends MY_Model
         $result = $query->result();
         return $result;
     }
-
     function chartdata_limit($params)
     {
 
@@ -119,91 +136,12 @@ class Result_model extends MY_Model
         return $result;
     }
 
-    function chart_data($params)
-    {
-        $results = array('labels' => array(), 'datasets' => array());
-        $data = $this->chartdata($params);
-        $data_limit = $this->chartdata_limit($params);
-        // echo "<pre>";
-        // print_r($data_limit);
-        // die();
-        $labels = array();
-        // $labels[] = array()
-        $position_list = array();
-        $datatmp = array();
-        $datasets = array();
-        $datasets[] = array(
-            'backgroundColor' => 'red',
-            'borderColor' => 'red',
-            'label' => "Action Limit",
-            'data' => array(),
-            'pointRadius' => 0,
-            'fill' => 'false'
-        );
-        $datasets[] = array(
-            'backgroundColor' => 'orange',
-            'borderColor' => 'orange',
-            'label' => "Alert Limit",
-            'data' => array(),
-            'pointRadius' => 0,
-            'fill' => 'false'
-        );
-        // echo "<pre>";
-        // print_r($params);
-        // die();
-        $lineAtIndex = null;
-        foreach ($data as $row) {
-            $date = $row->date;
-            $position = $row->position_string_id;
-            $value = $row->value;
-            if (!in_array($date, $labels)) {
-                $labels[] = $date;
-                ///CHECK MỐC 
-                if ($lineAtIndex === null && $params['date_from_prev'] != "" && $date >= $params['date_from']) {
-                    $lineAtIndex = count($labels) - 1;
-                }
-            }
-            if (!in_array($position, $position_list)) {
-                $position_list[] = $position;
-                $color = getRandomColor();
-                $datasets[] = array(
-                    'backgroundColor' => $color,
-                    'borderColor' => $color,
-                    'label' => $position,
-                    'data' => array(),
-                    'fill' => 'false'
-                );
-            }
-            $datatmp[$date][$position] = $value;
-        }
-        foreach ($labels as $date) {
-            foreach ($datasets as &$position) {
-                $position_string_id = $position['label'];
-                $value = isset($datatmp[$date][$position_string_id]) ? $datatmp[$date][$position_string_id] : 0;
-                if ($position_string_id == "Action Limit") {
-                    $value = isset($data_limit['action_limit']) ? $data_limit['action_limit'] : 0;
-                } else if ($position_string_id == "Alert Limit") {
-                    $value = isset($data_limit['alert_limit']) ? $data_limit['alert_limit'] : 0;
-                }
-                $position['data'][] = $value;
-                //                $index = array_search($position_string_id, $position_list);
-            }
-        }
-        $results = array(
-            'labels' => $labels,
-            'datasets' => $datasets,
-            'lineAtIndex' => $lineAtIndex
-        );
-        return $results;
-    }
     function chart_datav2($params)
     {
         $this->load->model("target_model");
         $results = array('labels' => array(), 'datasets' => array());
         $data = $this->chartdata($params);
         $data_limit = $this->chartdata_limit($params);
-        $target = $this->target_model->where("id", $params['target_id'])->get();
-        $department = $params['department'];
         // echo "<pre>";
         // print_r($data_limit);
         // die();
@@ -233,31 +171,28 @@ class Result_model extends MY_Model
         // print_r($params);
         // die();
         $lineAtIndex = null;
-        foreach ($data as $row) {
+        foreach ($data as $key => $row) {
             $date = date("d/m/Y", strtotime($row->date));
             $position = $row->position_string_id;
             $value = $row->value;
-            if (!in_array($date, $labels)) {
-                $labels[] = $date;
-                ///CHECK MỐC 
-                if ($lineAtIndex === null && $params['date_from_prev'] != "" && $row->date >= $params['date_from']) {
-                    $lineAtIndex = count($labels) - 1;
-                }
+            ///CHECK MỐC 
+            if ($lineAtIndex === null && $params['date_from_prev'] != "" && $row->date >= $params['date_from']) {
+                $lineAtIndex = count($labels) - 1;
             }
             if (!in_array($position, $position_list)) {
                 $position_list[] = $position;
-                $color = getRandomColor();
                 $datasets[] = array(
                     'name' => $position,
                     'data' => array(),
                 );
             }
-            $datatmp[$date][$position] = $value;
+            $labels[] = $date;
+            $datatmp[$key][$position] = $value;
         }
-        foreach ($labels as $date) {
+        foreach ($labels as $key => $date) {
             foreach ($datasets as &$position) {
                 $position_string_id = $position['name'];
-                $value = isset($datatmp[$date][$position_string_id]) ? (float) $datatmp[$date][$position_string_id] : 0;
+                $value = isset($datatmp[$key][$position_string_id]) ? (float) $datatmp[$key][$position_string_id] : 0;
                 if ($position_string_id == "Action Limit") {
                     $limit = array_values(array_filter($data_limit, function ($item) use ($date) {
                         $list = explode("/", $date);
@@ -280,23 +215,9 @@ class Result_model extends MY_Model
                 //                $index = array_search($position_string_id, $position_list);
             }
         }
-        $title = $department->name;
-        $subtitle = "";
         $yAxis_title = "CFU/Plate";
-        if ($department->type == 3) {
-            $list = explode("_", $department->string_id);
-            $id = $list[1];
-            $title = $department->name . " / " . $id;
-            $title = "Biểu đồ xu hướng vi sinh nhân viên $department->name ($id)";
-            $subtitle = "Trend chart of microbiological monitoring of Personnel  $department->name ($id)";
-        } else if ($department->type == 2) {
-            $title = "Trend chart of microbiological monitoring";
-            $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
-        } else if ($department->type == 1) {
-            $title = "Trend chart of microbiological monitoring";
-            $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
-        }
-
+        $title = $params['title'];
+        $subtitle = $params['subtitle'];
         $results = array(
             'title' => array('text' => $title),
             'subtitle' => array('text' => $subtitle, 'style' => array("fontSize" => 18)),

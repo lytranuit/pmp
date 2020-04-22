@@ -31,6 +31,9 @@ class Export extends MY_Controller
         //        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
         //        $object_name = isset($_COOKIE['SELECT_NAME']) ? $_COOKIE['SELECT_NAME'] : "";
         if ($object_id == 3) {
+
+            $this->load->model("employee_model");
+            $this->load->model("employeeresult_model");
             $object = $this->object_model->where(array('id' => $object_id))->as_object()->get();
             $workshop_id = $record->workshop_id;
 
@@ -52,14 +55,30 @@ class Export extends MY_Controller
             $params['workshop_id'] = $workshop_id;
             $params['object_id'] = $object_id;
             ///////DATA
-            $area_all = $this->result_model->area_export($params);
-            $nhanvien_all = $this->result_model->nhanvien_export($params);
-            foreach ($area_all as &$row) {
-                $new_array = array_values(array_filter($nhanvien_all, function ($obj) use ($row) {
-                    return $obj->area_id == $row->id;
-                }));
-                $row->nhanvien = $new_array;
-            }
+            $area_list = $this->employeeresult_model->set_value_export($params)->with_area()->group_by("area_id")->get_all();
+            $area_all = array_map(function ($item) use ($params) {
+                $nhanvien = $this->employeeresult_model->set_value_export($params)->where(array('area_id' => $item->area_id))->with_employee()->group_by("employee_id")->get_all();
+                $nhanvien =  array_map(function ($item) {
+                    return $item->employee;
+                }, $nhanvien);
+                $item->area->nhanvien = $nhanvien;
+                return $item->area;
+            }, $area_list);
+            usort($area_all, function ($a, $b) {
+                return strcmp($a->name, $b->name);
+            });
+
+            // $area_all = $this->employeeresult_model->area_export($params);
+            // $nhanvien_all = $this->employeeresult_model->set_value_export($params)->with_employee()->group_by("employee_id")->get_all();
+            // $nhanvien_all = array_map(function ($item) {
+            //     return $item->employee;
+            // }, $nhanvien_all);
+            // foreach ($area_all as &$row) {
+            //     $new_array = array_values(array_filter($nhanvien_all, function ($obj) use ($row) {
+            //         return $obj->area_id == $row->id;
+            //     }));
+            //     $row->nhanvien = $new_array;
+            // }
             // echo "<pre>";
             // print_r($area_all);
             // die();
@@ -106,29 +125,29 @@ class Export extends MY_Controller
             $cellVCentered = array('valign' => 'center');
             ////TABLE VITRI
 
-            $table = new Table(array('borderSize' => 13, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
-            $table->addRow();
-            $textrun = $table->addCell(2000, $styleCell);
+            $table = new Table(array('borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+            $table->addRow(null, array('tblHeader' => true));
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Vị trí lấy mẫu', array(), $fontCell);
             $textrun->addText('Sampling locations', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Tên nhân viên', array(), $fontCell);
             $textrun->addText('Name of personnel', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Mã số nhân viên', array(), $fontCell);
             $textrun->addText('ID No.', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Tần suất', array(), $fontCell);
             $textrun->addText('Frequency', array('italic' => true), $fontCell);
 
             foreach ($area_all as $row2) {
                 ///DATA
                 $table->addRow();
-                $cell1 = $table->addCell(8000, $cellColSpan);
+                $cell1 = $table->addCell(null, $cellColSpan);
                 $textrun1 = $cell1->addTextRun($cellHCentered);
                 $textrun1->addText($row2->name, array('bold' => true));
                 $table->addRow();
-                $cell1 = $table->addCell(2000, $cellRowSpan);
+                $cell1 = $table->addCell(null, $cellRowSpan);
                 $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                 $textrun1->addText("Đầu / ");
                 $textrun1->addText('Head', array('italic' => true));
@@ -156,12 +175,11 @@ class Export extends MY_Controller
                 // print_r($nhanvien);
                 // die();
                 if (count($nhanvien)) {
-                    $list = explode("_", $nhanvien[0]->string_id);
-                    $table->addCell(2000, $cellVCentered)->addText($nhanvien[0]->name, null, $cellHCentered);
-                    $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
+                    $table->addCell(4000, $cellVCentered)->addText($nhanvien[0]->name, null, $cellHCentered);
+                    $table->addCell(2000, $cellVCentered)->addText($nhanvien[0]->string_id, null, $cellHCentered);
                 }
 
-                $cell1 = $table->addCell(2000, $cellRowSpan);
+                $cell1 = $table->addCell(null, $cellRowSpan);
                 $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                 $textrun1->addText("Nhân viên phải được lấy mẫu sau khi hoàn tất hoạt động trong ngày và trước khi nhân viên ra khỏi khu vực vô trùng.");
                 $textrun1->addTextBreak();
@@ -169,9 +187,8 @@ class Export extends MY_Controller
                 for ($i = 1; $i <= count($nhanvien) - 1; $i++) {
                     $table->addRow();
                     $table->addCell(null, $cellRowContinue);
-                    $list = explode("_", $nhanvien[$i]->string_id);
-                    $table->addCell(2000, $cellVCentered)->addText($nhanvien[$i]->name, null, $cellHCentered);
-                    $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
+                    $table->addCell(4000, $cellVCentered)->addText($nhanvien[$i]->name, null, $cellHCentered);
+                    $table->addCell(2000, $cellVCentered)->addText($nhanvien[$i]->string_id, null, $cellHCentered);
                     $table->addCell(null, $cellRowContinue);
                 }
             }
@@ -179,30 +196,30 @@ class Export extends MY_Controller
             $templateProcessor->setComplexBlock('table_vitri', $table);
             ////END TABLE VI TRI
             ///TABLE LIMIT
-            $table = new Table(array('borderSize' => 13, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
+            $table = new Table(array('borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
             $table->addRow();
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Vị trí lấy mẫu', array(), $fontCell);
             $textrun->addText('Sampling locations', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Đầu', array(), $fontCell);
             $textrun->addText('Head', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Mũi', array(), $fontCell);
             $textrun->addText('Nose', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Ngực', array(), $fontCell);
             $textrun->addText('Chest', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Cẳng tay trái', array(), $fontCell);
             $textrun->addText('Left forearm', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Cẳng tay phải', array(), $fontCell);
             $textrun->addText('Right forearm', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Dấu găng tay trái', array(), $fontCell);
             $textrun->addText('Left glove print 5 fingers', array('italic' => true), $fontCell);
-            $textrun = $table->addCell(2000, $styleCell);
+            $textrun = $table->addCell(null, $styleCell);
             $textrun->addText('Dấu găng tay phải', array(), $fontCell);
             $textrun->addText('Right glove print 5 fingers', array('italic' => true), $fontCell);
 
@@ -213,75 +230,30 @@ class Export extends MY_Controller
                 // die();  
                 //     ///DATA
                 $table->addRow();
-                $cell1 = $table->addCell(8000, array('gridSpan' => 8, 'valign' => 'center'));
+                $cell1 = $table->addCell(null, array('gridSpan' => 8, 'valign' => 'center'));
                 $textrun1 = $cell1->addTextRun($cellHCentered);
                 $textrun1->addText($row2->name, array('bold' => true));
                 $table->addRow();
-                $textrun = $table->addCell(2000, $styleCell);
+                $textrun = $table->addCell(null, $styleCell);
                 $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
                 $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
-                $textrun = $table->addCell(2000, array('gridSpan' => 7, 'valign' => 'center'));
+                $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
                 $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
                 $textrun->addText($value, array(), $fontCell);
                 $table->addRow();
-                $textrun = $table->addCell(2000, $styleCell);
+                $textrun = $table->addCell(null, $styleCell);
                 $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
                 $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
-                $textrun = $table->addCell(2000, array('gridSpan' => 7, 'valign' => 'center'));
+                $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
                 $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
                 $textrun->addText($value, array(), $fontCell);
                 $table->addRow();
-                $textrun = $table->addCell(2000, $styleCell);
+                $textrun = $table->addCell(null, $styleCell);
                 $textrun->addText('Giới hạn hành động', array(), $fontCell);
                 $textrun->addText('Action Limit', array('italic' => true), $fontCell);
-                $textrun = $table->addCell(2000, array('gridSpan' => 7, 'valign' => 'center'));
+                $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
                 $value = isset($limit->action_limit) ? $limit->action_limit : "";
                 $textrun->addText($value, array(), $fontCell);
-                //     $cell1 = $table->addCell(2000, $cellRowSpan);
-                //     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                //     $textrun1->addText("Đầu / ");
-                //     $textrun1->addText('Head', array('italic' => true));
-                //     $textrun1->addTextBreak();
-                //     $textrun1->addText("Mũi / ");
-                //     $textrun1->addText('Nose', array('italic' => true));
-                //     $textrun1->addTextBreak();
-                //     $textrun1->addText("Ngực / ");
-                //     $textrun1->addText('Chest', array('italic' => true));
-                //     $textrun1->addTextBreak();
-                //     $textrun1->addText("Cẳng tay trái / ");
-                //     $textrun1->addText('Left forearm', array('italic' => true));
-                //     $textrun1->addTextBreak();
-                //     $textrun1->addText("Cẳng tay phải / ");
-                //     $textrun1->addText('Right forearm', array('italic' => true));
-                //     $textrun1->addTextBreak();
-                //     $textrun1->addText("Dấu găng tay trái / ");
-                //     $textrun1->addText('Left glove print 5 fingers', array('italic' => true));
-                //     $textrun1->addTextBreak();
-                //     $textrun1->addText("Dấu găng tay phải / ");
-                //     $textrun1->addText('Right glove print 5 fingers', array('italic' => true));
-                //     $textrun1->addTextBreak();
-                //     $nhanvien = $row2->nhanvien;
-                //     // echo "<pre>";
-                //     // print_r($nhanvien);
-                //     // die();
-                //     if (count($nhanvien)) {
-                //         $list = explode("_", $nhanvien[0]->string_id);
-                //         $table->addCell(2000, $cellVCentered)->addText($nhanvien[0]->name, null, $cellHCentered);
-                //         $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
-                //     }
-                //     $cell1 = $table->addCell(2000, $cellRowSpan);
-                //     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                //     $textrun1->addText("Nhân viên phải được lấy mẫu sau khi hoàn tất hoạt động trong ngày và trước khi nhân viên ra khỏi khu vực vô trùng.");
-                //     $textrun1->addTextBreak();
-                //     $textrun1->addText('Samples shall be collected after completion of operations for that day, before personnel go out of the aseptic areas.', array('italic' => true));
-                //     for ($i = 1; $i <= count($nhanvien) - 1; $i++) {
-                //         $table->addRow();
-                //         $table->addCell(null, $cellRowContinue);
-                //         $list = explode("_", $nhanvien[$i]->string_id);
-                //         $table->addCell(2000, $cellVCentered)->addText($nhanvien[$i]->name, null, $cellHCentered);
-                //         $table->addCell(2000, $cellVCentered)->addText($list[1], null, $cellHCentered);
-                //         $table->addCell(null, $cellRowContinue);
-                //     }
             }
 
             $templateProcessor->setComplexBlock('table_limit', $table);
@@ -291,78 +263,77 @@ class Export extends MY_Controller
                 $templateProcessor->setValue("area_heading#" . ($key + 1), "5." . ($key + 1));
                 $templateProcessor->setValue("area_name#" . ($key + 1), $area->name);
                 $templateProcessor->setValue("area_name_en#" . ($key + 1), $area->name_en);
-                $department_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
-                $department_list = array();
-                $length_department = count($department_results);
-                $templateProcessor->cloneBlock("department_block#" . ($key + 1), $length_department, true, true);
-                for ($key1 = 0; $key1 < $length_department; $key1++) {
-                    $department = $department_results[$key1]->department;
-                    $list = explode("_", $department->string_id);
-                    $id = $list[1];
+                $nhanvien = $area->nhanvien;
+                $length_employee = count($nhanvien);
+                $templateProcessor->cloneBlock("department_block#" . ($key + 1), $length_employee, true, true);
+                // echo "<pre>";
+                // print_r($length_employee);
+                // die();
+                for ($key1 = 0; $key1 < $length_employee; $key1++) {
+                    $employee = $nhanvien[$key1];
+                    $id =  $employee->string_id;
                     $target_id = 6;
-                    $name_chart = $target_id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
-                    $position_results = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where(array('area_id' => $area->id))->where(array('department_id' => $department->id))->with_position()->get_all();
-                    $positions = array_map(function ($item) {
-                        return $item->position;
-                    }, $position_results);
-                    $data = $this->result_model->get_data_table($department->id, $positions, $params);
-                    $data_min_max = $this->result_model->get_data_minmax($department->id, $positions, $params['date_from'], $params['date_to']);
-                    $data_min_max_prev = $this->result_model->get_data_minmax($department->id, $positions, $params['date_from_prev'], $params['date_to_prev']);
+                    $name_chart = $object_id . "_" . $target_id . "_" . $employee->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+
+                    $data = $this->employeeresult_model->set_value_export($params)->where(array('area_id' => $area->id, 'employee_id' => $employee->id))->as_array()->get_all();
+                    $data_min_max = $this->employeeresult_model->get_data_minmax($employee->id, $area->id, $params['date_from'], $params['date_to']);
+                    $data_min_max_prev = $this->employeeresult_model->get_data_minmax($employee->id, $area->id, $params['date_from_prev'], $params['date_to_prev']);
                     $templateProcessor->cloneRow("stt#" . ($key + 1) . "#" . ($key1 + 1), count($data));
-
-
+                    // echo "<pre>";
+                    // print_r($data_min_max);
+                    // die();
                     foreach ($data as $keystt => $stt) {
                         $templateProcessor->setValue("stt#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), ($keystt + 1));
                         $templateProcessor->setValue("date#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), date("d/m/y", strtotime($stt['date'])));
-                        $templateProcessor->setValue("value_H#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_H"]);
-                        $templateProcessor->setValue("value_N#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_N"]);
-                        $templateProcessor->setValue("value_C#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_C"]);
-                        $templateProcessor->setValue("value_LF#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_LF"]);
-                        $templateProcessor->setValue("value_RF#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_RF"]);
-                        $templateProcessor->setValue("value_LG#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_LG"]);
-                        $templateProcessor->setValue("value_RG#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["$department->string_id" . "_RG"]);
+                        $templateProcessor->setValue("value_H#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_H"]);
+                        $templateProcessor->setValue("value_N#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_N"]);
+                        $templateProcessor->setValue("value_C#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_C"]);
+                        $templateProcessor->setValue("value_LF#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_LF"]);
+                        $templateProcessor->setValue("value_RF#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_RF"]);
+                        $templateProcessor->setValue("value_LG#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_LG"]);
+                        $templateProcessor->setValue("value_RG#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_RG"]);
                     }
                     //MAX
-                    $templateProcessor->setValue("max_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_H"]);
-                    $templateProcessor->setValue("max_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_N"]);
-                    $templateProcessor->setValue("max_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_C"]);
-                    $templateProcessor->setValue("max_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_LF"]);
-                    $templateProcessor->setValue("max_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_RF"]);
-                    $templateProcessor->setValue("max_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_LG"]);
-                    $templateProcessor->setValue("max_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_$department->string_id" . "_RG"]);
+                    $templateProcessor->setValue("max_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_H"]);
+                    $templateProcessor->setValue("max_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_N"]);
+                    $templateProcessor->setValue("max_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_C"]);
+                    $templateProcessor->setValue("max_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_LF"]);
+                    $templateProcessor->setValue("max_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_RF"]);
+                    $templateProcessor->setValue("max_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_LG"]);
+                    $templateProcessor->setValue("max_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_RG"]);
 
                     //MIN
-                    $templateProcessor->setValue("min_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_H"]);
-                    $templateProcessor->setValue("min_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_N"]);
-                    $templateProcessor->setValue("min_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_C"]);
-                    $templateProcessor->setValue("min_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_LF"]);
-                    $templateProcessor->setValue("min_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_RF"]);
-                    $templateProcessor->setValue("min_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_LG"]);
-                    $templateProcessor->setValue("min_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_$department->string_id" . "_RG"]);
+                    $templateProcessor->setValue("min_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_H"]);
+                    $templateProcessor->setValue("min_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_N"]);
+                    $templateProcessor->setValue("min_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_C"]);
+                    $templateProcessor->setValue("min_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_LF"]);
+                    $templateProcessor->setValue("min_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_RF"]);
+                    $templateProcessor->setValue("min_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_LG"]);
+                    $templateProcessor->setValue("min_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_RG"]);
 
                     //MAX PREV
-                    $templateProcessor->setValue("max_prev_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_$department->string_id" . "_H"]);
-                    $templateProcessor->setValue("max_prev_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_$department->string_id" . "_N"]);
-                    $templateProcessor->setValue("max_prev_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_$department->string_id" . "_C"]);
-                    $templateProcessor->setValue("max_prev_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_$department->string_id" . "_LF"]);
-                    $templateProcessor->setValue("max_prev_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_$department->string_id" . "_RF"]);
-                    $templateProcessor->setValue("max_prev_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_$department->string_id" . "_LG"]);
-                    $templateProcessor->setValue("max_prev_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_$department->string_id" . "_RG"]);
+                    $templateProcessor->setValue("max_prev_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_H"]);
+                    $templateProcessor->setValue("max_prev_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_N"]);
+                    $templateProcessor->setValue("max_prev_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_C"]);
+                    $templateProcessor->setValue("max_prev_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_LF"]);
+                    $templateProcessor->setValue("max_prev_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_RF"]);
+                    $templateProcessor->setValue("max_prev_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_LG"]);
+                    $templateProcessor->setValue("max_prev_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_RG"]);
 
                     //MIN PREV
-                    $templateProcessor->setValue("min_prev_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_$department->string_id" . "_H"]);
-                    $templateProcessor->setValue("min_prev_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_$department->string_id" . "_N"]);
-                    $templateProcessor->setValue("min_prev_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_$department->string_id" . "_C"]);
-                    $templateProcessor->setValue("min_prev_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_$department->string_id" . "_LF"]);
-                    $templateProcessor->setValue("min_prev_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_$department->string_id" . "_RF"]);
-                    $templateProcessor->setValue("min_prev_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_$department->string_id" . "_LG"]);
-                    $templateProcessor->setValue("min_prev_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_$department->string_id" . "_RG"]);
+                    $templateProcessor->setValue("min_prev_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_H"]);
+                    $templateProcessor->setValue("min_prev_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_N"]);
+                    $templateProcessor->setValue("min_prev_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_C"]);
+                    $templateProcessor->setValue("min_prev_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_LF"]);
+                    $templateProcessor->setValue("min_prev_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_RF"]);
+                    $templateProcessor->setValue("min_prev_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_LG"]);
+                    $templateProcessor->setValue("min_prev_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_RG"]);
 
                     $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
 
                     $templateProcessor->setValue("department_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
-                    $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), $department->name);
-                    $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), $department->name_en);
+                    $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
+                    $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
                     $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), $id);
                 }
             }
@@ -739,7 +710,7 @@ class Export extends MY_Controller
                     $department = $department_results[$key1]->department;
                     $area = $department_results[$key1]->area;
                     $target_id = $target->id;
-                    $name_chart = $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+                    $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
                     $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
 
@@ -1134,7 +1105,7 @@ class Export extends MY_Controller
                     $department = $department_results[$key1]->department;
                     $area = $department_results[$key1]->area;
                     $target_id = $target->id;
-                    $name_chart = $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+                    $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
                     $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
 

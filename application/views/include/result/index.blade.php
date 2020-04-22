@@ -11,7 +11,13 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Tên Phòng</th>
+                            <th>
+                                @if($object_id == 11)
+                                Tên Phòng
+                                @else
+                                Thiết bị
+                                @endif
+                            </th>
                             <th>Phương pháp lấy mẫu</th>
                             <th>Tần suất</th>
                             <th>Mã vị trí</th>
@@ -31,8 +37,11 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#quanlytin').DataTable({
+            language: {
+                searchPlaceholder: "Mã vị trí"
+            },
             "processing": true,
             "serverSide": true,
             "ajax": {

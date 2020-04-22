@@ -11,7 +11,7 @@
                     <div class="col-md-3">
                         <b class="col-form-label text-sm-right">Nhà máy:<i class="text-danger">*</i></b>
                         <div class="pt-1">
-                            <select class="form-control form-control-sm" name="factory_id">
+                            <select class="form-control form-control-sm factory_id">
                                 @foreach ($factory as $row)
                                 <option value="{{$row->id}}">{{$row->name}}</option>
                                 @endforeach
@@ -21,10 +21,8 @@
                     <div class="col-md-3">
                         <b class="col-form-label text-sm-right">Xưởng:<i class="text-danger">*</i></b>
                         <div class="pt-1">
-                            <select class="form-control form-control-sm" name="workshop_id">
-                                @foreach ($workshop as $row)
-                                <option value="{{$row->id}}">{{$row->name}}</option>
-                                @endforeach
+                            <select class="form-control form-control-sm workshop_id">
+
                             </select>
                         </div>
                     </div>
@@ -63,10 +61,8 @@
                     <div class="col-md-3">
                         <b class="col-form-label text-sm-right">Khu vực:</b>
                         <div class="pt-1">
-                            <select class="form-control form-control-sm" name="area_id">
-                                @foreach ($area as $area)
-                                <option value="{{$area->id}}">{{$area->name}}</option>
-                                @endforeach
+                            <select class="form-control form-control-sm area_id">
+
                             </select>
                         </div>
                     </div>
@@ -81,10 +77,8 @@
                             @endif
                         </b>
                         <div class="pt-1">
-                            <select class="form-control form-control-sm" name="department_id">
-                                @foreach ($department as $dep)
-                                <option value="{{$dep->id}}">{{$dep->name}}</option>
-                                @endforeach
+                            <select class="form-control form-control-sm department_id">
+
                             </select>
                         </div>
                     </div>
@@ -233,7 +227,62 @@
         // console.log(img);
         $(document).ready(function() {
             $(".page-loader-wrapper").show();
-            $("[name=factory_id]").change();
+            $(".department_id").change(async function() {
+                drawChart();
+            });
+            $(".area_id").change(async function() {
+                $(".page-loader-wrapper").show();
+                let value = $(this).val();
+                let department = await $.ajax({
+                    url: path + "dashboard/getdepartment/" + value,
+                    dataType: "JSON"
+                });
+                let html = "";
+                $.each(department, function(k, item) {
+                    html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                })
+                $(".department_id").html(html);
+                if ($(".department_id").length)
+                    $(".department_id").trigger("change");
+                else
+                    $(".page-loader-wrapper").hide();
+            });
+            $(".workshop_id").change(async function() {
+                $(".page-loader-wrapper").show();
+                let value = $(this).val();
+                let area = await $.ajax({
+                    url: path + "dashboard/getarea/" + value,
+                    dataType: "JSON"
+                });
+                let html = "";
+                $.each(area, function(k, item) {
+                    html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                })
+                $(".area_id").html(html);
+                if ($(".department_id").length)
+                    $(".area_id").trigger("change");
+                else
+                    $(".page-loader-wrapper").hide();
+            });
+            $(".factory_id").change(async function() {
+                $(".page-loader-wrapper").show();
+                let value = $(this).val();
+                let workshop = await $.ajax({
+                    url: path + "dashboard/getworkshop/" + value,
+                    dataType: "JSON"
+                });
+                let html = "";
+                $.each(workshop, function(k, item) {
+                    html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                })
+                $(".workshop_id").html(html);
+                if ($(".area_id").length)
+                    $(".workshop_id").trigger("change");
+                else
+                    $(".page-loader-wrapper").hide();
+                /////LOAD SELECTOR
+                $(".type_data.active").trigger("click");
+            });
             //DATE RANGE
             $("#export_report").click(function() {
                 let html_loading = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
@@ -241,7 +290,8 @@
 
                 // $(".collapse").addClass("show");
 
-                var workshop_id = $("[name=workshop_id]").val();
+                var factory_id = $(".factory_id").val();
+                var workshop_id = $(".workshop_id").val();
                 let type = $(".type_data.active input").val();
                 let selector = $("#the_selector").val();
                 let daterange = $("#daterange").val();
@@ -268,9 +318,6 @@
                 console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
             });
             ///EVENT
-            $("[name=department_id]").change(function() {
-                drawChart();
-            })
             $("#the_selector,#daterange").change(function() {
                 drawChart();
             });
@@ -301,7 +348,14 @@
             async function drawChart() {
 
                 $(".page-loader-wrapper").show();
-                var department_id = $("[name=department_id]").val();
+                var department_id = $(".department_id").val();
+                if (!(department_id > 0)) {
+                    return;
+                }
+                var area_id = $(".area_id").val();
+                if (!(area_id > 0)) {
+                    return;
+                }
                 // var target_id = $("[name=target_id]").val();
                 let type = $(".type_data.active input").val();
                 let selector = $("#the_selector").val();
@@ -311,6 +365,7 @@
                     url: path + 'dashboard/chartdatav3',
                     data: {
                         department_id: department_id,
+                        area_id: area_id,
                         // target_id: target_id,
                         type: type,
                         selector: selector,
@@ -356,6 +411,8 @@
 
 
             ///////
-            $(".type_data.active").trigger("click");
+            // $(".type_data.active").trigger("click");
+
+            $(".factory_id").trigger("change");
         });
     </script>

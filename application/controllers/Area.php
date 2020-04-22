@@ -13,6 +13,7 @@ class Area extends MY_Controller
         $version = $this->config->item("version");
         $this->data['stylesheet_tag'] = array(
             base_url() . "public/assets/css/main.css?v=" . $version,
+            base_url() . "public/assets/css/custom.css?v=" . $version,
             base_url() . "public/admin/vendor/fonts/fontawesome/css/fontawesome-all.css"
         );
         $this->data['javascript_tag'] = array(
@@ -133,14 +134,13 @@ class Area extends MY_Controller
             echo json_encode(array());
             die();
         }
-        $this->load->model("result_model");
-        $area_list = $this->result_model->where(array("deleted" => 0, 'workshop_id' => $id, 'object_id' => $object_id))->with_area()->group_by("area_id")->as_object()->get_all();
-        $data = array_map(function ($item) {
-            return $item->area;
-        }, $area_list);
-        usort($data, function ($a, $b) {
-            return strcmp($a->name, $b->name);
-        });
+        $id = $params[0];
+        if (!is_numeric($id)) {
+            echo json_encode(array());
+            die();
+        }
+        $this->load->model("area_model");
+        $data = $this->area_model->where(array("deleted" => 0, 'workshop_id' => $id))->as_object()->get_all();
         echo json_encode($data);
     }
     public function add()

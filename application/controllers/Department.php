@@ -136,11 +136,10 @@ class Department extends MY_Controller
             echo json_encode(array());
             die();
         }
-        $this->load->model("result_model");
-        $list = $this->result_model->where(array("deleted" => 0, 'area_id' => $id, 'object_id' => $object_id))->with_department()->group_by("department_id")->as_object()->get_all();
-        $data = array_map(function ($item) {
-            return $item->department;
-        }, $list);
+        $this->load->model("department_model");
+        $data = $this->department_model->where(array("deleted" => 0, 'area_id' => $id))->as_object()->get_all();
+
+
 
         // usort($data, function ($a, $b) {
         //     return strcmp($a->name, $b->name);
@@ -155,90 +154,6 @@ class Department extends MY_Controller
             $this->load->model("department_model");
             $data_up = $this->department_model->create_object($data);
             $id = $this->department_model->insert($data_up);
-            if (isset($data_up['type']) && $data_up['type'] == 3) { /// Tự tạo vị trí cho nhân viên
-                $this->load->model("position_model");
-                $nhanvien_string_id = $data_up['string_id'];
-                $frequency_name = "";
-                $nhanvien_id = $id;
-                $data_nhanvien = array();
-                $data_nhanvien[] = array(
-                    'name' => "Đầu",
-                    'string_id' => $nhanvien_string_id . "_H",
-                    'frequency_name' => $frequency_name,
-                    'target_id' => 6,
-                    'department_id' => $nhanvien_id,
-                    'area_id' => $data_up['area_id'],
-                    'workshop_id' => $data_up['workshop_id'],
-                    'factory_id' => $data_up['factory_id']
-                );
-                ///Mũi
-                $data_nhanvien[] = array(
-                    'name' => "Mũi",
-                    'string_id' => $nhanvien_string_id . "_N",
-                    'frequency_name' => $frequency_name,
-                    'target_id' => 6,
-                    'department_id' => $nhanvien_id,
-                    'area_id' => $data_up['area_id'],
-                    'workshop_id' => $data_up['workshop_id'],
-                    'factory_id' => $data_up['factory_id']
-                );
-                ///Ngực
-                $data_nhanvien[] = array(
-                    'name' => "Ngực",
-                    'string_id' => $nhanvien_string_id . "_C",
-                    'frequency_name' => $frequency_name,
-                    'target_id' => 6,
-                    'department_id' => $nhanvien_id,
-                    'area_id' => $data_up['area_id'],
-                    'workshop_id' => $data_up['workshop_id'],
-                    'factory_id' => $data_up['factory_id']
-                );
-                ///Cẳng tay trái
-                $data_nhanvien[] = array(
-                    'name' => "Cẳng tay trái",
-                    'string_id' => $nhanvien_string_id . "_LF",
-                    'frequency_name' => $frequency_name,
-                    'target_id' => 6,
-                    'department_id' => $nhanvien_id,
-                    'area_id' => $data_up['area_id'],
-                    'workshop_id' => $data_up['workshop_id'],
-                    'factory_id' => $data_up['factory_id']
-                );
-                ///Cẳng tay phải
-                $data_nhanvien[] = array(
-                    'name' => "Cẳng tay phải",
-                    'string_id' => $nhanvien_string_id . "_RF",
-                    'frequency_name' => $frequency_name,
-                    'target_id' => 6,
-                    'department_id' => $nhanvien_id,
-                    'area_id' => $data_up['area_id'],
-                    'workshop_id' => $data_up['workshop_id'],
-                    'factory_id' => $data_up['factory_id']
-                );
-                ///Dấu găng tay trái
-                $data_nhanvien[] = array(
-                    'name' => "Dấu găng tay trái",
-                    'string_id' => $nhanvien_string_id . "_LG",
-                    'frequency_name' => $frequency_name,
-                    'target_id' => 6,
-                    'department_id' => $nhanvien_id,
-                    'area_id' => $data_up['area_id'],
-                    'workshop_id' => $data_up['workshop_id'],
-                    'factory_id' => $data_up['factory_id']
-                );
-                ///Dấu găng tay phải
-                $data_nhanvien[] = array(
-                    'name' => "Dấu găng tay phải",
-                    'string_id' => $nhanvien_string_id . "_RG",
-                    'frequency_name' => $frequency_name,
-                    'target_id' => 6,
-                    'department_id' => $nhanvien_id,
-                    'area_id' => $data_up['area_id'],
-                    'workshop_id' => $data_up['workshop_id'],
-                    'factory_id' => $data_up['factory_id']
-                );
-                $this->position_model->insert($data_nhanvien);
-            }
             redirect('department', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -268,94 +183,6 @@ class Department extends MY_Controller
             $data = $_POST;
             $data_up = $this->department_model->create_object($data);
             $this->department_model->update($data_up, $id);
-            if (isset($data_up['type']) && $data_up['type'] == 3) { /// Tự tạo vị trí cho nhân viên
-                $this->load->model("position_model");
-                $nhanvien_string_id = $data_up['string_id'];
-                $frequency_name = "";
-                $nhanvien_id = $id;
-
-                $check = $this->position_model->where(array("department_id" => $id, 'deleted' => 0))->as_array()->get_all();
-                if (empty($check)) {
-                    $data_nhanvien = array();
-                    $data_nhanvien[] = array(
-                        'name' => "Đầu",
-                        'string_id' => $nhanvien_string_id . "_H",
-                        'frequency_name' => $frequency_name,
-                        'target_id' => 6,
-                        'department_id' => $nhanvien_id,
-                        'area_id' => $data_up['area_id'],
-                        'workshop_id' => $data_up['workshop_id'],
-                        'factory_id' => $data_up['factory_id']
-                    );
-                    ///Mũi
-                    $data_nhanvien[] = array(
-                        'name' => "Mũi",
-                        'string_id' => $nhanvien_string_id . "_N",
-                        'frequency_name' => $frequency_name,
-                        'target_id' => 6,
-                        'department_id' => $nhanvien_id,
-                        'area_id' => $data_up['area_id'],
-                        'workshop_id' => $data_up['workshop_id'],
-                        'factory_id' => $data_up['factory_id']
-                    );
-                    ///Ngực
-                    $data_nhanvien[] = array(
-                        'name' => "Ngực",
-                        'string_id' => $nhanvien_string_id . "_C",
-                        'frequency_name' => $frequency_name,
-                        'target_id' => 6,
-                        'department_id' => $nhanvien_id,
-                        'area_id' => $data_up['area_id'],
-                        'workshop_id' => $data_up['workshop_id'],
-                        'factory_id' => $data_up['factory_id']
-                    );
-                    ///Cẳng tay trái
-                    $data_nhanvien[] = array(
-                        'name' => "Cẳng tay trái",
-                        'string_id' => $nhanvien_string_id . "_LF",
-                        'frequency_name' => $frequency_name,
-                        'target_id' => 6,
-                        'department_id' => $nhanvien_id,
-                        'area_id' => $data_up['area_id'],
-                        'workshop_id' => $data_up['workshop_id'],
-                        'factory_id' => $data_up['factory_id']
-                    );
-                    ///Cẳng tay phải
-                    $data_nhanvien[] = array(
-                        'name' => "Cẳng tay phải",
-                        'string_id' => $nhanvien_string_id . "_RF",
-                        'frequency_name' => $frequency_name,
-                        'target_id' => 6,
-                        'department_id' => $nhanvien_id,
-                        'area_id' => $data_up['area_id'],
-                        'workshop_id' => $data_up['workshop_id'],
-                        'factory_id' => $data_up['factory_id']
-                    );
-                    ///Dấu găng tay trái
-                    $data_nhanvien[] = array(
-                        'name' => "Dấu găng tay trái",
-                        'string_id' => $nhanvien_string_id . "_LG",
-                        'frequency_name' => $frequency_name,
-                        'target_id' => 6,
-                        'department_id' => $nhanvien_id,
-                        'area_id' => $data_up['area_id'],
-                        'workshop_id' => $data_up['workshop_id'],
-                        'factory_id' => $data_up['factory_id']
-                    );
-                    ///Dấu găng tay phải
-                    $data_nhanvien[] = array(
-                        'name' => "Dấu găng tay phải",
-                        'string_id' => $nhanvien_string_id . "_RG",
-                        'frequency_name' => $frequency_name,
-                        'target_id' => 6,
-                        'department_id' => $nhanvien_id,
-                        'area_id' => $data_up['area_id'],
-                        'workshop_id' => $data_up['workshop_id'],
-                        'factory_id' => $data_up['factory_id']
-                    );
-                    $this->position_model->insert($data_nhanvien);
-                }
-            }
             redirect('department', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("department_model");

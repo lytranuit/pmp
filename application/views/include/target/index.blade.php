@@ -1,4 +1,3 @@
-
 <!-- ============================================================== -->
 <!-- pageheader -->
 <!-- ============================================================== -->
@@ -14,6 +13,8 @@
                         <tr>
                             <th>Id</th>
                             <th>Tên</th>
+                            <th>Đơn vị tính</th>
+                            <th>Chỉ tiêu chính</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -27,7 +28,7 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#quanlytin').DataTable({
             "processing": true,
             "serverSide": true,
@@ -36,10 +37,21 @@
                 "dataType": "json",
                 "type": "POST",
             },
-            "columns": [
-                {"data": "id"},
-                {"data": "name"},
-                {"data": "action"}
+            "columns": [{
+                    "data": "id"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "unit"
+                },
+                {
+                    "data": "parent_name"
+                },
+                {
+                    "data": "action"
+                }
             ]
 
         });

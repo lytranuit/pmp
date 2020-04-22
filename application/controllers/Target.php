@@ -46,77 +46,6 @@ class Target extends MY_Controller
 
     private function has_right($method, $params = array())
     {
-
-        /*
-         * SET PERMISSION
-         */
-        //        $role_user = $this->session->userdata('role');
-        //        $this->user_model->set_permission($role_user);
-        //
-        //        /* Change method */
-        //        switch ($method) {
-        //            case 'updatetintuc':
-        //                $method = 'edittintuc';
-        //                break;
-        //            case 'editmenu':
-        //                $method = 'quanlymenu';
-        //                break;
-        //            case 'updatenoibat':
-        //                $method = 'editnoibat';
-        //                break;
-        //            case 'updatenoibo':
-        //                $method = 'editnoibo';
-        //                break;
-        //            case 'updateproduct':
-        //                $method = 'editproduct';
-        //                break;
-        //            case 'viewtin':
-        //                $method = 'quanlynoibo';
-        //                break;
-        //            case 'updatepage':
-        //                $method = "editpage";
-        //                break;
-        //            case 'slider':
-        //            case 'saveslider':
-        //            case 'gioithieu':
-        //            case 'savegioithieu':
-        //            case 'quanlycategory':
-        //            case 'themcategory':
-        //            case 'editcategory':
-        //            case 'updatecategory':
-        //            case 'removecategory':
-        //            case 'quanlyclient':
-        //            case 'themclient':
-        //            case 'editclient':
-        //            case 'updateclient':
-        //            case 'removeclient':
-        //            case 'quanlyhappy':
-        //            case 'themhappy':
-        //            case 'edithappy':
-        //            case 'updatehappy':
-        //            case 'removehappy':
-        //                $method = 'trangchu';
-        //                break;
-        //        }
-        //        if (has_permission($method) && !is_permission($method)) {
-        //            return false;
-        //        }
-        /* Tin đăng check */
-        //        $fun_tin = array(
-        //            "edittin",
-        //            "activate_tin",
-        //            "deactivate_tin",
-        //            "remove_tin",
-        //        );
-        //        if (in_array($method, $fun_tin)) {
-        //            $id = $params[0];
-        //            $id_user = $this->session->userdata('user_id');
-        //            $this->load->model("tin_model");
-        //            $tin = $this->tin_model->where(array('deleted' => 0, 'id_user' => $id_user, 'id_tin' => $id))->as_array()->get_all();
-        //            if (!count($tin)) {
-        //                return false;
-        //            }
-        //        }
         return true;
     }
 
@@ -136,6 +65,9 @@ class Target extends MY_Controller
 
             redirect('target', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
+            $this->load->model("target_model");
+            $this->data['targets'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
@@ -154,6 +86,8 @@ class Target extends MY_Controller
             $tin = $this->target_model->where(array('id' => $id))->as_object()->get();
             $this->data['tin'] = $tin;
 
+            $this->data['targets'] = $this->target_model->where(array('deleted' => 0))->where('id', '<>', $id)->as_object()->get_all();
+            load_chossen($this->data);
             //            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
@@ -191,7 +125,7 @@ class Target extends MY_Controller
             $where = $this->target_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_parent()->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);
         //        die();
@@ -200,6 +134,8 @@ class Target extends MY_Controller
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
                 $nestedData['name'] = $post->name;
+                $nestedData['parent_name'] = isset($post->parent->name) ? $post->parent->name : "";
+                $nestedData['unit'] = $post->unit;
                 $nestedData['action'] = '<a href="' . base_url() . 'target/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'

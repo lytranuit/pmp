@@ -82,12 +82,21 @@
                     </a>
                 </li>
                 <li class="app-sidebar__heading">Nhập dữ liệu</li>
+                @if($object_id == "3")
+                <li>
+                    <a href="{{base_url()}}resulte/" class="">
+                        <i class="metismenu-icon fa fa-database"></i>
+                        Dữ liệu
+                    </a>
+                </li>
+                @else
                 <li>
                     <a href="{{base_url()}}result/" class="">
                         <i class="metismenu-icon fa fa-database"></i>
                         Dữ liệu
                     </a>
                 </li>
+                @endif
                 <li>
                     <a href="{{base_url()}}limit/" class="">
                         <i class="metismenu-icon fas fa-bell"></i>
@@ -157,13 +166,19 @@
                         <li>
                             <a href="{{base_url()}}department/">
                                 <i class="metismenu-icon"></i>
-                                Phòng/Thiết bị/Nhân viên
+                                Phòng/Thiết bị
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}position/">
                                 <i class="metismenu-icon"></i>
                                 Vị trí
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{base_url()}}employee/">
+                                <i class="metismenu-icon"></i>
+                                Nhân viên
                             </a>
                         </li>
                     </ul>

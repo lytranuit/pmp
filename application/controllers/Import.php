@@ -250,9 +250,9 @@ class Import extends MY_Controller
                 $data[$i - 1][$j] = $sheet->getCellByColumnAndRow($j, $i)->getValue();
             }
         }
-        // echo "<pre>";
-        // print_r($data);
-        // die();
+        echo "<pre>";
+        print_r($data);
+        die();
         //Hiển thị mảng dữ liệu
 
         $this->load->model("area_model");
@@ -582,9 +582,8 @@ class Import extends MY_Controller
 
         echo "<pre>";
         echo $dir;
-        $this->load->model("result_model");
-        $this->load->model("position_model");
-        $this->load->model("department_model");
+        $this->load->model("employeeresult_model");
+        $this->load->model("employee_model");
         $this->load->model("area_model");
         $area_A = $this->area_model->where(array('id' => 1))->as_object()->get();
         $area_B = $this->area_model->where(array('id' => 4))->as_object()->get();
@@ -669,6 +668,9 @@ class Import extends MY_Controller
                         }
                     }
                 }
+                // echo "<pre>";
+                // print_r($data);
+                // die();
                 $nhanvien_string_id = $sheet->getCellByColumnAndRow(5, 6)->getValue();
                 $area_string = $sheet->getCellByColumnAndRow(2, 7)->getValue();
                 // echo $nhanvien_string_id . "<br>" . $area_string;
@@ -677,20 +679,21 @@ class Import extends MY_Controller
                     continue;
                 }
                 $area = $temp_area[$area_string];
-                $nhan_vien = $this->department_model->where(array('area_id' => $area['area_id'], 'string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string))->as_object()->get();
+                $nhan_vien = $this->employee_model->where(array('string_id' => $nhanvien_string_id))->as_object()->get();
 
                 // echo "<pre>";
                 // print_r($nhan_vien);
                 if (empty($nhan_vien)) {
                     continue;
                 }
-                $position_H = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_H"))->as_object()->get();
-                $position_N = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_N"))->as_object()->get();
-                $position_C = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_C"))->as_object()->get();
-                $position_LF = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_LF"))->as_object()->get();
-                $position_RF = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_RF"))->as_object()->get();
-                $position_LG = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_LG"))->as_object()->get();
-                $position_RG = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_RG"))->as_object()->get();
+
+                // $position_H = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_H"))->as_object()->get();
+                // $position_N = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_N"))->as_object()->get();
+                // $position_C = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_C"))->as_object()->get();
+                // $position_LF = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_LF"))->as_object()->get();
+                // $position_RF = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_RF"))->as_object()->get();
+                // $position_LG = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_LG"))->as_object()->get();
+                // $position_RG = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_RG"))->as_object()->get();
 
                 // die();
                 ///LIST POSTION
@@ -717,136 +720,27 @@ class Import extends MY_Controller
                     if (!is_Date($date)) {
                         continue;
                     }
-                    if (is_numeric($head)) {
-                        $data_up = array(
-                            'value' => $head,
-                            'position_id' => $position_H->id,
-                            'area_id' => $position_H->area_id,
-                            'department_id' => $position_H->department_id,
-                            'target_id' => 6,
-                            'factory_id' => $position_H->factory_id,
-                            'workshop_id' => $position_H->workshop_id,
-                            'date' => $date,
-                            'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name,
-                            'object_id' => $position_H->object_id,
-                            //                        'workshop_id' => $area['workshop_id'],
-                            //                        'factory_id' => $area['factory_id']
-                        );
-                        $insert[] = $data_up;
-                    }
-                    if (is_numeric($nose)) {
-                        $data_up = array(
-                            'value' => $nose,
-                            'position_id' => $position_N->id,
-                            'area_id' => $position_N->area_id,
-                            'department_id' => $position_N->department_id,
-                            'target_id' => 6,
-                            'factory_id' => $position_N->factory_id,
-                            'workshop_id' => $position_N->workshop_id,
-                            'date' => $date,
-                            'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name,
-                            'object_id' => $position_N->object_id,
-                            //                        'workshop_id' => $area['workshop_id'],
-                            //                        'factory_id' => $area['factory_id']
-                        );
-                        $insert[] = $data_up;
-                    }
-                    if (is_numeric($chest)) {
-                        $data_up = array(
-                            'value' => $chest,
-                            'position_id' => $position_C->id,
-                            'area_id' => $position_C->area_id,
-                            'department_id' => $position_C->department_id,
-                            'target_id' => 6,
-                            'factory_id' => $position_C->factory_id,
-                            'workshop_id' => $position_C->workshop_id,
-                            'date' => $date,
-                            'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name,
-                            'object_id' => $position_C->object_id,
-                            //                        'workshop_id' => $area['workshop_id'],
-                            //                        'factory_id' => $area['factory_id']
-                        );
-                        $insert[] = $data_up;
-                    }
-                    if (is_numeric($lf)) {
-                        $data_up = array(
-                            'value' => $lf,
-                            'position_id' => $position_LF->id,
-                            'area_id' => $position_LF->area_id,
-                            'department_id' => $position_LF->department_id,
-                            'target_id' => 6,
-                            'factory_id' => $position_LF->factory_id,
-                            'workshop_id' => $position_LF->workshop_id,
-                            'date' => $date,
-                            'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name,
-                            'object_id' => $position_LF->object_id,
-                            //                        'workshop_id' => $area['workshop_id'],
-                            //                        'factory_id' => $area['factory_id']
-                        );
-                        $insert[] = $data_up;
-                    }
-                    if (is_numeric($rf)) {
-                        $data_up = array(
-                            'value' => $rf,
-                            'position_id' => $position_RF->id,
-                            'area_id' => $position_RF->area_id,
-                            'department_id' => $position_RF->department_id,
-                            'target_id' => 6,
-                            'factory_id' => $position_RF->factory_id,
-                            'workshop_id' => $position_RF->workshop_id,
-                            'date' => $date,
-                            'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name,
-                            'object_id' => $position_RF->object_id,
-                            //                        'workshop_id' => $area['workshop_id'],
-                            //                        'factory_id' => $area['factory_id']
-                        );
-                        $insert[] = $data_up;
-                    }
-                    if (is_numeric($lg)) {
-                        $data_up = array(
-                            'value' => $lg,
-                            'position_id' => $position_LG->id,
-                            'area_id' => $position_LG->area_id,
-                            'department_id' => $position_LG->department_id,
-                            'target_id' => 6,
-                            'factory_id' => $position_LG->factory_id,
-                            'workshop_id' => $position_LG->workshop_id,
-                            'date' => $date,
-                            'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name
-                            //                        'workshop_id' => $area['workshop_id'],
-                            //                        'factory_id' => $area['factory_id']
-                        );
-                        $insert[] = $data_up;
-                    }
-                    if (is_numeric($rg)) {
-                        $data_up = array(
-                            'value' => $rg,
-                            'position_id' => $position_RG->id,
-                            'area_id' => $position_RG->area_id,
-                            'department_id' => $position_RG->department_id,
-                            'target_id' => 6,
-                            'factory_id' => $position_RG->factory_id,
-                            'workshop_id' => $position_RG->workshop_id,
-                            'date' => $date,
-                            'create_at' => date("Y-m-d"),
-                            'from_file' => $sheet_name,
-                            'object_id' => $position_RG->object_id,
-
-                            //                        'workshop_id' => $area['workshop_id'],
-                            //                        'factory_id' => $area['factory_id']
-                        );
-                        $insert[] = $data_up;
-                    }
+                    $data_up = array(
+                        'employee_id' => $nhan_vien->id,
+                        'area_id' => $area['area_id'],
+                        'factory_id' => $area['factory_id'],
+                        'workshop_id' => $area['workshop_id'],
+                        'from_file' => $sheet_name,
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'date' => $date,
+                        'value_H' => $head,
+                        'value_N' => $nose,
+                        'value_C' => $chest,
+                        'value_LF' => $lf,
+                        'value_RF' => $rf,
+                        'value_LG' => $lg,
+                        'value_RG' => $rg
+                    );
+                    $insert[] = $data_up;
                 }
             }
         }
         print_r($insert);
-        $this->result_model->insert($insert);
+        $this->employeeresult_model->insert($insert);
     }
 }
