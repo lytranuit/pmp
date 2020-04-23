@@ -177,7 +177,7 @@ class Result_model extends MY_Model
             $value = $row->value;
             ///CHECK MỐC 
             if ($lineAtIndex === null && $params['date_from_prev'] != "" && $row->date >= $params['date_from']) {
-                $lineAtIndex = count($labels) - 1;
+                $lineAtIndex = count($labels);
             }
             if (!in_array($position, $position_list)) {
                 $position_list[] = $position;
