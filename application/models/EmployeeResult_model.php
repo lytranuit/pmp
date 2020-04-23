@@ -242,13 +242,6 @@ class EmployeeResult_model extends MY_Model
     }
     function set_value_export($params)
     {
-        if ($params['type'] == "Month") {
-            $this->where('type_bc', "Month");
-        } elseif ($params['type'] == "Quarter") {
-            $this->where('type_bc', "Quarter");
-        } elseif ($params['type'] == "HalfYear") {
-            $this->where('type_bc', "HalfYear");
-        }
         $this->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $params['workshop_id'], 'deleted' => 0));
         return $this;
     }

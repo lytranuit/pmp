@@ -269,6 +269,7 @@ class Export extends MY_Controller
                 // echo "<pre>";
                 // print_r($length_employee);
                 // die();
+
                 for ($key1 = 0; $key1 < $length_employee; $key1++) {
                     $employee = $nhanvien[$key1];
                     $id =  $employee->string_id;
@@ -278,57 +279,232 @@ class Export extends MY_Controller
                     $data = $this->employeeresult_model->set_value_export($params)->where(array('area_id' => $area->id, 'employee_id' => $employee->id))->as_array()->get_all();
                     $data_min_max = $this->employeeresult_model->get_data_minmax($employee->id, $area->id, $params['date_from'], $params['date_to']);
                     $data_min_max_prev = $this->employeeresult_model->get_data_minmax($employee->id, $area->id, $params['date_from_prev'], $params['date_to_prev']);
-                    $templateProcessor->cloneRow("stt#" . ($key + 1) . "#" . ($key1 + 1), count($data));
+
                     // echo "<pre>";
                     // print_r($data_min_max);
                     // die();
+                    ///TABLE RESULT
+                    $table = new Table(array('borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+                    $table->addRow(null, array('tblHeader' => true));
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText("Stt", array('size' => 10), $fontCell);
+                    $cell1->addTextBreak();
+                    $cell1->addText("No.", array('size' => 10, 'italic' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText("Ngày", array('size' => 10), $fontCell);
+                    $cell1->addText("Date", array('size' => 10, 'italic' => true), $fontCell);
+                    $cell1->addText("(dd/mm/yy)", array(), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Đầu', array('size' => 10), $fontCell);
+                    $textrun->addText('Head', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Mũi', array('size' => 10), $fontCell);
+                    $textrun->addText('Nose', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Ngực', array('size' => 10), $fontCell);
+                    $textrun->addText('Chest', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Cẳng tay trái', array('size' => 10), $fontCell);
+                    $textrun->addText('Left forearm', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Cẳng tay phải', array('size' => 10), $fontCell);
+                    $textrun->addText('Right forearm', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Dấu găng tay trái', array('size' => 10), $fontCell);
+                    $textrun->addText('Left glove print 5 fingers', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Dấu găng tay phải', array(), $fontCell);
+                    $textrun->addText('Right glove print 5 fingers', array('italic' => true), $fontCell);
+
                     foreach ($data as $keystt => $stt) {
-                        $templateProcessor->setValue("stt#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), ($keystt + 1));
-                        $templateProcessor->setValue("date#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), date("d/m/y", strtotime($stt['date'])));
-                        $templateProcessor->setValue("value_H#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_H"]);
-                        $templateProcessor->setValue("value_N#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_N"]);
-                        $templateProcessor->setValue("value_C#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_C"]);
-                        $templateProcessor->setValue("value_LF#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_LF"]);
-                        $templateProcessor->setValue("value_RF#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_RF"]);
-                        $templateProcessor->setValue("value_LG#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_LG"]);
-                        $templateProcessor->setValue("value_RG#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($keystt + 1), $stt["value_RG"]);
+                        $table->addRow(null);
+
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText(($keystt + 1), array('size' => 10), $fontCell);
+
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText(date("d/m/y", strtotime($stt['date'])), array('size' => 10), $fontCell);
+
+
+                        if ($stt["value_H"] == "") {
+                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_H"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_N"] == "") {
+                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_N"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_C"] == "") {
+                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_C"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_LF"] == "") {
+                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_LF"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_RF"] == "") {
+                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_RF"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_LG"] == "") {
+                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_LG"], array('size' => 10), $fontCell);
+                        }
+                        if ($stt["value_RG"] == "") {
+                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_RG"], array('size' => 10), $fontCell);
+                        }
                     }
                     //MAX
-                    $templateProcessor->setValue("max_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_H"]);
-                    $templateProcessor->setValue("max_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_N"]);
-                    $templateProcessor->setValue("max_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_C"]);
-                    $templateProcessor->setValue("max_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_LF"]);
-                    $templateProcessor->setValue("max_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_RF"]);
-                    $templateProcessor->setValue("max_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_LG"]);
-                    $templateProcessor->setValue("max_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["max_RG"]);
+                    $table->addRow(null);
 
+                    $cell1 = $table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
+                    $cell1->addText("Max", array('size' => 10, 'bold' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["max_H"], array('size' => 10), $fontCell);
+
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["max_N"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["max_C"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["max_LF"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["max_RF"], array('size' => 10), $fontCell);
+
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["max_LG"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["max_RG"], array('size' => 10), $fontCell);
                     //MIN
-                    $templateProcessor->setValue("min_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_H"]);
-                    $templateProcessor->setValue("min_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_N"]);
-                    $templateProcessor->setValue("min_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_C"]);
-                    $templateProcessor->setValue("min_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_LF"]);
-                    $templateProcessor->setValue("min_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_RF"]);
-                    $templateProcessor->setValue("min_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_LG"]);
-                    $templateProcessor->setValue("min_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max["min_RG"]);
+                    $table->addRow(null);
 
-                    //MAX PREV
-                    $templateProcessor->setValue("max_prev_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_H"]);
-                    $templateProcessor->setValue("max_prev_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_N"]);
-                    $templateProcessor->setValue("max_prev_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_C"]);
-                    $templateProcessor->setValue("max_prev_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_LF"]);
-                    $templateProcessor->setValue("max_prev_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_RF"]);
-                    $templateProcessor->setValue("max_prev_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_LG"]);
-                    $templateProcessor->setValue("max_prev_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["max_RG"]);
+                    $cell1 = $table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
+                    $cell1->addText("Min", array('size' => 10, 'bold' => true), $fontCell);
 
-                    //MIN PREV
-                    $templateProcessor->setValue("min_prev_H#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_H"]);
-                    $templateProcessor->setValue("min_prev_N#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_N"]);
-                    $templateProcessor->setValue("min_prev_C#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_C"]);
-                    $templateProcessor->setValue("min_prev_LF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_LF"]);
-                    $templateProcessor->setValue("min_prev_RF#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_RF"]);
-                    $templateProcessor->setValue("min_prev_LG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_LG"]);
-                    $templateProcessor->setValue("min_prev_RG#" . ($key + 1) . "#" . ($key1 + 1), $data_min_max_prev["min_RG"]);
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["min_H"], array('size' => 10), $fontCell);
 
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["min_N"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["min_C"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["min_LF"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["min_RF"], array('size' => 10), $fontCell);
+
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["min_LG"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max["min_RG"], array('size' => 10), $fontCell);
+                    ////PREV
+                    $table->addRow(null);
+                    $cell1 = $table->addCell(null, array('gridSpan' => 9, 'valign' => 'center'));
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $cell1->addText("Kết quả của năm trước / ", array('size' => 10, 'bold' => true), $fontCell);
+                    $cell1->addText('Results of previous year', array('size' => 10, 'bold' => true, 'italic' => true), $fontCell);
+
+                    //MAX
+                    $table->addRow(null);
+
+                    $cell1 = $table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
+                    $cell1->addText("Max", array('size' => 10, 'bold' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["max_H"], array('size' => 10), $fontCell);
+
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["max_N"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["max_C"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["max_LF"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["max_RF"], array('size' => 10), $fontCell);
+
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["max_LG"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["max_RG"], array('size' => 10), $fontCell);
+                    //MIN
+                    $table->addRow(null);
+
+                    $cell1 = $table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
+                    $cell1->addText("Min", array('size' => 10, 'bold' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["min_H"], array('size' => 10), $fontCell);
+
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["min_N"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["min_C"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["min_LF"], array('size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["min_RF"], array('size' => 10), $fontCell);
+
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["min_LG"], array('size' => 10, 'size' => 10), $fontCell);
+
+                    $cell1 = $table->addCell(null, $styleCell);
+                    $cell1->addText($data_min_max_prev["min_RG"], array('size' => 10), $fontCell);
+
+                    $templateProcessor->setComplexBlock("table_result#" . ($key + 1) . "#" . ($key1 + 1), $table);
+
+                    ///CHART
                     $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
 
                     $templateProcessor->setValue("department_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
