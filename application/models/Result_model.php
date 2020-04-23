@@ -96,7 +96,7 @@ class Result_model extends MY_Model
 
         $where = "WHERE a.deleted = 0 and a.area_id = " . $this->db->escape($params['area_id']) . " and a.target_id = " . $this->db->escape($params['target_id']) . "";
 
-        $sql = "SELECT a.* FROM pmp_limit as a $where";
+        $sql = "SELECT a.* FROM pmp_limit as a $where ORDER BY day_effect DESC";
 
         // echo "<pre>";
         // print_r($sql);
@@ -150,34 +150,34 @@ class Result_model extends MY_Model
         // $labels[] = array()
         $position_list = array();
         $datatmp = array();
+
         $datasets = array();
-        $datasets[] = array(
-            'marker' => array(
-                'enabled' => false
-            ),
-            'color' => 'red',
-            'name' => "Action Limit",
-            'data' => array(),
-        );
-        $datasets[] = array(
-            'marker' => array(
-                'enabled' => false
-            ),
-            'color' => 'orange',
-            'name' => "Alert Limit",
-            'data' => array(),
-        );
         // echo "<pre>";
         // print_r($params);
         // die();
         $lineAtIndex = null;
+        $list_limit = array();
+        $list_id_limit =  array();
         foreach ($data as $key => $row) {
-            $date = date("d/m/Y", strtotime($row->date));
+            $date = $row->date;
+
+            $limit = array_values(array_filter($data_limit, function ($item) use ($date) {
+                return $item['day_effect'] <= $date;
+            }));
+            if (isset($limit[0]) && !in_array($limit[0]['id'], $list_id_limit)) {
+                $list_id_limit[] = $limit[0]['id'];
+                $limit[0]['day_effect_to'] = date("Y-m-d");
+                if (count($list_limit) > 0) {
+                    $list_limit[count($list_limit) - 1]['day_effect_to'] = $limit[0]['day_effect'];
+                }
+                $list_limit[] = $limit[0];
+            }
+            $labels[] = $date;
             $position = $row->position_string_id;
             $value = $row->value;
             ///CHECK MỐC 
             if ($lineAtIndex === null && $params['date_from_prev'] != "" && $row->date >= $params['date_from']) {
-                $lineAtIndex = count($labels);
+                $lineAtIndex = count($labels) - 1;
             }
             if (!in_array($position, $position_list)) {
                 $position_list[] = $position;
@@ -186,27 +186,74 @@ class Result_model extends MY_Model
                     'data' => array(),
                 );
             }
-            $labels[] = $date;
             $datatmp[$key][$position] = $value;
         }
-        foreach ($labels as $key => $date) {
+
+        $alert_limit = array(
+            'marker' => array(
+                'enabled' => false
+            ),
+            'data_limit' => $limit,
+            'color' => 'orange',
+            'index' => $key,
+            'name' => "Alert Limit",
+            'data' => array(),
+        );
+        $action_limit = array(
+            'marker' => array(
+                'enabled' => false
+            ),
+            'data_limit' => $limit,
+            'color' => 'red',
+            'index' => $key,
+            'name' => "Action Limit",
+            'data' => array(),
+        );
+        array_unshift($datasets, $action_limit, $alert_limit);
+        foreach ($list_limit as $key => $limit) {
+            $alert_limit = array(
+                'marker' => array(
+                    'enabled' => false
+                ),
+                'data_limit' => $limit,
+                'color' => 'orange',
+                'index' => $key,
+                'name' => "Alert",
+                'data' => array(),
+            );
+            $action_limit = array(
+                'marker' => array(
+                    'enabled' => false
+                ),
+                'data_limit' => $limit,
+                'color' => 'red',
+                'index' => $key,
+                'name' => "Action",
+                'data' => array(),
+            );
+            // if ($key > 0) {
+            $alert_limit['showInLegend'] = false;
+            $action_limit['showInLegend'] = false;
+            // }
+            array_unshift($datasets, $action_limit, $alert_limit);
+        }
+
+        // echo "<pre>";
+        // print_r($list_limit);
+        // die();
+        $limit_prev = null;
+        foreach ($labels as $key => $date_real) {
+            $date = date("d/m/Y", strtotime($date_real));
+
             foreach ($datasets as &$position) {
                 $position_string_id = $position['name'];
-                $value = isset($datatmp[$key][$position_string_id]) ? (float) $datatmp[$key][$position_string_id] : 0;
-                if ($position_string_id == "Action Limit") {
-                    $limit = array_values(array_filter($data_limit, function ($item) use ($date) {
-                        $list = explode("/", $date);
-                        $year = $list[2];
-                        return $item['year'] == $year;
-                    }));
-                    $value = isset($limit[0]['action_limit']) ? (float) $limit[0]['action_limit'] : 0;
-                } else if ($position_string_id == "Alert Limit") {
-                    $limit = array_values(array_filter($data_limit, function ($item) use ($date) {
-                        $list = explode("/", $date);
-                        $year = $list[2];
-                        return $item['year'] == $year;
-                    }));
-                    $value = isset($limit[0]['alert_limit']) ? (float) $limit[0]['alert_limit'] : 0;
+                $value = isset($datatmp[$key][$position_string_id]) ? (float) $datatmp[$key][$position_string_id] : null;
+                if ($position_string_id == "Action") {
+                    $limit = $position['data_limit'];
+                    $value = isset($limit['action_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['action_limit'] : null;
+                } else if ($position_string_id == "Alert") {
+                    $limit = $position['data_limit'];
+                    $value = isset($limit['alert_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real  ? (float) $limit['alert_limit'] : null;
                 }
                 if ($value > $max) {
                     $max = $value;
@@ -214,6 +261,9 @@ class Result_model extends MY_Model
                 $position['data'][] = $value;
                 //                $index = array_search($position_string_id, $position_list);
             }
+            if ($limit_prev != null) {
+            }
+            $limit_prev = $limit;
         }
         $yAxis_title = "CFU/Plate";
         $title = $params['title'];

@@ -182,7 +182,6 @@ class Dashboard extends MY_Controller
         $this->load->model("workshop_model");
         $this->load->model("employeeresult_model");
         $this->load->model("result_model");
-        $this->load->model("limit_model");
 
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $workshop_id = $this->input->get('workshop_id', TRUE);
@@ -263,7 +262,6 @@ class Dashboard extends MY_Controller
 
         $this->load->model("employeeresult_model");
         $this->load->model("result_model");
-        $this->load->model("limit_model");
         $this->load->model("employee_model");
         $this->load->model("department_model");
 

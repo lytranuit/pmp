@@ -18,7 +18,7 @@ class Limit_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'deleted', 'area_id', 'factory_id', 'workshop_id', 'target_id', 'alert_limit', 'action_limit', 'standard_limit', 'year'
+            'deleted', 'area_id', 'factory_id', 'workshop_id', 'target_id', 'alert_limit', 'action_limit', 'standard_limit', 'day_effect'
         );
         $obj = array();
         foreach ($array as $key) {

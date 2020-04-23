@@ -1,8 +1,10 @@
 <?php
 
-class Limit extends MY_Controller {
+class Limit extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -25,7 +27,8 @@ class Limit extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
@@ -41,7 +44,8 @@ class Limit extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
@@ -116,12 +120,14 @@ class Limit extends MY_Controller {
         return true;
     }
 
-    public function index() { /////// trang ca nhan
+    public function index()
+    { /////// trang ca nhan
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function add() { /////// trang ca nhan
+    public function add()
+    { /////// trang ca nhan
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("limit_model");
@@ -131,6 +137,7 @@ class Limit extends MY_Controller {
             redirect('limit', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
+            $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
             $this->load->model("factory_model");
             $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
 
@@ -143,13 +150,18 @@ class Limit extends MY_Controller {
             $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
 
 
-            $this->load->model("target_model");
-            $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->load->model("object_model");
+            $object = $this->object_model->where(array('deleted' => 0, 'id' => $object_id))->with_targets()->as_object()->get();
+            $this->data['target'] = $object->targets;
+            // echo "<pre>";
+            // print_r($object);
+            // die();
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
 
-    public function edit($param) { /////// trang ca nhan
+    public function edit($param)
+    { /////// trang ca nhan
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("limit_model");
@@ -158,6 +170,8 @@ class Limit extends MY_Controller {
             $this->limit_model->update($data_up, $id);
             redirect('limit', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
+            
+            $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
             $this->load->model("limit_model");
             $tin = $this->limit_model->where(array('id' => $id))->as_object()->get();
             $this->data['tin'] = $tin;
@@ -172,13 +186,15 @@ class Limit extends MY_Controller {
             $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $tin->workshop_id))->as_object()->get_all();
 
 
-            $this->load->model("target_model");
-            $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->load->model("object_model");
+            $object = $this->object_model->where(array('deleted' => 0, 'id' => $object_id))->with_targets()->as_object()->get();
+            $this->data['target'] =  $object->targets;
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
 
-    public function remove($params) { /////// trang ca nhan
+    public function remove($params)
+    { /////// trang ca nhan
         $this->load->model("limit_model");
         $id = $params[0];
         $this->limit_model->update(array("deleted" => 1), $id);
@@ -186,7 +202,8 @@ class Limit extends MY_Controller {
         exit;
     }
 
-    public function table() {
+    public function table()
+    {
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $this->load->model("object_model");
         $this->load->model("limit_model");
@@ -211,22 +228,22 @@ class Limit extends MY_Controller {
         $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         $totalFiltered = $where->count_rows();
         $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
-//        echo "<pre>";
-//        print_r($object);
-//        die();
-//        if (empty($this->input->post('search')['value'])) {
-//            //            $max_page = ceil($totalFiltered / $limit);
-//
-//            $where = $this->limit_model->where(array("deleted" => 0));
-//            $totalFiltered = $where->count_rows();
-//            $where = $this->limit_model->where(array("deleted" => 0));
-//        } else {
-//            $search = $this->input->post('search')['value'];
-//            $sWhere = "deleted = 0";
-//            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
-//            $totalFiltered = $where->count_rows();
-//            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
-//        }
+        //        echo "<pre>";
+        //        print_r($object);
+        //        die();
+        //        if (empty($this->input->post('search')['value'])) {
+        //            //            $max_page = ceil($totalFiltered / $limit);
+        //
+        //            $where = $this->limit_model->where(array("deleted" => 0));
+        //            $totalFiltered = $where->count_rows();
+        //            $where = $this->limit_model->where(array("deleted" => 0));
+        //        } else {
+        //            $search = $this->input->post('search')['value'];
+        //            $sWhere = "deleted = 0";
+        //            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+        //            $totalFiltered = $where->count_rows();
+        //            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+        //        }
 
         $posts = $where->order_by("id", "DESC")->with_area()->with_target()->paginate($limit, NULL, $page);
         //        echo "<pre>";
@@ -237,20 +254,20 @@ class Limit extends MY_Controller {
             foreach ($posts as $post) {
                 $target = $post->target;
                 $area = $post->area;
-                $nestedData['year'] = $post->year;
+                $nestedData['day_effect'] = $post->day_effect;
                 $nestedData['target_name'] = $target->name;
                 $nestedData['area_name'] = $area->name;
                 $nestedData['standard_limit'] = $post->standard_limit;
                 $nestedData['alert_limit'] = $post->alert_limit;
                 $nestedData['action_limit'] = $post->action_limit;
                 $nestedData['action'] = '<a href="' . base_url() . 'limit/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
-                        . '<i class="fas fa-pencil-alt">'
-                        . '</i>'
-                        . '</a>'
-                        . '<a href="' . base_url() . 'limit/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
-                        . '<i class="far fa-trash-alt">'
-                        . '</i>'
-                        . '</a>';
+                    . '<i class="fas fa-pencil-alt">'
+                    . '</i>'
+                    . '</a>'
+                    . '<a href="' . base_url() . 'limit/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                    . '<i class="far fa-trash-alt">'
+                    . '</i>'
+                    . '</a>';
 
                 $data[] = $nestedData;
             }
@@ -265,5 +282,4 @@ class Limit extends MY_Controller {
 
         echo json_encode($json_data);
     }
-
 }

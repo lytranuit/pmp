@@ -224,8 +224,7 @@ class Export extends MY_Controller
             $textrun->addText('Right glove print 5 fingers', array('italic' => true), $fontCell);
 
             foreach ($area_all as $row2) {
-                $year = date("Y", strtotime($params['date_from']));
-                $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' => 6, 'year' => $year))->as_object()->get();
+                $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' => 6))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
                 // print_r($limit);
                 // die();  
                 //     ///DATA
@@ -323,7 +322,9 @@ class Export extends MY_Controller
                     $textrun = $table->addCell(null, $styleCell);
                     $textrun->addText('Dấu găng tay phải', array(), $fontCell);
                     $textrun->addText('Right glove print 5 fingers', array('italic' => true), $fontCell);
-
+                    // echo "<pre>";
+                    // print_r($data);
+                    // die();
                     foreach ($data as $keystt => $stt) {
                         $table->addRow(null);
 
@@ -388,120 +389,218 @@ class Export extends MY_Controller
                     $cell1 = $table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
                     $cell1->addText("Max", array('size' => 10, 'bold' => true), $fontCell);
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["max_H"], array('size' => 10), $fontCell);
+                    if ($data_min_max["max_H"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_H"], array('size' => 10), $fontCell);
+                    }
 
+                    if ($data_min_max["max_N"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_N"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["max_N"], array('size' => 10), $fontCell);
+                    if ($data_min_max["max_C"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_C"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["max_C"], array('size' => 10), $fontCell);
+                    if ($data_min_max["max_LF"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_LF"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["max_LF"], array('size' => 10), $fontCell);
+                    if ($data_min_max["max_RF"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_RF"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["max_RF"], array('size' => 10), $fontCell);
-
-
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["max_LG"], array('size' => 10), $fontCell);
-
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["max_RG"], array('size' => 10), $fontCell);
+                    if ($data_min_max["max_LG"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_LG"], array('size' => 10), $fontCell);
+                    }
+                    if ($data_min_max["max_RG"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_RG"], array('size' => 10), $fontCell);
+                    }
                     //MIN
                     $table->addRow(null);
 
                     $cell1 = $table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
                     $cell1->addText("Min", array('size' => 10, 'bold' => true), $fontCell);
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["min_H"], array('size' => 10), $fontCell);
+                    if ($data_min_max["min_H"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_H"], array('size' => 10), $fontCell);
+                    }
 
+                    if ($data_min_max["min_N"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_N"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["min_N"], array('size' => 10), $fontCell);
+                    if ($data_min_max["min_C"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_C"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["min_C"], array('size' => 10), $fontCell);
+                    if ($data_min_max["min_LF"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_LF"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["min_LF"], array('size' => 10), $fontCell);
+                    if ($data_min_max["min_RF"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_RF"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["min_RF"], array('size' => 10), $fontCell);
-
-
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["min_LG"], array('size' => 10), $fontCell);
-
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max["min_RG"], array('size' => 10), $fontCell);
+                    if ($data_min_max["min_LG"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_LG"], array('size' => 10), $fontCell);
+                    }
+                    if ($data_min_max["min_RG"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_RG"], array('size' => 10), $fontCell);
+                    }
                     ////PREV
                     $table->addRow(null);
                     $cell1 = $table->addCell(null, array('gridSpan' => 9, 'valign' => 'center'));
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $cell1->addText("Kết quả của năm trước / ", array('size' => 10, 'bold' => true), $fontCell);
-                    $cell1->addText('Results of previous year', array('size' => 10, 'bold' => true, 'italic' => true), $fontCell);
+                    $textrun1->addText("Kết quả của năm trước / ", array('size' => 10, 'bold' => true), $fontCell);
+                    $textrun1->addText('Results of previous year', array('size' => 10, 'bold' => true, 'italic' => true), $fontCell);
 
                     //MAX
                     $table->addRow(null);
-
                     $cell1 = $table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
                     $cell1->addText("Max", array('size' => 10, 'bold' => true), $fontCell);
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["max_H"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["max_H"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_H"], array('size' => 10), $fontCell);
+                    }
 
+                    if ($data_min_max_prev["max_N"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_N"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["max_N"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["max_C"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_C"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["max_C"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["max_LF"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_LF"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["max_LF"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["max_RF"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_RF"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["max_RF"], array('size' => 10), $fontCell);
-
-
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["max_LG"], array('size' => 10), $fontCell);
-
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["max_RG"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["max_LG"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_LG"], array('size' => 10), $fontCell);
+                    }
+                    if ($data_min_max_prev["max_RG"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_RG"], array('size' => 10), $fontCell);
+                    }
                     //MIN
                     $table->addRow(null);
 
                     $cell1 = $table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
                     $cell1->addText("Min", array('size' => 10, 'bold' => true), $fontCell);
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["min_H"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["min_H"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_H"], array('size' => 10), $fontCell);
+                    }
 
+                    if ($data_min_max_prev["min_N"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_N"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["min_N"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["min_C"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_C"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["min_C"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["min_LF"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_LF"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["min_LF"], array('size' => 10), $fontCell);
+                    if ($data_min_max_prev["min_RF"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_RF"], array('size' => 10), $fontCell);
+                    }
 
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["min_RF"], array('size' => 10), $fontCell);
-
-
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["min_LG"], array('size' => 10, 'size' => 10), $fontCell);
-
-                    $cell1 = $table->addCell(null, $styleCell);
-                    $cell1->addText($data_min_max_prev["min_RG"], array('size' => 10), $fontCell);
-
+                    if ($data_min_max_prev["min_LG"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_LG"], array('size' => 10), $fontCell);
+                    }
+                    if ($data_min_max_prev["min_RG"] == "") {
+                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_RG"], array('size' => 10), $fontCell);
+                    }
                     $templateProcessor->setComplexBlock("table_result#" . ($key + 1) . "#" . ($key1 + 1), $table);
 
                     ///CHART
@@ -636,8 +735,7 @@ class Export extends MY_Controller
                 $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
                 $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
                 foreach ($target_list as $key => $target) {
-                    $year = date("Y", strtotime($params['date_from']));
-                    $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' => $target->id, 'year' => $year))->as_object()->get();
+                    $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
                     $target_list[$key]->limit = $limit;
                     // print_r($limit);
                     // die();  
@@ -1025,8 +1123,7 @@ class Export extends MY_Controller
                 $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
                 $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
                 foreach ($target_list as $key => $target) {
-                    $year = date("Y", strtotime($params['date_from']));
-                    $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' => $target->id, 'year' => $year))->as_object()->get();
+                    $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
                     $target_list[$key]->limit = $limit;
                     // print_r($limit);
                     // die();  

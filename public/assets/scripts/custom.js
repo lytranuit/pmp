@@ -1,6 +1,16 @@
 $(document).ready(function () {
     ///MOVE MODAL RA NGOÀI
     $(".app-main .modal").detach().appendTo("body");
+    ////Confirm
+    $(document).off("click", "[data-type='confirm']").on("click", "[data-type='confirm']", function (e) {
+        e.preventDefault();
+        var title = $(this).attr("title");
+        var href = $(this).attr("href");
+        if (confirm(title) == true) {
+            location.href = href;
+        }
+        return false;
+    })
     ////ACTIVE MENU
     setTimeout(function () {
         let url = window.location.href;
@@ -11,7 +21,7 @@ $(document).ready(function () {
             p.trigger("click");
             $(">a", p).trigger("click");
         }
-    }, 1000)
+    }, 1000);
     /// Chọn đối tượng
     $(".object_select").click(function () {
         var i = $(this).data("id");

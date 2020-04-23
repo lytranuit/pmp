@@ -113,20 +113,73 @@ class EmployeeResult_model extends MY_Model
         );
         $lineAtIndex = null;
         $labels = array();
-
+        $list_id_limit = array();
+        $list_limit = array();
         foreach ($data as $row) {
+            $date_real = $row->date;
             $date = date("d/m/Y", strtotime($row->date));
             $labels[] = $date;
             if ($lineAtIndex === null && $params['date_from_prev'] != "" && $row->date >= $params['date_from']) {
-                $lineAtIndex = count($row);
+                $lineAtIndex = count($labels) - 1;
             }
-            $limit = array_values(array_filter($data_limit, function ($item) use ($date) {
-                $list = explode("/", $date);
-                $year = $list[2];
-                return $item['year'] == $year;
+            $limit = array_values(array_filter($data_limit, function ($item) use ($date_real) {
+                return $item['day_effect'] <= $date_real;
             }));
-            $value_action = isset($limit[0]['action_limit']) ? (float) $limit[0]['action_limit'] : 0;
-            $value_alert = isset($limit[0]['alert_limit']) ? (float) $limit[0]['alert_limit'] : 0;
+            if (isset($limit[0]) && !in_array($limit[0]['id'], $list_id_limit)) {
+                $list_id_limit[] = $limit[0]['id'];
+                $limit[0]['day_effect_to'] = date("Y-m-d");
+                if (count($list_limit) > 0) {
+                    $list_limit[count($list_limit) - 1]['day_effect_to'] = $limit[0]['day_effect'];
+                }
+                $list_limit[] = $limit[0];
+            }
+            ///
+            // $value_action = isset($limit[0]['action_limit']) ? (float) $limit[0]['action_limit'] : null;
+            // $value_alert = isset($limit[0]['alert_limit']) ? (float) $limit[0]['alert_limit'] : null;
+            // $value_H = (float) $row->value_H;
+            // $value_N = (float) $row->value_N;
+            // $value_C = (float) $row->value_C;
+            // $value_LF = (float) $row->value_LF;
+            // $value_RF = (float) $row->value_RF;
+            // $value_LG = (float) $row->value_LG;
+            // $value_RG = (float) $row->value_RG;
+            // $values = array($value_action, $value_alert, $value_H, $value_N, $value_C, $value_LF, $value_RF, $value_LG, $value_RG);
+            // foreach ($datasets as $key => &$position) {
+            //     $position['data'][] = $values[$key];
+            //     if ($values[$key] > $max) {
+            //         $max = $values[$key];
+            //     }
+            // }
+        }
+        foreach ($list_limit as $key => $limit) {
+            $alert_limit = array(
+                'marker' => array(
+                    'enabled' => false
+                ),
+                'data_limit' => $limit,
+                'color' => 'orange',
+                'index' => $key,
+                'name' => "Alert",
+                'data' => array(),
+            );
+            $action_limit = array(
+                'marker' => array(
+                    'enabled' => false
+                ),
+                'data_limit' => $limit,
+                'color' => 'red',
+                'index' => $key,
+                'name' => "Action",
+                'data' => array(),
+            );
+            // if ($key > 0) {
+            $alert_limit['showInLegend'] = false;
+            $action_limit['showInLegend'] = false;
+            // }
+            array_push($datasets, $action_limit, $alert_limit);
+        }
+        foreach ($data as $row) {
+            $date_real = $row->date;
             $value_H = (float) $row->value_H;
             $value_N = (float) $row->value_N;
             $value_C = (float) $row->value_C;
@@ -134,15 +187,26 @@ class EmployeeResult_model extends MY_Model
             $value_RF = (float) $row->value_RF;
             $value_LG = (float) $row->value_LG;
             $value_RG = (float) $row->value_RG;
-            $values = array($value_action, $value_alert, $value_H, $value_N, $value_C, $value_LF, $value_RF, $value_LG, $value_RG);
+            $values = array(null, null, $value_H, $value_N, $value_C, $value_LF, $value_RF, $value_LG, $value_RG);
             foreach ($datasets as $key => &$position) {
-                $position['data'][] = $values[$key];
-                if ($values[$key] > $max) {
-                    $max = $values[$key];
+                if ($key < 9) {
+                    $value = $values[$key];
+                } else {
+                    $limit = $position['data_limit'];
+                    if ($position['name'] == "Action") {
+                        $value = isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['action_limit'] : null;
+                    } elseif ($position['name'] == "Alert") {
+                        $value = isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['alert_limit'] : null;
+                    } else {
+                        $value = null;
+                    }
+                }
+                $position['data'][] = $value;
+                if ($value > $max) {
+                    $max = $value;
                 }
             }
         }
-
         $yAxis_title = "CFU/Plate";
         $title = $params['title'];
         $subtitle = $params['subtitle'];
@@ -204,7 +268,7 @@ class EmployeeResult_model extends MY_Model
 
         $where = "WHERE a.deleted = 0 and a.area_id = " . $this->db->escape($params['area_id']) . " and a.target_id = " . $this->db->escape($params['target_id']) . "";
 
-        $sql = "SELECT a.* FROM pmp_limit as a $where";
+        $sql = "SELECT a.* FROM pmp_limit as a $where ORDER BY day_effect DESC";
 
         // echo "<pre>";
         // print_r($sql);

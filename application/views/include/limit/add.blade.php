@@ -47,7 +47,6 @@
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Phương pháp lấy mẫu:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="target_id">
-                                        <option></option>
                                         @foreach ($target as $row)
                                         <option value="{{$row->id}}">{{$row->name}}</option>
                                         @endforeach
@@ -56,9 +55,9 @@
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Năm:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Ngày hiệu lực:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='number' name="year" required="" value="{{date('Y')}}" />
+                                    <input class="form-control" type='date' name="day_effect" required="" />
                                 </div>
                             </div>
 

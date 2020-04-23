@@ -11,7 +11,7 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Năm</th>
+                            <th>Ngày hiệu lực</th>
                             <th>Khu vực</th>
                             <th>Phương pháp lấy mẫu</th>
                             <th>Tiêu chuẩn chấp nhận</th>
@@ -39,9 +39,8 @@
                 "dataType": "json",
                 "type": "POST",
             },
-            "columns": [
-                {
-                    "data": "year"
+            "columns": [{
+                    "data": "day_effect"
                 },
                 {
                     "data": "area_name"
