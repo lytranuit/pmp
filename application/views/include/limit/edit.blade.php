@@ -58,7 +58,7 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Năm:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='number' name="date" required="" value="{{date('Y')}}" />
+                                    <input class="form-control" type='number' name="year" required="" value="{{date('Y')}}" />
                                 </div>
                             </div>
                             <div class="form-group row">
