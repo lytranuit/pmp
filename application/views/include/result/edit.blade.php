@@ -137,6 +137,7 @@
                     let workshop_name = workshop.name;
                     let area_name = area.name;
                     let department_name = department.name;
+                    let target_name = target.name;
                     let area_id = department.area_id;
                     $("input[name='frequency_name']").val(frequency_name);
                     $("input[name='position_name']").val(name);
@@ -152,7 +153,6 @@
                     $("input[name='target_id']").val(target_id);
                     $("input[name='target_name']").val(target_name);
                     $("input[name='type_bc']").val(type_bc);
-
                 }
             })
         })
