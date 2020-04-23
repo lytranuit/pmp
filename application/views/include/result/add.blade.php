@@ -66,6 +66,7 @@
                                     <input class="form-control" type='hidden' name="workshop_id" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="factory_id" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="object_id" required="" readonly="" />
+                                    <input class="form-control" type='hidden' name="type_bc" required="" readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
