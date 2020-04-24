@@ -242,7 +242,7 @@ class Result_model extends MY_Model
         // print_r($list_limit);
         // die();
         $limit_prev = null;
-        foreach ($labels as $key => $date_real) {
+        foreach ($labels as $key => &$date_real) {
             $date = date("d/m/Y", strtotime($date_real));
 
             foreach ($datasets as &$position) {
@@ -261,9 +261,8 @@ class Result_model extends MY_Model
                 $position['data'][] = $value;
                 //                $index = array_search($position_string_id, $position_list);
             }
-            if ($limit_prev != null) {
-            }
-            $limit_prev = $limit;
+            $date_real = $date;
+
         }
         $yAxis_title = "CFU/Plate";
         $title = $params['title'];
