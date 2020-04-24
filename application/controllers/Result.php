@@ -150,7 +150,7 @@ class Result extends MY_Controller
             $daterange = $this->input->post('daterange');
 
             $search = $this->input->post('search')['value'];
-            $sWhere = "deleted = 0 and and object_id = " . $this->db->escape($object_id) . " and position_id IN (SELECT id from pmp_position where deleted = 0 and string_id like '%" . $search . "%')";
+            $sWhere = "deleted = 0 and object_id = " . $this->db->escape($object_id) . " and position_id IN (SELECT id from pmp_position where deleted = 0 and string_id like '%" . $search . "%')";
             if ($daterange != "") {
                 $list_date = explode(" - ", $daterange);
                 $date_from = date("Y-m-d", strtotime($list_date[0]));
