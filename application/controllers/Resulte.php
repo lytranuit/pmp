@@ -56,6 +56,7 @@ class Resulte extends MY_Controller
     public function index()
     { /////// trang ca nhan
         load_datatable($this->data);
+        load_daterangepicker($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
@@ -136,12 +137,29 @@ class Resulte extends MY_Controller
         if (empty($this->input->post('search')['value'])) {
             //            $max_page = ceil($totalFiltered / $limit);
 
-            $where = $this->employeeResult_model->where(array("deleted" => 0));
-            $totalFiltered = $where->count_rows();
-            $where = $this->employeeResult_model->where(array("deleted" => 0));
+            $daterange = $this->input->post('daterange');
+
+            if ($daterange != "") {
+                $list_date = explode(" - ", $daterange);
+                $date_from = date("Y-m-d", strtotime($list_date[0]));
+                $date_to = date("Y-m-d", strtotime($list_date[1]));
+                $where = $this->employeeResult_model->where(array("deleted" => 0))->where("date", ">=", $date_from)->where("date", "<=", $date_to);
+                $totalFiltered = $where->count_rows();
+                $where = $this->employeeResult_model->where(array("deleted" => 0))->where("date", ">=", $date_from)->where("date", "<=", $date_to);
+            } else {
+                $where = $this->employeeResult_model->where(array("deleted" => 0));
+                $totalFiltered = $where->count_rows();
+                $where = $this->employeeResult_model->where(array("deleted" => 0));
+            }
         } else {
             $search = $this->input->post('search')['value'];
             $sWhere = "deleted = 0 and employee_id IN (SELECT id from pmp_employee where deleted = 0 and (name like '%" . $search . "%' OR string_id like '%" . $search . "%'))";
+            if ($daterange != "") {
+                $list_date = explode(" - ", $daterange);
+                $date_from = date("Y-m-d", strtotime($list_date[0]));
+                $date_to = date("Y-m-d", strtotime($list_date[1]));
+                $sWhere .= " AND date BETWEEN '$date_from' AND '$date_to";
+            }
             $where = $this->employeeResult_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
             $totalFiltered = $where->count_rows();
             $where = $this->employeeResult_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);

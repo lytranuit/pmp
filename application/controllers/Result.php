@@ -57,6 +57,7 @@ class Result extends MY_Controller
     public function index()
     { /////// trang ca nhan
         load_datatable($this->data);
+        load_daterangepicker($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
@@ -131,13 +132,29 @@ class Result extends MY_Controller
 
         if (empty($this->input->post('search')['value'])) {
             //            $max_page = ceil($totalFiltered / $limit);
+            $daterange = $this->input->post('daterange');
 
-            $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id));
-            $totalFiltered = $where->count_rows();
-            $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id));
+            if ($daterange != "") {
+                $list_date = explode(" - ", $daterange);
+                $date_from = date("Y-m-d", strtotime($list_date[0]));
+                $date_to = date("Y-m-d", strtotime($list_date[1]));
+                $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id))->where("date", ">=", $date_from)->where("date", "<=", $date_to);
+                $totalFiltered = $where->count_rows();
+                $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id))->where("date", ">=", $date_from)->where("date", "<=", $date_to);
+            } else {
+                $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id));
+                $totalFiltered = $where->count_rows();
+                $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id));
+            }
         } else {
             $search = $this->input->post('search')['value'];
-            $sWhere = "deleted = 0 and object_id = " . $this->db->escape($object_id) . " and position_id IN (SELECT id from pmp_position where deleted = 0 and string_id like '%" . $search . "%')";
+            $sWhere = "deleted = 0 and and object_id = " . $this->db->escape($object_id) . " and position_id IN (SELECT id from pmp_position where deleted = 0 and string_id like '%" . $search . "%')";
+            if ($daterange != "") {
+                $list_date = explode(" - ", $daterange);
+                $date_from = date("Y-m-d", strtotime($list_date[0]));
+                $date_to = date("Y-m-d", strtotime($list_date[1]));
+                $sWhere .= " AND date BETWEEN '$date_from' AND '$date_to";
+            }
             $where = $this->result_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
             $totalFiltered = $where->count_rows();
             $where = $this->result_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
