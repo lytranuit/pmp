@@ -117,7 +117,7 @@ class EmployeeResult_model extends MY_Model
         $list_limit = array();
         foreach ($data as $row) {
             $date_real = $row->date;
-            $date = date("d/m/Y", strtotime($row->date));
+            $date = date("d/m/y", strtotime($row->date));
             $labels[] = $date;
             if ($lineAtIndex === null && $params['date_from_prev'] != "" && $row->date >= $params['date_from']) {
                 $lineAtIndex = count($labels) - 1;

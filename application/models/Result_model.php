@@ -243,7 +243,7 @@ class Result_model extends MY_Model
         // die();
         $limit_prev = null;
         foreach ($labels as $key => &$date_real) {
-            $date = date("d/m/Y", strtotime($date_real));
+            $date = date("d/m/y", strtotime($date_real));
 
             foreach ($datasets as &$position) {
                 $position_string_id = $position['name'];
