@@ -152,6 +152,8 @@ class Resulte extends MY_Controller
                 $where = $this->employeeResult_model->where(array("deleted" => 0));
             }
         } else {
+            $daterange = $this->input->post('daterange');
+
             $search = $this->input->post('search')['value'];
             $sWhere = "deleted = 0 and employee_id IN (SELECT id from pmp_employee where deleted = 0 and (name like '%" . $search . "%' OR string_id like '%" . $search . "%'))";
             if ($daterange != "") {

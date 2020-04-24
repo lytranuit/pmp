@@ -147,6 +147,8 @@ class Result extends MY_Controller
                 $where = $this->result_model->where(array("deleted" => 0, 'object_id' => $object_id));
             }
         } else {
+            $daterange = $this->input->post('daterange');
+
             $search = $this->input->post('search')['value'];
             $sWhere = "deleted = 0 and and object_id = " . $this->db->escape($object_id) . " and position_id IN (SELECT id from pmp_position where deleted = 0 and string_id like '%" . $search . "%')";
             if ($daterange != "") {
