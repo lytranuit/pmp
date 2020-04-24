@@ -160,7 +160,7 @@ class Resulte extends MY_Controller
                 $list_date = explode(" - ", $daterange);
                 $date_from = date("Y-m-d", strtotime($list_date[0]));
                 $date_to = date("Y-m-d", strtotime($list_date[1]));
-                $sWhere .= " AND date BETWEEN '$date_from' AND '$date_to";
+                $sWhere .= " AND date BETWEEN '$date_from' AND '$date_to'";
             }
             $where = $this->employeeResult_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
             $totalFiltered = $where->count_rows();
