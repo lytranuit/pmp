@@ -254,6 +254,8 @@ class Result_model extends MY_Model
                 } else if ($position_string_id == "Alert") {
                     $limit = $position['data_limit'];
                     $value = isset($limit['alert_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real  ? (float) $limit['alert_limit'] : null;
+                } elseif ($position_string_id == "Alert Limit" || $position_string_id == "Action Limit") {
+                    $value = null;
                 }
                 if ($value > $max) {
                     $max = $value;
@@ -262,7 +264,6 @@ class Result_model extends MY_Model
                 //                $index = array_search($position_string_id, $position_list);
             }
             $date_real = $date;
-
         }
         $yAxis_title = "CFU/Plate";
         $title = $params['title'];
