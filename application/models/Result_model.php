@@ -247,7 +247,7 @@ class Result_model extends MY_Model
 
             foreach ($datasets as &$position) {
                 $position_string_id = $position['name'];
-                $value = isset($datatmp[$key][$position_string_id]) ? (float) $datatmp[$key][$position_string_id] : null;
+                $value = isset($datatmp[$key][$position_string_id]) ? (float) $datatmp[$key][$position_string_id] : 0;
                 if ($position_string_id == "Action") {
                     $limit = $position['data_limit'];
                     $value = isset($limit['action_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['action_limit'] : null;
