@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 
 /*
@@ -57,9 +57,9 @@ $config['url_suffix'] = '';
 $config['language'] = 'vietnamese';
 
 $config['language_list'] = array(
-    'vietnamese' => 'vi',
-    'english' => 'en',
-    'japanese' => 'jp'
+  'vietnamese' => 'vi',
+  'english' => 'en',
+  'japanese' => 'jp'
 );
 
 /*
@@ -531,6 +531,21 @@ $config['proxy_ips'] = '';
 //$query = $db->where(array("name" => 'base_url'))->get('options');
 //$result = $query->result_array();
 //$base_url = count($result) ? $result[0]['content'] : "";
+
+/*
+* Audit Trail
+*/
+
+$config['audit_enable'] = TRUE;
+$config['track_insert'] = TRUE;
+$config['track_update'] = TRUE;
+$config['track_delete'] = TRUE;
+$config['not_allowed_tables'] = array();
+
+
+
+
+
 /*
   |--------------------------------------------------------------------------
   | Modules locations
@@ -550,4 +565,3 @@ $config['base_url'] = "http://pmp.local/";
 $config['project_name'] = "Xu hướng vi sinh môi trường";
 
 $config['version'] = "1.1";
-

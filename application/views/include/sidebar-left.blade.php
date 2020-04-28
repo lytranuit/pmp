@@ -103,7 +103,14 @@
                         Giới hạn
                     </a>
                 </li>
+
                 <li class="app-sidebar__heading">Cài đặt</li>
+                <li>
+                    <a href="{{base_url()}}history/" class="">
+                        <i class="metismenu-icon far fa-clipboard"></i>
+                        Audit Trail
+                    </a>
+                </li>
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fa fa-lock"></i>
@@ -112,7 +119,7 @@
                     </a>
                     <ul>
                         <li>
-                            <a href="{{base_url()}}admin/quanlyuser">
+                            <a href="{{base_url()}}user/">
                                 <i class="metismenu-icon"></i>
                                 Tài khoản
                             </a>
@@ -126,6 +133,7 @@
                     </ul>
 
                 </li>
+
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fas fa-columns"></i>

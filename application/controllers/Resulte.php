@@ -71,6 +71,9 @@ class Resulte extends MY_Controller
             $data_up = $this->employeeResult_model->create_object($data);
             $id = $this->employeeResult_model->insert($data_up);
 
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' added a new record($id) to the table 'pmp_employee_result'";
+            $this->employeeResult_model->trail($id, "insert", null, $data_up, null, $text);
             redirect('resulte', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -88,10 +91,15 @@ class Resulte extends MY_Controller
         $id = $params[0];
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         if (isset($_POST['dangtin'])) {
-            $data = $_POST;
             $this->load->model("employeeResult_model");
+            $data = $_POST;
+            $prev_data = $this->employeeResult_model->as_array()->get($id);
             $data_up = $this->employeeResult_model->create_object($data);
-            $this->employeeResult_model->update($data_up, $id);
+            $status = $this->employeeResult_model->update($data_up, $id);
+
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' edited record($id) to the table 'pmp_employee_result'";
+            $this->employeeResult_model->trail($status, "update", null, $data_up, $prev_data, $text);
             redirect('resulte', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("employeeResult_model");
@@ -119,7 +127,11 @@ class Resulte extends MY_Controller
     { /////// trang ca nhan
         $this->load->model("employeeResult_model");
         $id = $params[0];
-        $this->employeeResult_model->update(array("deleted" => 1), $id);
+        $status = $this->employeeResult_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' removed record($id) to the table 'pmp_employee_result'";
+        $this->result_model->trail($status, "delete", null, null, $id, $text);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

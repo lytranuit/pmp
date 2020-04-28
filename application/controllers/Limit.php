@@ -134,6 +134,9 @@ class Limit extends MY_Controller
             $data_up = $this->limit_model->create_object($data);
             $id = $this->limit_model->insert($data_up);
 
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' added a new record($id) to the table 'pmp_limit'";
+            $this->result_model->trail($id, "insert", null, $data_up, null, $text);
             redirect('limit', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -165,12 +168,17 @@ class Limit extends MY_Controller
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("limit_model");
+            $prev_data = $this->result_model->as_array()->get($id);
             $data = $_POST;
             $data_up = $this->limit_model->create_object($data);
-            $this->limit_model->update($data_up, $id);
+            $status = $this->limit_model->update($data_up, $id);
+
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' edited record($id) to the table 'pmp_limit'";
+            $this->result_model->trail($status, "update", null, $data_up, $prev_data, $text);
             redirect('limit', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
-            
+
             $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
             $this->load->model("limit_model");
             $tin = $this->limit_model->where(array('id' => $id))->as_object()->get();
@@ -197,7 +205,10 @@ class Limit extends MY_Controller
     { /////// trang ca nhan
         $this->load->model("limit_model");
         $id = $params[0];
-        $this->limit_model->update(array("deleted" => 1), $id);
+        $status = $this->limit_model->update(array("deleted" => 1), $id);
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' removed record($id) to the table 'pmp_limit'";
+        $this->result_model->trail($status, "delete", null, null, $id, $text);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

@@ -20,7 +20,18 @@ class Result_model extends MY_Model
         $this->has_one['position'] = array('foreign_model' => 'Position_model', 'foreign_table' => 'pmp_position', 'foreign_key' => 'id', 'local_key' => 'position_id');
         $this->has_one['target'] = array('foreign_model' => 'Target_model', 'foreign_table' => 'pmp_target', 'foreign_key' => 'id', 'local_key' => 'target_id');
     }
-
+    // protected function log_create($data)
+    // {
+    //     $text =   "'" . $this->session->userdata('username') . "' insert into table '$this->table' a new record($data)";
+    //     $this->trail(1, 'insert', $this->table, $data, null, $text);
+    //     return $data;
+    // }
+    // protected function log_delete($data)
+    // {
+    //     $text =   "'" . $this->session->userdata('username') . "' insert into table '$this->table' a new record($data)";
+    //     $this->trail(1, 'insert', $this->table, $data, null, $text);
+    //     return $data;
+    // }
     function create_object($data)
     {
         $array = array(
@@ -393,11 +404,11 @@ class Result_model extends MY_Model
         $result = isset($result[0]) ? $result[0] : array();
         return $result;
     }
-    function max_stt_in_day($position, $date)
+    function max_stt_in_day($position, $date, $except_id = 0)
     {
         $sql = "SELECT MAX(stt_in_day) as max_stt FROM
                     pmp_result 
-                WHERE position_id = $position and date = '$date' and deleted = 0";
+                WHERE position_id = $position and date = '$date' and deleted = 0 and id <> $except_id";
 
         // echo "<pre>";
         // print_r($sql);

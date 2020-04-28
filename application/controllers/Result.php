@@ -77,6 +77,10 @@ class Result extends MY_Controller
             $data_up = $this->result_model->create_object($data);
             $id = $this->result_model->insert($data_up);
 
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' added a new record($id) to the table 'pmp_result'";
+            $this->result_model->trail($id, "insert", null, $data_up, null, $text);
+            // die();
             redirect('result', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -91,15 +95,20 @@ class Result extends MY_Controller
         $id = $params[0];
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         if (isset($_POST['dangtin'])) {
-            $data = $_POST;
+
             $this->load->model("result_model");
+            $prev_data = $this->result_model->as_array()->get($id);
+            $data = $_POST;
             $position_id = $data['position_id'];
             $date = $data['date'];
-            $max_stt = $this->result_model->max_stt_in_day($position_id, $date);
+            $max_stt = $this->result_model->max_stt_in_day($position_id, $date, $id);
             $data['stt_in_day'] = $max_stt;
             $data_up = $this->result_model->create_object($data);
-            $this->result_model->update($data_up, $id);
+            $status = $this->result_model->update($data_up, $id);
 
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' edited record($id) to the table 'pmp_result'";
+            $this->result_model->trail($status, "update", null, $data_up, $prev_data, $text);
             redirect('result', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("result_model");
@@ -116,7 +125,11 @@ class Result extends MY_Controller
     { /////// trang ca nhan
         $this->load->model("result_model");
         $id = $params[0];
-        $this->result_model->update(array("deleted" => 1), $id);
+        $status = $this->result_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' removed record($id) to the table 'pmp_result'";
+        $this->result_model->trail($status, "delete", null, null, $id, $text);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 /*
  * Copyright (C) 2014 @avenirer [avenir.ro@gmail.com]
  * Everyone is permitted to copy and distribute verbatim or modified copies of this license document,
@@ -69,7 +69,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 	}
  *
  * */
-class MY_Model extends CI_Model {
+class MY_Model extends CI_Model
+{
 
     /**
      * Select the database connection from the group names defined inside the database.php configuration file or an
@@ -173,7 +174,9 @@ class MY_Model extends CI_Model {
     private $_trashed = 'without';
     private $_select = '*';
 
-    public function __construct() {
+    private $CI;
+    public function __construct()
+    {
         parent::__construct();
         $this->load->helper('inflector');
         $this->_set_connection();
@@ -181,6 +184,8 @@ class MY_Model extends CI_Model {
         $this->_fetch_table();
         $this->pagination_delimiters = (isset($this->pagination_delimiters)) ? $this->pagination_delimiters : array('<span>', '</span>');
         $this->pagination_arrows = (isset($this->pagination_arrows)) ? $this->pagination_arrows : array('&lt;', '&gt;');
+        $this->CI = &get_instance();
+        // $this->CI->config->load('trail');
         /* These below are implementation examples for before_create and before_update triggers.
           Their respective functions - add_creator() and add_updater() - can be found at the end of the model.
           They add user id on create and update. If you comment this out don't forget to do the same for the methods()
@@ -188,14 +193,16 @@ class MY_Model extends CI_Model {
           $this->before_update[]='add_updater';
          */
     }
-    public function _get_table_fields() {
+    public function _get_table_fields()
+    {
         if (empty($this->table_fields)) {
             $this->table_fields = $this->_database->list_fields($this->table);
         }
         return TRUE;
     }
 
-    public function fillable_fields() {
+    public function fillable_fields()
+    {
         if (!isset($this->_can_be_filled)) {
             $this->_get_table_fields();
             $no_protection = array();
@@ -219,7 +226,8 @@ class MY_Model extends CI_Model {
         return TRUE;
     }
 
-    public function _prep_before_write($data) {
+    public function _prep_before_write($data)
+    {
         $this->fillable_fields();
         // We make sure we have the fields that can be filled
         $can_fill = $this->_can_be_filled;
@@ -253,18 +261,20 @@ class MY_Model extends CI_Model {
      * It should be called by any "save" method
      */
 
-    public function _prep_after_write() {
+    public function _prep_after_write()
+    {
         if ($this->delete_cache_on_save === TRUE) {
             $this->delete_cache('*');
         }
         return TRUE;
     }
 
-    public function _prep_before_read() {
-        
+    public function _prep_before_read()
+    {
     }
 
-    public function _prep_after_read($data, $multi = TRUE) {
+    public function _prep_after_read($data, $multi = TRUE)
+    {
         // let's join the subqueries...
         $data = $this->join_temporary_results($data);
         $this->_database->reset_query();
@@ -294,7 +304,8 @@ class MY_Model extends CI_Model {
      * the row when doing an update
      * @return $this
      */
-    public function from_form($rules = NULL, $additional_values = NULL, $row_fields_to_update = array()) {
+    public function from_form($rules = NULL, $additional_values = NULL, $row_fields_to_update = array())
+    {
         $this->_get_table_fields();
         $this->load->library('form_validation');
         if (!isset($rules)) {
@@ -345,7 +356,8 @@ class MY_Model extends CI_Model {
      * @param $data
      * @return int/array Returns id/ids of inserted rows
      */
-    public function insert($data = NULL) {
+    public function insert($data = NULL)
+    {
         if (!isset($data) && $this->validated != FALSE) {
             $data = $this->validated;
             $this->validated = FALSE;
@@ -397,7 +409,8 @@ class MY_Model extends CI_Model {
      * @return bool return TRUE if the array is a multidimensional one
      */
 
-    public function is_multidimensional($array) {
+    public function is_multidimensional($array)
+    {
         if (is_array($array)) {
             foreach ($array as $element) {
                 if (is_array($element)) {
@@ -416,7 +429,8 @@ class MY_Model extends CI_Model {
      * @param bool $escape should the values be escaped or not - defaults to true
      * @return str/array Returns id/ids of inserted rows
      */
-    public function update($data = NULL, $column_name_where = NULL, $escape = TRUE) {
+    public function update($data = NULL, $column_name_where = NULL, $escape = TRUE)
+    {
         if (!isset($data) && $this->validated != FALSE) {
             $data = $this->validated;
             $this->validated = FALSE;
@@ -507,7 +521,8 @@ class MY_Model extends CI_Model {
      * @param bool $custom_string - if set to true, will simply assume that $field_or_array is actually a string and pass it to the where query
      * @return $this
      */
-    public function where($field_or_array = NULL, $operator_or_value = NULL, $value = NULL, $with_or = FALSE, $with_not = FALSE, $custom_string = FALSE) {
+    public function where($field_or_array = NULL, $operator_or_value = NULL, $value = NULL, $with_or = FALSE, $with_not = FALSE, $custom_string = FALSE)
+    {
         if ($this->soft_deletes === TRUE) {
             $backtrace = debug_backtrace(); #fix for lower PHP 5.4 version
             if ($backtrace[1]['function'] != 'force_delete') {
@@ -555,7 +570,7 @@ class MY_Model extends CI_Model {
             //exit;
             $this->_database->{$where_or . $not . '_in'}($this->table . '.' . $field_or_array, $operator_or_value);
         } elseif (isset($field_or_array) && isset($operator_or_value) && isset($value)) {
-            
+
             if (strtolower($operator_or_value) == 'like') {
                 if ($with_not === TRUE) {
                     $like = 'not_like';
@@ -585,7 +600,8 @@ class MY_Model extends CI_Model {
      * @param int $offset
      * @return $this
      */
-    public function limit($limit, $offset = 0) {
+    public function limit($limit, $offset = 0)
+    {
         $this->_database->limit($limit, $offset);
         return $this;
     }
@@ -596,7 +612,8 @@ class MY_Model extends CI_Model {
      * @param $grouping_by
      * @return $this
      */
-    public function group_by($grouping_by) {
+    public function group_by($grouping_by)
+    {
         $this->_database->group_by($grouping_by);
         return $this;
     }
@@ -607,7 +624,8 @@ class MY_Model extends CI_Model {
      * @param $where primary_key(s) Can receive the primary key value or a list of primary keys as array()
      * @return Returns affected rows or false on failure
      */
-    public function delete($where = NULL) {
+    public function delete($where = NULL)
+    {
         if (!empty($this->before_delete) || !empty($this->before_soft_delete) || !empty($this->after_delete) || !empty($this->after_soft_delete) || ($this->soft_deletes === TRUE)) {
             $to_update = array();
             if (isset($where)) {
@@ -666,7 +684,8 @@ class MY_Model extends CI_Model {
      * @param null $where
      * @return bool
      */
-    public function force_delete($where = NULL) {
+    public function force_delete($where = NULL)
+    {
         if (isset($where)) {
             $this->where($where);
         }
@@ -683,7 +702,8 @@ class MY_Model extends CI_Model {
      * @param null $where
      * @return bool
      */
-    public function restore($where = NULL) {
+    public function restore($where = NULL)
+    {
         $this->with_trashed();
         if (isset($where)) {
             $this->where($where);
@@ -701,7 +721,8 @@ class MY_Model extends CI_Model {
      * @param null $where
      * @return bool
      */
-    public function trashed($where = NULL) {
+    public function trashed($where = NULL)
+    {
         $this->only_trashed();
         if (isset($where)) {
             $this->where($where);
@@ -720,7 +741,8 @@ class MY_Model extends CI_Model {
      * @param null $where
      * @return mixed
      */
-    public function get($where = NULL) {
+    public function get($where = NULL)
+    {
         $data = $this->_get_from_cache();
 
         if (isset($data) && $data !== FALSE) {
@@ -760,7 +782,8 @@ class MY_Model extends CI_Model {
      * @param null $where
      * @return mixed
      */
-    public function get_all($where = NULL) {
+    public function get_all($where = NULL)
+    {
         $data = $this->_get_from_cache();
 
         if (isset($data) && $data !== FALSE) {
@@ -800,7 +823,8 @@ class MY_Model extends CI_Model {
      * @param null $where
      * @return integer
      */
-    public function count_rows($where = NULL) {
+    public function count_rows($where = NULL)
+    {
         if (isset($where)) {
             $this->where($where);
         }
@@ -818,7 +842,8 @@ class MY_Model extends CI_Model {
      * @param array $arguments
      * @return $this
      */
-    public function with($request, $arguments = array()) {
+    public function with($request, $arguments = array())
+    {
         $this->_set_relationships();
         if (array_key_exists($request, $this->_relationships)) {
             $this->_requested[$request] = array('request' => $request);
@@ -870,7 +895,8 @@ class MY_Model extends CI_Model {
      * @param $data
      * @return mixed
      */
-    protected function join_temporary_results($data) {
+    protected function join_temporary_results($data)
+    {
         $order_by = array();
         $order_inside_array = array();
         //$order_inside = '';
@@ -906,7 +932,7 @@ class MY_Model extends CI_Model {
 
             $local_key_values = array();
             foreach ($data as $key => $element) {
-                if (isset($element[$local_key]) and ! empty($element[$local_key])) {
+                if (isset($element[$local_key]) and !empty($element[$local_key])) {
                     $id = $element[$local_key];
                     $local_key_values[$key] = $id;
                 }
@@ -1067,7 +1093,8 @@ class MY_Model extends CI_Model {
      * @param $request
      * @return $this
      */
-    private function _has_one($request) {
+    private function _has_one($request)
+    {
         $relation = $this->_relationships[$request];
         $this->_database->join($relation['foreign_table'], $relation['foreign_table'] . '.' . $relation['foreign_key'] . ' = ' . $this->table . '.' . $relation['local_key'], 'left');
         return TRUE;
@@ -1078,7 +1105,8 @@ class MY_Model extends CI_Model {
      *
      * Called by the public method with() it will set the relationships between the current model and other models
      */
-    private function _set_relationships() {
+    private function _set_relationships()
+    {
         if (empty($this->_relationships)) {
             $options = array('has_one', 'has_many', 'has_many_pivot');
             foreach ($options as $option) {
@@ -1154,7 +1182,8 @@ class MY_Model extends CI_Model {
      * @param $connection_group = NULL - connection group in database setup
      * @return obj
      */
-    public function on($connection_group = NULL) {
+    public function on($connection_group = NULL)
+    {
         if (isset($connection_group)) {
             $this->_database->close();
             $this->load->database($connection_group);
@@ -1168,7 +1197,8 @@ class MY_Model extends CI_Model {
      * Resets the connection to the default used for all the model
      * @return obj
      */
-    public function reset_connection() {
+    public function reset_connection()
+    {
         if (isset($connection_group)) {
             $this->_database->close();
             $this->_set_connection();
@@ -1181,7 +1211,8 @@ class MY_Model extends CI_Model {
      * (which looks for an instance variable $this->event_name), an array of
      * parameters to pass through and an optional 'last in interation' boolean
      */
-    public function trigger($event, $data = array(), $last = TRUE) {
+    public function trigger($event, $data = array(), $last = TRUE)
+    {
         if (isset($this->$event) && is_array($this->$event)) {
             foreach ($this->$event as $method) {
                 if (strpos($method, '(')) {
@@ -1199,7 +1230,8 @@ class MY_Model extends CI_Model {
      * public function with_trashed()
      * Sets $_trashed to TRUE
      */
-    public function with_trashed() {
+    public function with_trashed()
+    {
         $this->_trashed = 'with';
         return $this;
     }
@@ -1208,20 +1240,22 @@ class MY_Model extends CI_Model {
      * public function with_trashed()
      * Sets $_trashed to TRUE
      */
-    public function only_trashed() {
+    public function only_trashed()
+    {
         $this->_trashed = 'only';
         return $this;
     }
 
-    private function _where_trashed() {
+    private function _where_trashed()
+    {
         switch ($this->_trashed) {
-            case 'only' :
+            case 'only':
                 $this->_database->where($this->_deleted_at_field . ' IS NOT NULL', NULL, FALSE);
                 break;
-            case 'without' :
+            case 'without':
                 $this->_database->where($this->_deleted_at_field . ' IS NULL', NULL, FALSE);
                 break;
-            case 'with' :
+            case 'with':
                 break;
         }
         $this->_trashed = 'without';
@@ -1234,7 +1268,8 @@ class MY_Model extends CI_Model {
      * @param $fields the fields needed
      * @return $this
      */
-    public function fields($fields = NULL) {
+    public function fields($fields = NULL)
+    {
         if (isset($fields)) {
             if ($fields == '*count*') {
                 $this->_select = '';
@@ -1265,7 +1300,8 @@ class MY_Model extends CI_Model {
      * @param string $order
      * @return $this
      */
-    public function order_by($criteria, $order = 'ASC') {
+    public function order_by($criteria, $order = 'ASC')
+    {
         if (is_array($criteria)) {
             foreach ($criteria as $key => $value) {
                 $this->_database->order_by($key, $value);
@@ -1279,7 +1315,8 @@ class MY_Model extends CI_Model {
     /**
      * Return the next call as an array rather than an object
      */
-    public function as_array() {
+    public function as_array()
+    {
         $this->return_as = 'array';
         return $this;
     }
@@ -1287,12 +1324,14 @@ class MY_Model extends CI_Model {
     /**
      * Return the next call as an object rather than an array
      */
-    public function as_object() {
+    public function as_object()
+    {
         $this->return_as = 'object';
         return $this;
     }
 
-    public function as_dropdown($field = NULL) {
+    public function as_dropdown($field = NULL)
+    {
         if (!isset($field)) {
             show_error('MY_Model: You must set a field to be set as value for the key: ...->as_dropdown(\'field\')->...');
             exit;
@@ -1303,7 +1342,8 @@ class MY_Model extends CI_Model {
         return $this;
     }
 
-    protected function _get_from_cache($cache_name = NULL) {
+    protected function _get_from_cache($cache_name = NULL)
+    {
         if (isset($cache_name) || (isset($this->_cache) && !empty($this->_cache))) {
             $this->load->driver('cache');
             $cache_name = isset($cache_name) ? $cache_name : $this->_cache['cache_name'];
@@ -1312,7 +1352,8 @@ class MY_Model extends CI_Model {
         }
     }
 
-    protected function _write_to_cache($data, $cache_name = NULL) {
+    protected function _write_to_cache($data, $cache_name = NULL)
+    {
         if (isset($cache_name) || (isset($this->_cache) && !empty($this->_cache))) {
             $this->load->driver('cache');
             $cache_name = isset($cache_name) ? $cache_name : $this->_cache['cache_name'];
@@ -1326,21 +1367,24 @@ class MY_Model extends CI_Model {
         }
     }
 
-    public function set_cache($string, $seconds = 86400) {
+    public function set_cache($string, $seconds = 86400)
+    {
         $prefix = (strlen($this->cache_prefix) > 0) ? $this->cache_prefix . '_' : '';
         $prefix .= $this->table . '_';
         $this->_cache = array('cache_name' => $prefix . $string, 'seconds' => $seconds);
         return $this;
     }
 
-    private function _reset_cache($string) {
+    private function _reset_cache($string)
+    {
         if (isset($string)) {
             $this->_cache = array();
         }
         return $this;
     }
 
-    public function delete_cache($string = NULL) {
+    public function delete_cache($string = NULL)
+    {
         $this->load->driver('cache');
         $prefix = (strlen($this->cache_prefix) > 0) ? $this->cache_prefix . '_' : '';
         if (isset($string) && (strpos($string, '*') === FALSE)) {
@@ -1365,7 +1409,8 @@ class MY_Model extends CI_Model {
      * Sets the fields for the created_at, updated_at and deleted_at timestamps
      * @return bool
      */
-    private function _set_timestamps() {
+    private function _set_timestamps()
+    {
         if ($this->timestamps !== FALSE) {
             $this->_created_at_field = (is_array($this->timestamps) && isset($this->timestamps[0])) ? $this->timestamps[0] : 'created_at';
             $this->_updated_at_field = (is_array($this->timestamps) && isset($this->timestamps[1])) ? $this->timestamps[1] : 'updated_at';
@@ -1380,7 +1425,8 @@ class MY_Model extends CI_Model {
      * returns a value representing the date/time depending on the timestamp format choosed
      * @return string
      */
-    private function _the_timestamp() {
+    private function _the_timestamp()
+    {
         if ($this->timestamps_format == 'timestamp') {
             return time();
         } else {
@@ -1393,7 +1439,8 @@ class MY_Model extends CI_Model {
      *
      * Sets the connection to database
      */
-    private function _set_connection() {
+    private function _set_connection()
+    {
         if (isset($this->_database_connection)) {
             $this->_database = $this->load->database($this->_database_connection, TRUE);
         } else {
@@ -1408,7 +1455,8 @@ class MY_Model extends CI_Model {
      * HELPER FUNCTIONS
      */
 
-    public function paginate($rows_per_page, $total_rows = NULL, $page_number = 1) {
+    public function paginate($rows_per_page, $total_rows = NULL, $page_number = 1)
+    {
         $this->load->helper('url');
         $segments = $this->uri->total_segments();
         $uri_array = $this->uri->segment_array();
@@ -1485,14 +1533,16 @@ class MY_Model extends CI_Model {
         }
     }
 
-    public function set_pagination_delimiters($delimiters) {
+    public function set_pagination_delimiters($delimiters)
+    {
         if (is_array($delimiters) && sizeof($delimiters) == 2) {
             $this->pagination_delimiters = $delimiters;
         }
         return $this;
     }
 
-    public function set_pagination_arrows($arrows) {
+    public function set_pagination_arrows($arrows)
+    {
         if (is_array($arrows) && sizeof($arrows) == 2) {
             $this->pagination_arrows = $arrows;
         }
@@ -1505,19 +1555,22 @@ class MY_Model extends CI_Model {
      * Sets the table name when called by the constructor
      *
      */
-    private function _fetch_table() {
+    private function _fetch_table()
+    {
         if (!isset($this->table)) {
             $this->table = $this->_get_table_name(get_class($this));
         }
         return TRUE;
     }
 
-    private function _get_table_name($model_name) {
+    private function _get_table_name($model_name)
+    {
         $table_name = plural(preg_replace('/(_m|_model|_mdl)?$/', '', strtolower($model_name)));
         return $table_name;
     }
 
-    public function __call($method, $arguments) {
+    public function __call($method, $arguments)
+    {
         if (substr($method, 0, 6) == 'where_') {
             $column = substr($method, 6);
             $this->where($column, $arguments);
@@ -1534,8 +1587,9 @@ class MY_Model extends CI_Model {
         }
     }
 
-    private function _build_sorter($data, $field, $order_by, $sort_by = 'DESC') {
-        usort($data, function($a, $b) use ($field, $order_by, $sort_by) {
+    private function _build_sorter($data, $field, $order_by, $sort_by = 'DESC')
+    {
+        usort($data, function ($a, $b) use ($field, $order_by, $sort_by) {
             $array_a = $this->object_to_array($a[$field]);
             $array_b = $this->object_to_array($b[$field]);
             return strtoupper($sort_by) == "DESC" ? ((isset($array_a[$order_by]) && isset($array_b[$order_by])) ? ($array_a[$order_by] < $array_b[$order_by]) : -1) : ((isset($array_a[$order_by]) && isset($array_b[$order_by])) ? ($array_a[$order_by] > $array_b[$order_by]) : -1);
@@ -1544,7 +1598,8 @@ class MY_Model extends CI_Model {
         return $data;
     }
 
-    public function object_to_array($object) {
+    public function object_to_array($object)
+    {
         if (!is_object($object) && !is_array($object)) {
             return $object;
         }
@@ -1559,7 +1614,8 @@ class MY_Model extends CI_Model {
      * @param array $array
      * @return bool
      */
-    private function _is_assoc(array $array) {
+    private function _is_assoc(array $array)
+    {
         return (bool) count(array_filter(array_keys($array), 'is_string'));
     }
 
@@ -1578,4 +1634,82 @@ class MY_Model extends CI_Model {
       return $data;
       }
      */
+    /**
+     * Save user audit trail data.
+     *
+     * @param $status
+     * @param $event
+     * @param $table
+     * @param null $set
+     * @param null $previous_values
+     * @return bool|int
+     */
+    public function trail($status, $event, $table = NULL, $set = NULL, $previous_values = NULL, $description = "")
+    {
+        if ($table == NULL) $table = $this->table;
+        //return without save resource
+        if (!$status) return 1;  // event not performed
+        if (!$this->CI->config->item('audit_enable')) return 1; // trail not enabled
+        if ($event === 'insert' && !$this->CI->config->item('track_insert')) return 1; // insert tracking not enabled
+        if ($event === 'update' && !$this->CI->config->item('track_update')) return 1; // update tracking not enabled
+        if ($event === 'delete' && !$this->CI->config->item('track_delete')) return 1; // delete tracking not enabled
+        if (in_array($table, $this->CI->config->item('not_allowed_tables'))) return 1; // table tracking not allowed
+
+
+        if ($event == 'update') {
+            $this->diff_on_update($previous_values, $set);
+            //data has not been update
+            if (empty($previous_values) && empty($set))
+                return 1;
+        }
+
+        $old_value = null;
+        if (!empty($previous_values)) $old_value = json_encode($previous_values);
+
+        $new_value = json_encode($set); // For delete event it stores where condition
+
+        return $this->_database->insert(
+            'user_audit_trails',
+            array(
+                'user_id' => $this->session->userdata('user_id'),
+                'name' => $this->session->userdata('username'),
+                'event' => $event,
+                'table_name' => $table,
+                'old_values' => $old_value,
+                'new_values' => $new_value,
+                'url' => $this->CI->uri->ruri_string(),
+                'ip_address' => $this->CI->input->ip_address(),
+                'user_agent' => $this->CI->input->user_agent(),
+                'description' => $description,
+                'created_at' => date('Y-m-d H:i:s'),
+            )
+        );
+    }
+    /**
+     * Find out the difference of values.
+     *
+     * @param $old_value
+     * @param $new_value
+     */
+    public function diff_on_update(&$old_value, &$new_value)
+    {
+        $old = [];
+        $new = [];
+        foreach ($new_value as $key => $val) {
+            if (isset($new_value[$key])) {
+                if (isset($old_value[$key])) {
+                    if ($new_value[$key] != $old_value[$key]) {
+                        $old[$key] = $old_value[$key];
+                        $new[$key] = $new_value[$key];
+                    }
+                } else {
+                    $old[$key] = '';
+                    $new[$key] = $new_value[$key];
+                }
+            }
+        }
+
+        $old_value = $old;
+        $new_value = $new;
+    }
 }

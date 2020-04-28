@@ -26,10 +26,6 @@ class Index extends MY_Controller
             base_url() . "public/assets/core.min.js",
             base_url() . "public/lib/easing/easing.min.js"
         );
-
-        $this->load->model("option_model");
-        $print_bill = $this->option_model->where(array('key' => 'print_bill'))->as_object()->get();
-        $this->data['is_print_bill'] = !$print_bill || $print_bill->value == '1' ? 1 : 0;
     }
 
     public function _remap($method, $params = array())
