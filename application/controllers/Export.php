@@ -114,7 +114,7 @@ class Export extends MY_Controller
 
 
             ////STYLE
-            $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
+            $cellRowSpan = array('valign' => 'center');
             $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
             $cellHCenteredLEFT = array('alignment' => 'left');
 
@@ -273,7 +273,15 @@ class Export extends MY_Controller
                     $employee = $nhanvien[$key1];
                     $id =  $employee->string_id;
                     $target_id = 6;
-                    $name_chart = $object_id . "_" . $target_id . "_" . $employee->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+                    $name_chart = $object_id . "_" . $target_id . "_" . $area->id . "_" . $employee->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+
+                    ///CHART
+                    $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+
+                    $templateProcessor->setValue("department_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
+                    $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
+                    $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
+                    $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), $id);
 
                     $data = $this->employeeresult_model->set_value_export($params)->where(array('area_id' => $area->id, 'employee_id' => $employee->id))->as_array()->get_all();
                     $data_min_max = $this->employeeresult_model->get_data_minmax($employee->id, $area->id, $params['date_from'], $params['date_to']);
@@ -336,48 +344,48 @@ class Export extends MY_Controller
 
 
                         if ($stt["value_H"] == "") {
-                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                         } else {
                             $cell1 = $table->addCell(null, $styleCell);
                             $cell1->addText($stt["value_H"], array('size' => 10), $fontCell);
                         }
 
                         if ($stt["value_N"] == "") {
-                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                         } else {
                             $cell1 = $table->addCell(null, $styleCell);
                             $cell1->addText($stt["value_N"], array('size' => 10), $fontCell);
                         }
 
                         if ($stt["value_C"] == "") {
-                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                         } else {
                             $cell1 = $table->addCell(null, $styleCell);
                             $cell1->addText($stt["value_C"], array('size' => 10), $fontCell);
                         }
 
                         if ($stt["value_LF"] == "") {
-                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                         } else {
                             $cell1 = $table->addCell(null, $styleCell);
                             $cell1->addText($stt["value_LF"], array('size' => 10), $fontCell);
                         }
 
                         if ($stt["value_RF"] == "") {
-                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                         } else {
                             $cell1 = $table->addCell(null, $styleCell);
                             $cell1->addText($stt["value_RF"], array('size' => 10), $fontCell);
                         }
 
                         if ($stt["value_LG"] == "") {
-                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                         } else {
                             $cell1 = $table->addCell(null, $styleCell);
                             $cell1->addText($stt["value_LG"], array('size' => 10), $fontCell);
                         }
                         if ($stt["value_RG"] == "") {
-                            $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                         } else {
                             $cell1 = $table->addCell(null, $styleCell);
                             $cell1->addText($stt["value_RG"], array('size' => 10), $fontCell);
@@ -390,48 +398,48 @@ class Export extends MY_Controller
                     $cell1->addText("Max", array('size' => 10, 'bold' => true), $fontCell);
 
                     if ($data_min_max["max_H"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["max_H"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["max_N"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["max_N"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["max_C"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["max_C"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["max_LF"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["max_LF"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["max_RF"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["max_RF"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["max_LG"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["max_LG"], array('size' => 10), $fontCell);
                     }
                     if ($data_min_max["max_RG"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["max_RG"], array('size' => 10), $fontCell);
@@ -443,48 +451,48 @@ class Export extends MY_Controller
                     $cell1->addText("Min", array('size' => 10, 'bold' => true), $fontCell);
 
                     if ($data_min_max["min_H"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["min_H"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["min_N"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["min_N"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["min_C"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["min_C"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["min_LF"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["min_LF"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["min_RF"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["min_RF"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max["min_LG"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["min_LG"], array('size' => 10), $fontCell);
                     }
                     if ($data_min_max["min_RG"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max["min_RG"], array('size' => 10), $fontCell);
@@ -502,48 +510,48 @@ class Export extends MY_Controller
                     $cell1->addText("Max", array('size' => 10, 'bold' => true), $fontCell);
 
                     if ($data_min_max_prev["max_H"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["max_H"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["max_N"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["max_N"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["max_C"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["max_C"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["max_LF"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["max_LF"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["max_RF"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["max_RF"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["max_LG"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["max_LG"], array('size' => 10), $fontCell);
                     }
                     if ($data_min_max_prev["max_RG"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["max_RG"], array('size' => 10), $fontCell);
@@ -555,61 +563,53 @@ class Export extends MY_Controller
                     $cell1->addText("Min", array('size' => 10, 'bold' => true), $fontCell);
 
                     if ($data_min_max_prev["min_H"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["min_H"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["min_N"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["min_N"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["min_C"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["min_C"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["min_LF"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["min_LF"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["min_RF"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["min_RF"], array('size' => 10), $fontCell);
                     }
 
                     if ($data_min_max_prev["min_LG"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["min_LG"], array('size' => 10), $fontCell);
                     }
                     if ($data_min_max_prev["min_RG"] == "") {
-                        $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                     } else {
                         $cell1 = $table->addCell(null, $styleCell);
                         $cell1->addText($data_min_max_prev["min_RG"], array('size' => 10), $fontCell);
                     }
                     $templateProcessor->setComplexBlock("table_result#" . ($key + 1) . "#" . ($key1 + 1), $table);
-
-                    ///CHART
-                    $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
-
-                    $templateProcessor->setValue("department_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
-                    $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
-                    $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
-                    $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), $id);
                 }
             }
 
@@ -699,7 +699,7 @@ class Export extends MY_Controller
 
 
             ////STYLE
-            $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
+            $cellRowSpan = array('valign' => 'center');
             $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
             $cellHCenteredLEFT = array('alignment' => 'left');
 
@@ -882,7 +882,7 @@ class Export extends MY_Controller
                                 $string_id = $position->string_id;
                                 $value = $stt[$string_id];
                                 if ($value == "") {
-                                    $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                    $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                                 } else {
                                     $cell1 = $table->addCell(null, $cellRowSpan);
                                     $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -898,7 +898,7 @@ class Export extends MY_Controller
                             $string_id = $position->string_id;
                             $value = $data_min_max["max_$string_id"];
                             if ($value == "") {
-                                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                             } else {
                                 $cell1 = $table->addCell(null, $cellRowSpan);
                                 $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -913,7 +913,7 @@ class Export extends MY_Controller
                             $string_id = $position->string_id;
                             $value = $data_min_max["min_$string_id"];
                             if ($value == "") {
-                                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                             } else {
                                 $cell1 = $table->addCell(null, $cellRowSpan);
                                 $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -935,7 +935,7 @@ class Export extends MY_Controller
                             $string_id = $position->string_id;
                             $value = $data_min_max_prev["max_$string_id"];
                             if ($value == "") {
-                                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                             } else {
                                 $cell1 = $table->addCell(null, $cellRowSpan);
                                 $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -950,7 +950,7 @@ class Export extends MY_Controller
                             $string_id = $position->string_id;
                             $value = $data_min_max_prev["min_$string_id"];
                             if ($value == "") {
-                                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                             } else {
                                 $cell1 = $table->addCell(null, $cellRowSpan);
                                 $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -1087,7 +1087,7 @@ class Export extends MY_Controller
 
 
             ////STYLE
-            $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
+            $cellRowSpan = array('valign' => 'center');
             $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
             $cellHCenteredLEFT = array('alignment' => 'left');
 
@@ -1264,7 +1264,7 @@ class Export extends MY_Controller
                                 $string_id = $position->string_id;
                                 $value = $stt[$string_id];
                                 if ($value == "") {
-                                    $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                    $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                                 } else {
                                     $cell1 = $table->addCell(null, $cellRowSpan);
                                     $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -1280,7 +1280,7 @@ class Export extends MY_Controller
                             $string_id = $position->string_id;
                             $value = $data_min_max["max_$string_id"];
                             if ($value == "") {
-                                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                             } else {
                                 $cell1 = $table->addCell(null, $cellRowSpan);
                                 $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -1295,7 +1295,7 @@ class Export extends MY_Controller
                             $string_id = $position->string_id;
                             $value = $data_min_max["min_$string_id"];
                             if ($value == "") {
-                                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                             } else {
                                 $cell1 = $table->addCell(null, $cellRowSpan);
                                 $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -1317,7 +1317,7 @@ class Export extends MY_Controller
                             $string_id = $position->string_id;
                             $value = $data_min_max_prev["max_$string_id"];
                             if ($value == "") {
-                                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                             } else {
                                 $cell1 = $table->addCell(null, $cellRowSpan);
                                 $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -1332,7 +1332,7 @@ class Export extends MY_Controller
                             $string_id = $position->string_id;
                             $value = $data_min_max_prev["min_$string_id"];
                             if ($value == "") {
-                                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'bgColor' => "#c5c6c7"));
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
                             } else {
                                 $cell1 = $table->addCell(null, $cellRowSpan);
                                 $textrun1 = $cell1->addTextRun($cellHCentered);

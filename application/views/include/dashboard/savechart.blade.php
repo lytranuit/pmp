@@ -48,6 +48,7 @@
             let department = results[i]['department'];
             let data = results[i]['data'];
 
+            let area_id = results[i]['area_id'];
             let target_id = results[i]['target_id'];
             let department_id = department['id'];
             let object_id = params['object_id'];
@@ -104,12 +105,29 @@
                         params['type'],
                         params['selector']
                     ].join("_");
+                    if (params['object_id'] == "3") {
+                        name = [object_id, target_id,
+                            area_id,
+                            department_id,
+                            params['type'],
+                            params['selector']
+                        ].join("_");
+                    }
+
                 } else {
                     name = [object_id, target_id,
                         department_id,
                         params['type'],
                         params['daterange'].split(" ").join("_").split("/").join("_")
                     ].join("_");
+                    if (params['object_id'] == "3") {
+                        name = [object_id, target_id,
+                            area_id,
+                            department_id,
+                            params['type'],
+                            params['daterange'].split(" ").join("_").split("/").join("_")
+                        ].join("_");
+                    }
                 }
                 $.ajax({
                     url: path + 'ajax/uploadchart',
