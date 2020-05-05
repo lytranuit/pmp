@@ -5,19 +5,19 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}limit/add">Thêm</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}limit/add">Add</a>
             </h5>
             <div class="card-body">
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Ngày hiệu lực</th>
-                            <th>Khu vực</th>
-                            <th>Phương pháp lấy mẫu</th>
-                            <th>Tiêu chuẩn chấp nhận</th>
-                            <th>Giới hạn cảnh báo</th>
-                            <th>Giới hạn hành động</th>
-                            <th>Hành động</th>
+                            <th>Effective date</th>
+                            <th>Date</th>
+                            <th>Method</th>
+                            <th>Acceptance criteria</th>
+                            <th>Alert Limit</th>
+                            <th>Action Limit</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>

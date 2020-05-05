@@ -11,9 +11,9 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Ngày</th>
+                            <th>Date</th>
                             <th>User</th>
-                            <th>Mô tả</th>
+                            <th>Description</th>
                         </tr>
                     </thead>
                     <tbody>

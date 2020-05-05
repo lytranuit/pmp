@@ -35,7 +35,7 @@ class Result_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'type_bc', 'deleted', 'user_id', 'stt_in_day', 'target_id', 'object_id', 'position_id', 'department_id', 'area_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
+            'note', 'type_bc', 'deleted', 'user_id', 'stt_in_day', 'target_id', 'object_id', 'position_id', 'department_id', 'area_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
         );
         $obj = array();
         foreach ($array as $key) {
@@ -55,6 +55,8 @@ class Result_model extends MY_Model
 
         if ($type == "Year") {
             $sql = "select YEAR(date) as value from pmp_result where deleted = 0 GROUP BY YEAR(date) ORDER BY date DESC";
+        } else if ($type == "TwoYear") {
+            $sql = "select CONCAT(YEAR(DATE),'-',YEAR(DATE_SUB(DATE, INTERVAL 1 YEAR))) AS value FROM pmp_result WHERE deleted = 0 GROUP BY YEAR(DATE) ORDER BY DATE DESC";
         } else if ($type == "HalfYear") {
             $sql = "select CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) as value from pmp_result where deleted = 0 GROUP BY CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) ORDER BY date DESC";
         } else if ($type == "Quarter") {
@@ -430,6 +432,8 @@ class Result_model extends MY_Model
             $this->where('type_bc', "Quarter");
         } elseif ($params['type'] == "HalfYear") {
             $this->where('type_bc', "HalfYear");
+        } elseif ($params['type'] == "TwoYear") {
+            $this->where('type_bc', "TwoYear");
         }
         $this->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $params['workshop_id'], 'deleted' => 0, 'object_id' => $params['object_id']));
         return $this;

@@ -5,7 +5,7 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}result/add">Thêm</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}result/add">Add</a>
                 <div style="margin-left:auto;">
                     <input type="text" id="daterange" class="form-control form-control-sm btn-group" style="width: 200px;" placeholder="Search Time" />
                 </div>
@@ -17,18 +17,18 @@
                         <tr>
                             <th>
                                 @if($object_id == 11)
-                                Tên Phòng
+                                Department
                                 @else
-                                Thiết bị
+                                Equipment
                                 @endif
                             </th>
-                            <th>Phương pháp lấy mẫu</th>
-                            <th>Tần suất</th>
-                            <th>Mã vị trí</th>
-                            <th>Vị trí</th>
-                            <th>Ngày lấy mẫu</th>
-                            <th>Giá trị</th>
-                            <th>Hành động</th>
+                            <th>Method</th>
+                            <th>Code</th>
+                            <th>Frequency</th>
+                            <th>Date</th>
+                            <th class="text-center">Value</th>
+                            <th>Comment</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,19 +78,19 @@
                     "data": "target_name"
                 },
                 {
-                    "data": "frequency_name"
-                },
-                {
                     "data": "position_string_id"
                 },
                 {
-                    "data": "position_name"
+                    "data": "frequency_name"
                 },
                 {
                     "data": "date"
                 },
                 {
                     "data": "value"
+                },
+                {
+                    "data": "note"
                 },
                 {
                     "data": "action"

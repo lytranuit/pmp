@@ -5,7 +5,7 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}resulte/add">Thêm</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}resulte/add">Add</a>
                 <div style="margin-left:auto;">
                     <input type="text" id="daterange" class="form-control form-control-sm btn-group" style="width: 200px;" placeholder="Search Time" />
                 </div>
@@ -14,18 +14,19 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Mã NV</th>
-                            <th>Tên NV</th>
-                            <th>Khu vực</th>
-                            <th>Ngày lấy mẫu</th>
-                            <th>Đầu <br><i>Head:</i></th>
-                            <th>Mũi <br><i>Noise:</i></th>
-                            <th>Ngực <br><i>Chest:</i></th>
-                            <th>Cẳng tay trái <br><i>Left forearm:</i></th>
-                            <th>Cẳng tay phải <br><i>Right forearm:</i></th>
-                            <th>Dấu găng tay trái <br><i>Left glove print 5 fingers:</i></th>
-                            <th>Dấu găng tay phải <br><i>Right glove print 5 fingers:</i></th>
-                            <th>Hành động</th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Area</th>
+                            <th>Date</th>
+                            <th class="text-center">Head</th>
+                            <th class="text-center">Noise</th>
+                            <th class="text-center">Chest</th>
+                            <th class="text-center">Left forearm</th>
+                            <th class="text-center">Right forearm</th>
+                            <th class="text-center">Left glove print 5 fingers</th>
+                            <th class="text-center">Right glove print 5 fingers</th>
+                            <th>Comment</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,7 +57,7 @@
         });
         $('#quanlytin').DataTable({
             language: {
-                searchPlaceholder: "Mã hoặc tên NV"
+                searchPlaceholder: "Employee Code or Name"
             },
             "processing": true,
             "serverSide": true,
@@ -100,6 +101,9 @@
                 },
                 {
                     "data": "value_RG"
+                },
+                {
+                    "data": "note"
                 },
                 {
                     "data": "action"

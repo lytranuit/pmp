@@ -13,7 +13,7 @@
                         <div class="col-12">
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Mã vị trí:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Position:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="position_id" id="position">
                                         <option></option>
@@ -24,7 +24,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên vị trí:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Position Name:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="position_name" required="" readonly="" />
                                 </div>
@@ -33,20 +33,20 @@
 
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Nhà máy:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="factory_name" required="" readonly="" />
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Xưởng:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Workshop:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="workshop_name" required="" readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="area_name" required="" readonly="" />
                                 </div>
@@ -54,9 +54,9 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">
                                     @if($object_id == 10)
-                                    Thiết bị:
+                                    Equipment:
                                     @else
-                                    Phòng:
+                                    Department:
                                     @endif
                                     <i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
@@ -70,32 +70,37 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tần suất lấy mẫu:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Frequency:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="frequency_name" required="" readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phương pháp lấy mẫu:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='hidden' name="target_id" required="" readonly="" />
                                     <input class="form-control" type='text' name="target_name" required="" readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Ngày lấy mẫu:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Date:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='date' name="date" required="" value="{{date('Y-m-d')}}" />
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Giá trị:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Value:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='number' name="value" required="" />
                                 </div>
                             </div>
-
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Comment:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <textarea name="note" class="form-control"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

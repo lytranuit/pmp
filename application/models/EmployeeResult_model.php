@@ -22,7 +22,7 @@ class EmployeeResult_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'target_id', 'deleted', 'user_id', 'employee_id', 'area_id', 'factory_id', 'workshop_id', 'date', 'created_at', 'deleted_at', 'from_file', 'value_H', 'value_N', 'value_C', 'value_LF', 'value_RF', 'value_LG', 'value_RG'
+            'note', 'target_id', 'deleted', 'user_id', 'employee_id', 'area_id', 'factory_id', 'workshop_id', 'date', 'created_at', 'deleted_at', 'from_file', 'value_H', 'value_N', 'value_C', 'value_LF', 'value_RF', 'value_LG', 'value_RG'
         );
         $obj = array();
         foreach ($array as $key) {
@@ -36,9 +36,10 @@ class EmployeeResult_model extends MY_Model
     }
     function get_date_has_data($type)
     {
-
         if ($type == "Year") {
             $sql = "select YEAR(date) as value from pmp_employee_result where deleted = 0 GROUP BY YEAR(date) ORDER BY date DESC";
+        } else if ($type == "TwoYear") {
+            $sql = "select CONCAT(YEAR(DATE),'-',YEAR(DATE_SUB(DATE, INTERVAL 1 YEAR))) AS value FROM pmp_employee_result WHERE deleted = 0 GROUP BY YEAR(DATE) ORDER BY DATE DESC";
         } else if ($type == "HalfYear") {
             $sql = "select CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) as value from pmp_employee_result where deleted = 0 GROUP BY CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) ORDER BY date DESC";
         } else if ($type == "Quarter") {

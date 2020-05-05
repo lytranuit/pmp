@@ -12,14 +12,13 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Xưởng</th>
-                            <th>Đối tượng</th>
-                            <th>Loại báo cáo</th>
-                            <th>Thời gian</th>
-                            <th>Người xuất file</th>
-                            <th>Ngày xuất file</th>
+                            <th>Workshop</th>
+                            <th>Report type</th>
+                            <th>Time</th>
+                            <th>User</th>
+                            <th>Import time</th>
                             <th>File</th>
-                            <th>Trạng thái</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,9 +44,6 @@
                     "data": "id"
                 },{
                     "data": "workshop_name"
-                },
-                {
-                    "data": "object_name"
                 },
                 {
                     "data": "type"

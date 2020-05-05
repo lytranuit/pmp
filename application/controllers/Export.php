@@ -98,6 +98,9 @@ class Export extends MY_Controller
             } elseif ($type == "Quarter") {
                 $type_bc = "Hàng Quý";
                 $type_bc_en = "Quarter";
+            } elseif ($type == "TwoYear") {
+                $type_bc = "mỗi hai năm";
+                $type_bc_en = "every two year";
             }
             $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
             $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
@@ -681,6 +684,9 @@ class Export extends MY_Controller
             } elseif ($type == "Quarter") {
                 $type_bc = "Hàng Quý";
                 $type_bc_en = "Quarter";
+            } elseif ($type == "TwoYear") {
+                $type_bc = "mỗi hai năm";
+                $type_bc_en = "every two year";
             }
             $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
             $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
@@ -1070,6 +1076,9 @@ class Export extends MY_Controller
             } elseif ($type == "Quarter") {
                 $type_bc = "Hàng Quý";
                 $type_bc_en = "Quarter";
+            } elseif ($type == "TwoYear") {
+                $type_bc = "mỗi hai năm";
+                $type_bc_en = "every two year";
             }
 
             $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));

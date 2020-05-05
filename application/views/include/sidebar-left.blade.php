@@ -68,43 +68,43 @@
     <div class="scrollbar-sidebar">
         <div class="app-sidebar__inner">
             <ul class="vertical-nav-menu">
-                <li class="app-sidebar__heading">Tổng quan</li>
+                <li class="app-sidebar__heading">Dashboard</li>
                 <li>
                     <a href="{{base_url()}}dashboard/view" class="">
                         <i class="metismenu-icon far fa-chart-bar"></i>
-                        Biểu đồ
+                        Charts
                     </a>
                 </li>
                 <li>
                     <a href="{{base_url()}}report/" class="">
                         <i class="metismenu-icon fas fa-file-word"></i>
-                        Báo cáo
+                        Reports
                     </a>
                 </li>
-                <li class="app-sidebar__heading">Nhập dữ liệu</li>
+                <li class="app-sidebar__heading">Input</li>
                 @if($object_id == "3")
                 <li>
                     <a href="{{base_url()}}resulte/" class="">
                         <i class="metismenu-icon fa fa-database"></i>
-                        Dữ liệu
+                        Data
                     </a>
                 </li>
                 @else
                 <li>
                     <a href="{{base_url()}}result/" class="">
                         <i class="metismenu-icon fa fa-database"></i>
-                        Dữ liệu
+                        Data
                     </a>
                 </li>
                 @endif
                 <li>
                     <a href="{{base_url()}}limit/" class="">
                         <i class="metismenu-icon fas fa-bell"></i>
-                        Giới hạn
+                        Limit
                     </a>
                 </li>
 
-                <li class="app-sidebar__heading">Cài đặt</li>
+                <li class="app-sidebar__heading">Settings</li>
                 <li>
                     <a href="{{base_url()}}history/" class="">
                         <i class="metismenu-icon far fa-clipboard"></i>
@@ -114,20 +114,20 @@
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fa fa-lock"></i>
-                        Phân quyền
+                        Permissions
                         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                     </a>
                     <ul>
                         <li>
                             <a href="{{base_url()}}user/">
                                 <i class="metismenu-icon"></i>
-                                Tài khoản
+                                User
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}group/">
                                 <i class="metismenu-icon"></i>
-                                Nhóm
+                                Group
                             </a>
                         </li>
                     </ul>
@@ -137,56 +137,56 @@
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fas fa-columns"></i>
-                        Trường dữ liệu
+                        Field
                         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                     </a>
                     <ul>
                         <li>
                             <a href="{{base_url()}}object/">
                                 <i class="metismenu-icon"></i>
-                                Đối tượng
+                                Object
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}target/">
                                 <i class="metismenu-icon"></i>
-                                Phương pháp/Chỉ tiêu
+                                Method/Target
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}factory/">
                                 <i class="metismenu-icon"></i>
-                                Nhà máy
+                                Factory
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}workshop/">
                                 <i class="metismenu-icon"></i>
-                                Xưởng
+                                Workshop
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}area/">
                                 <i class="metismenu-icon"></i>
-                                Khu vực
+                                Area
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}department/">
                                 <i class="metismenu-icon"></i>
-                                Phòng/Thiết bị
+                                Department/Equipment
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}position/">
                                 <i class="metismenu-icon"></i>
-                                Vị trí
+                                Position
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}employee/">
                                 <i class="metismenu-icon"></i>
-                                Nhân viên
+                                Employee
                             </a>
                         </li>
                     </ul>

@@ -2,14 +2,13 @@
     <div class="col-12">
         <div class="card mb-3">
             <div class="card-header">
-                Bộ lọc
-
+                Filter
             </div>
             <div class="card-body" id="form-dang-tin">
 
                 <div class="row">
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Nhà máy:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm factory_id">
                                 @foreach ($factory as $row)
@@ -19,7 +18,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Xưởng:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">Workshop:<i class="text-danger">*</i></b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm workshop_id">
 
@@ -27,27 +26,29 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <b class="col-form-label text-sm-right">Thời gian:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">Time:<i class="text-danger">*</i></b>
                         <div class="pt-1">
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
 
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="Custom"> Tùy chỉnh
+                                    <input type="radio" name="options" id="option4" value="Custom"> Custom
                                 </label>
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="Month"> Tháng
+                                    <input type="radio" name="options" id="option4" value="Month"> Month
                                 </label>
 
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="Quarter"> Quý
+                                    <input type="radio" name="options" id="option4" value="Quarter"> Quarter
                                 </label>
 
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="HalfYear"> Nửa năm
+                                    <input type="radio" name="options" id="option4" value="HalfYear"> Half Year
                                 </label>
-
+                                <label class="btn btn-light type_data">
+                                    <input type="radio" name="options" id="option6" value="TwoYear"> 2 Years
+                                </label>
                                 <label class="btn btn-light type_data active">
-                                    <input type="radio" name="options" id="option5" value="Year"> Năm
+                                    <input type="radio" name="options" id="option5" value="Year"> Year
                                 </label>
                             </div>
                             <select style="width: 200px;" class="form-control form-control-sm btn-group" id="the_selector">
@@ -59,7 +60,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Khu vực:</b>
+                        <b class="col-form-label text-sm-right">Area:</b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm area_id">
 
@@ -69,11 +70,11 @@
                     <div class="col-md-3">
                         <b class="col-form-label text-sm-right">
                             @if($object_id == 3)
-                            Nhân viên
+                            Employee
                             @elseif($object_id == 10)
-                            Thiết bị
+                            Equipment
                             @elseif($object_id == 11)
-                            Phòng
+                            Department
                             @endif
                         </b>
                         <div class="pt-1">
@@ -88,7 +89,7 @@
         </div>
         <div class="card">
             <div class="card-header">
-                Biểu đồ xu hướng
+                Trend Chart
                 <div style="margin-left:auto">
                     <div class="btn-group">
                         <button class="btn btn-primary btn-sm" id="export_report"><i class="fas fa-print"></i></button>

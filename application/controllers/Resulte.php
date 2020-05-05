@@ -96,7 +96,6 @@ class Resulte extends MY_Controller
             $prev_data = $this->employeeResult_model->as_array()->get($id);
             $data_up = $this->employeeResult_model->create_object($data);
             $status = $this->employeeResult_model->update($data_up, $id);
-
             /// Log audit trail
             $text =   "USER '" . $this->session->userdata('username') . "' edited record($id) to the table 'pmp_employee_result'";
             $this->employeeResult_model->trail($status, "update", null, $data_up, $prev_data, $text);
@@ -141,6 +140,7 @@ class Resulte extends MY_Controller
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $this->load->model("employeeResult_model");
         $this->load->model("employee_model");
+        $this->load->model("limit_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
@@ -186,17 +186,58 @@ class Resulte extends MY_Controller
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
+                $limit = $this->limit_model->where(array("area_id" => $post->area_id, 'target_id' => 6))->where("day_effect", "<=", $post->date)->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
+
                 $nestedData['employee_string_id'] = isset($post->employee->string_id) ? $post->employee->string_id : "";
                 $nestedData['employee_name'] = isset($post->employee->name) ? $post->employee->name : "";
                 $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
                 $nestedData['date'] = $post->date;
-                $nestedData['value_H'] = $post->value_H;
-                $nestedData['value_N'] = $post->value_N;
-                $nestedData['value_C'] = $post->value_C;
-                $nestedData['value_LF'] = $post->value_LF;
-                $nestedData['value_RF'] = $post->value_RF;
-                $nestedData['value_LG'] = $post->value_LG;
-                $nestedData['value_RG'] = $post->value_RG;
+
+                $nestedData['value_H'] = "<div class='text-center'>$post->value_H</div>";
+                if (!empty($limit) && $post->value_H > $limit->alert_limit && $post->value_H < $limit->action_limit) {
+                    $nestedData['value_H'] = "<div class='bg-warning text-white text-center'>$post->value_H</div>";
+                } elseif (!empty($limit) && $post->value_H > $limit->action_limit) {
+                    $nestedData['value_H'] = "<div class='bg-danger text-white text-center'>$post->value_H</div>";
+                }
+
+                $nestedData['value_C'] = "<div class='text-center'>$post->value_C</div>";
+                if (!empty($limit) && $post->value_C > $limit->alert_limit && $post->value_C < $limit->action_limit) {
+                    $nestedData['value_C'] = "<div class='bg-warning text-white text-center'>$post->value_C</div>";
+                } elseif (!empty($limit) && $post->value_C > $limit->action_limit) {
+                    $nestedData['value_C'] = "<div class='bg-danger text-white text-center'>$post->value_C</div>";
+                }
+                $nestedData['value_N'] = "<div class='text-center'>$post->value_N</div>";
+                if (!empty($limit) && $post->value_N > $limit->alert_limit && $post->value_N < $limit->action_limit) {
+                    $nestedData['value_N'] = "<div class='bg-warning text-white text-center'>$post->value_N</div>";
+                } elseif (!empty($limit) && $post->value_N > $limit->action_limit) {
+                    $nestedData['value_N'] = "<div class='bg-danger text-white text-center'>$post->value_N</div>";
+                }
+                $nestedData['value_LF'] = "<div class='text-center'>$post->value_LF</div>";
+                if (!empty($limit) && $post->value_LF > $limit->alert_limit && $post->value_LF < $limit->action_limit) {
+                    $nestedData['value_LF'] = "<div class='bg-warning text-white text-center'>$post->value_LF</div>";
+                } elseif (!empty($limit) && $post->value_LF > $limit->action_limit) {
+                    $nestedData['value_LF'] = "<div class='bg-danger text-white text-center'>$post->value_LF</div>";
+                }
+                $nestedData['value_RF'] = "<div class='text-center'>$post->value_RF</div>";
+                if (!empty($limit) && $post->value_RF > $limit->alert_limit && $post->value_RF < $limit->action_limit) {
+                    $nestedData['value_RF'] = "<div class='bg-warning text-white text-center'>$post->value_RF</div>";
+                } elseif (!empty($limit) && $post->value_RF > $limit->action_limit) {
+                    $nestedData['value_RF'] = "<div class='bg-danger text-white text-center'>$post->value_RF</div>";
+                }
+                $nestedData['value_LG'] = "<div class='text-center'>$post->value_LG</div>";
+                if (!empty($limit) && $post->value_LG > $limit->alert_limit && $post->value_LG < $limit->action_limit) {
+                    $nestedData['value_LG'] = "<div class='bg-warning text-white text-center'>$post->value_LG</div>";
+                } elseif (!empty($limit) && $post->value_LG > $limit->action_limit) {
+                    $nestedData['value_LG'] = "<div class='bg-danger text-white text-center'>$post->value_LG</div>";
+                }
+                $nestedData['value_RG'] = "<div class='text-center'>$post->value_RG</div>";
+                if (!empty($limit) && $post->value_RG > $limit->alert_limit && $post->value_RG < $limit->action_limit) {
+                    $nestedData['value_RG'] = "<div class='bg-warning text-white text-center'>$post->value_RG</div>";
+                } elseif (!empty($limit) && $post->value_RG > $limit->action_limit) {
+                    $nestedData['value_RG'] = "<div class='bg-danger text-white text-center'>$post->value_RG</div>";
+                }
+
+                $nestedData['note'] = $post->note;
                 $nestedData['action'] = '<a href="' . base_url() . 'resulte/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'

@@ -1,7 +1,6 @@
 <div class="row clearfix">
     <div class="col-12">
         <form method="POST" action="" id="form-dang-tin">
-            <input type="hidden" name="parent_id" value="0" />
             <section class="card card-fluid">
                 <h5 class="card-header">
                     <div class="d-inline-block w-100">
@@ -12,7 +11,7 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Nhân viên:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Employee:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="employee_id" id="employee">
                                         <option></option>
@@ -22,10 +21,16 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Comment:</b>
+                                <div class="col-12 col-sm-9 col-lg-6 pt-1">
+                                    <textarea name="note" class="form-control"></textarea>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Nhà máy:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="factory_id">
                                         @foreach ($factory as $row)
@@ -36,7 +41,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Xưởng:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Workshop:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id">
                                         @foreach ($workshop as $row)
@@ -46,7 +51,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="area_id">
                                         @foreach ($area as $area)
@@ -60,7 +65,7 @@
                             <table class="table text-center">
                                 <thead>
                                     <tr>
-                                        <th>Ngày lấy mẫu</th>
+                                        <th>Date</th>
                                         <th>Đầu <br><i>Head:</i></th>
                                         <th>Mũi <br><i>Noise:</i></th>
                                         <th>Ngực <br><i>Chest:</i></th>

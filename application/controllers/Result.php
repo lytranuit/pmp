@@ -138,6 +138,7 @@ class Result extends MY_Controller
     {
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $this->load->model("result_model");
+        $this->load->model("limit_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
@@ -182,13 +183,21 @@ class Result extends MY_Controller
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
+                $limit = $this->limit_model->where(array("area_id" => $post->area_id, 'target_id' => $post->target_id))->where("day_effect", "<=", $post->date)->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
+
                 $nestedData['target_name'] = isset($post->target->name) ? $post->target->name : "";
                 $nestedData['position_name'] = isset($post->position->name) ? $post->position->name : "";
                 $nestedData['position_string_id'] = isset($post->position->string_id) ? $post->position->string_id : "";
                 $nestedData['frequency_name'] = isset($post->position->frequency_name) ? $post->position->frequency_name : "";
                 $nestedData['department_name'] = isset($post->department->name) ? $post->department->name : "";
                 $nestedData['date'] = $post->date;
-                $nestedData['value'] = $post->value;
+                $nestedData['value'] = "<div class='text-center'>$post->value</div>";
+                if (!empty($limit) && $post->value > $limit->alert_limit && $post->value < $limit->action_limit) {
+                    $nestedData['value'] = "<div class='bg-warning text-white text-center'>$post->value</div>";
+                } elseif (!empty($limit) && $post->value > $limit->action_limit) {
+                    $nestedData['value'] = "<div class='bg-danger text-white text-center'>$post->value</div>";
+                }
+                $nestedData['note'] = $post->note;
                 $nestedData['action'] = '<a href="' . base_url() . 'result/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'

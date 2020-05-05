@@ -70,7 +70,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title" id="object-modalLabel">
-                    Chọn đối tượng
+                    Select Object
                 </h6>
                 <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                     <span aria-hidden="true">
