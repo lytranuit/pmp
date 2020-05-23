@@ -174,7 +174,7 @@
                         <li>
                             <a href="{{base_url()}}department/">
                                 <i class="metismenu-icon"></i>
-                                Department/Equipment
+                                Room/Equipment
                             </a>
                         </li>
                         <li>

@@ -56,7 +56,7 @@
                                     @if($object_id == 10)
                                     Equipment:
                                     @else
-                                    Department:
+                                    Room:
                                     @endif
                                     <i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">

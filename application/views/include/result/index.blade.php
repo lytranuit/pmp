@@ -17,7 +17,7 @@
                         <tr>
                             <th>
                                 @if($object_id == 11)
-                                Department
+                                Room
                                 @else
                                 Equipment
                                 @endif

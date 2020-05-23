@@ -74,7 +74,7 @@
                             @elseif($object_id == 10)
                             Equipment
                             @elseif($object_id == 11)
-                            Department
+                            Room
                             @endif
                         </b>
                         <div class="pt-1">
