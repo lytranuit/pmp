@@ -53,6 +53,7 @@ class Result_model extends MY_Model
     function get_date_has_data($type)
     {
 
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         if ($type == "Year") {
             $sql = "select YEAR(date) as value from pmp_result where deleted = 0 GROUP BY YEAR(date) ORDER BY date DESC";
         } else if ($type == "TwoYear") {
@@ -62,7 +63,7 @@ class Result_model extends MY_Model
         } else if ($type == "Quarter") {
             $sql = "select CONCAT(YEAR(date),'-',QUARTER(date)) as value from pmp_result where deleted = 0 GROUP BY CONCAT(YEAR(date),'-',QUARTER(date)) ORDER BY date DESC";
         } else if ($type == "Month") {
-            $sql = "select DATE_FORMAT(date,'%Y-%m') as value from pmp_result where deleted = 0 GROUP BY DATE_FORMAT(date,'%Y-%m') ORDER BY date DESC";
+            $sql = "select DATE_FORMAT(date,'%Y-%m') as value from pmp_result where deleted = 0 and object_id = $object_id GROUP BY DATE_FORMAT(date,'%Y-%m') ORDER BY date DESC";
         } else {
             return array();
         }
@@ -331,9 +332,9 @@ class Result_model extends MY_Model
                 $where  
                 GROUP BY date,stt_in_day ";
 
-        // echo "<pre>";
-        // print_r($sql);
-        // die();
+        echo "<pre>";
+        print_r($sql);
+        die();
         $query = $this->db->query($sql);
         $result = $query->result_array();
         return $result;
@@ -404,6 +405,25 @@ class Result_model extends MY_Model
         $query = $this->db->query($sql);
         $result = $query->result_array();
         $result = isset($result[0]) ? $result[0] : array();
+        return $result;
+    }
+
+    function max_stt_have_target_in_day($position, $date, $target_id = 0)
+    {
+        $sql = "SELECT MAX(stt_in_day) as max_stt FROM
+                    pmp_result 
+                WHERE position_id = $position and date = '$date' and deleted = 0 and target_id = $target_id";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result_array();
+        $result = isset($result[0]['max_stt']) ? (int) $result[0]['max_stt'] + 1 : 1;
+
+        // echo "<pre>";
+        // print_r($result);
+        // die();
         return $result;
     }
     function max_stt_in_day($position, $date, $except_id = 0)

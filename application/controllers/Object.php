@@ -153,7 +153,7 @@ class Object extends MY_Controller {
         } else {
 
             $this->load->model("target_model");
-            $this->data['targets'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->data['targets'] = $this->target_model->where(array('deleted' => 0))->with_parent()->as_object()->get_all();
             load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
@@ -202,7 +202,7 @@ class Object extends MY_Controller {
             $this->load->model("area_model");
             $this->data['areas'] = $this->area_model->where(array('deleted' => 0))->as_object()->get_all();
             $this->load->model("target_model");
-            $this->data['targets'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
+            $this->data['targets'] = $this->target_model->where(array('deleted' => 0))->with_parent()->as_object()->get_all();
             load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }

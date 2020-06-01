@@ -12,29 +12,34 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Name:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên tiếng anh:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">English Name:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name_en" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Đơn vị tính:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Unit:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="unit" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Chỉ tiêu phụ:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Parent Method:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select name="targets[]" style="width: 500px;" multiple="">
+                                    <select name="parent_id" style="width: 500px;">
                                         @foreach($targets as $target)
-                                        <option value="{{$target->id}}">{{$target->name}}</option>
+                                        <option value="{{$target->id}}">
+                                            {{$target->name}}
+                                            @if($target->parent_id > 0)
+                                            ({{$target->parent->name}})
+                                            @endif
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>

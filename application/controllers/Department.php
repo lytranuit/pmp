@@ -217,7 +217,7 @@ class Department extends MY_Controller
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
-        $where = $this->department_model;
+        $where = $this->department_model->where(array("deleted" => 0));
 
         $totalData = $where->count_rows();
         $totalFiltered = $totalData;

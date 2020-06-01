@@ -12,7 +12,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Workshop</th>
+                            <th>Department</th>
                             <th>Report type</th>
                             <th>Time</th>
                             <th>User</th>

@@ -263,11 +263,15 @@ class Limit extends MY_Controller
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
-                $target = $post->target;
-                $area = $post->area;
+                if (isset($post->target->parent_id) && $post->target->parent_id > 0) {
+                    $parent_target = $this->target_model->get($post->target->parent_id);
+                    if (!empty($parent_target)) {
+                        $post->target->name .= " ($parent_target->name)";
+                    }
+                }
                 $nestedData['day_effect'] = $post->day_effect;
-                $nestedData['target_name'] = $target->name;
-                $nestedData['area_name'] = $area->name;
+                $nestedData['target_name'] = isset($post->target->name) ? $post->target->name : "";
+                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
                 $nestedData['standard_limit'] = $post->standard_limit;
                 $nestedData['alert_limit'] = $post->alert_limit;
                 $nestedData['action_limit'] = $post->action_limit;

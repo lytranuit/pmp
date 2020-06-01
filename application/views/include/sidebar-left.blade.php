@@ -162,7 +162,7 @@
                         <li>
                             <a href="{{base_url()}}workshop/">
                                 <i class="metismenu-icon"></i>
-                                Workshop
+                                Department
                             </a>
                         </li>
                         <li>

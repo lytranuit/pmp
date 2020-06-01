@@ -13,25 +13,25 @@
                         <div class="col-12">
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Mã vị trí:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Id:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="string_id" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên vị trí:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Name:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên tiếng anh:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">English Name:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name_en" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Nhà máy:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="factory_id">
                                         @foreach ($factory as $row)
@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Xưởng:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id">
                                         @foreach ($workshop as $row)
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="area_id">
                                         @foreach ($area as $area)
@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phòng/Thiết bị:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Room/Equipment:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="department_id">
                                         @foreach ($department as $dep)
@@ -71,7 +71,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Đối tượng:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Object:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="object_id">
                                         @foreach ($object as $row)
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Phương pháp lấy mẫu:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="target_id">
                                         @foreach ($target as $row)
@@ -91,19 +91,19 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tần suất lấy mẫu:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Frequency:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="frequency_name" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Báo cáo:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Report:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="type_bc">
-                                        <option value="Year">Năm</option>
-                                        <option value="HalfYear">Nửa Năm</option>
-                                        <option value="Quarter">Quý</option>
-                                        <option value="Month">Tháng</option>
+                                        <option value="Year">Year</option>
+                                        <option value="HalfYear">Half Year</option>
+                                        <option value="Quarter">Quarter</option>
+                                        <option value="Month">Month</option>
                                     </select>
                                 </div>
                             </div>

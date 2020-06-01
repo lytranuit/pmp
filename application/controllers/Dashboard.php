@@ -167,9 +167,13 @@ class Dashboard extends MY_Controller
         } else {
             $this->load->model("result_model");
             $this->data['factory'] = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id))->with_factory()->group_by("factory_id")->as_object()->get_all();
+            // print_r($object_id);
             $this->data['factory'] = array_map(function ($item) {
                 return $item->factory;
             }, $this->data['factory']);
+            // echo "<pre>";
+            // print_r($this->data['factory']);
+            // die();
         }
         $this->data['object_id'] = $object_id;
         load_daterangepicker($this->data);
@@ -264,6 +268,7 @@ class Dashboard extends MY_Controller
         $this->load->model("result_model");
         $this->load->model("employee_model");
         $this->load->model("department_model");
+        $this->load->model("target_model");
 
         $department_id = $this->input->get('department_id', TRUE);
         $area_id = $this->input->get('area_id', TRUE);
@@ -276,11 +281,13 @@ class Dashboard extends MY_Controller
             'daterange' => $daterange
         );
         $params = input_params($params);
+
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         if (!is_numeric($department_id)) {
             echo json_encode(array());
             die();
         }
-        if ($this->data['object_id'] == 3) {
+        if ($object_id == 3) {
             $department = $this->employee_model->where(array('id' => $department_id))->as_object()->get();
             $params['employee_id'] = $department_id;
         } else {
@@ -295,19 +302,28 @@ class Dashboard extends MY_Controller
 
         $title = "";
         $subtitle = "";
-        if ($this->data['object_id'] == 3) {
-            $target_list = $this->employeeresult_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('employee_id' => $department_id, 'deleted' => 0))->with_target()->group_by("target_id")->get_all();
+        if ($object_id == 3) {
+            $target_list = $this->employeeresult_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('employee_id' => $department_id, 'deleted' => 0))->group_by("target_id")->get_all();
         } else {
-            $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('department_id' => $department_id, 'deleted' => 0))->with_target()->group_by("target_id")->get_all();
+            $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('department_id' => $department_id, 'deleted' => 0, 'object_id' => $object_id))->group_by("target_id")->get_all();
         }
         $results = [];
 
         for ($i = 0; $i < count($target_list); $i++) {
-            $target = $target_list[$i]->target;
+
+            $target = $this->target_model->with_parent()->get($target_list[$i]->target_id);
             $params['target_id'] = $target->id;
             if ($this->data['object_id'] == 3) {
                 $title = "Biểu đồ xu hướng vi sinh nhân viên $department->name ($department->string_id)";
                 $subtitle = "Trend chart of microbiological monitoring of Personnel $department->name ($department->string_id)";
+            } else if ($this->data['object_id'] == 14 || $this->data['object_id'] == 15) {
+                if ($target->id == 14 || $target->id == 15) {
+                    $title = "Trend chart of non viable particles size (≥ 5.0 µm)";
+                } else {
+                    $title = "Trend chart of non viable particles size (≥ 0.5 µm)";
+                }
+
+                $subtitle = "";
             } else {
                 $title = "Trend chart of microbiological monitoring";
                 $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";

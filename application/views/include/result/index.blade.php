@@ -16,7 +16,7 @@
                     <thead>
                         <tr>
                             <th>
-                                @if($object_id == 11)
+                                @if($object_id == 11 || $object_id == 15)
                                 Room
                                 @else
                                 Equipment

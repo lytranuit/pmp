@@ -18,7 +18,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Workshop:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm workshop_id">
 
@@ -71,9 +71,9 @@
                         <b class="col-form-label text-sm-right">
                             @if($object_id == 3)
                             Employee
-                            @elseif($object_id == 10)
+                            @elseif($object_id == 10 || $object_id == 14 )
                             Equipment
-                            @elseif($object_id == 11)
+                            @elseif($object_id == 11 || $object_id == 15 )
                             Room
                             @endif
                         </b>
@@ -377,7 +377,10 @@
                 for (target of all_target) {
                     let data = target['data'];
                     let target_html = $('#target_html').html();
-
+                    console.log(target);
+                    if (target['parent']) {
+                        target['name'] += " (" + target['parent']['name'] + ")";
+                    }
                     let rendered = Mustache.render(target_html, target);
                     $("#chart_template").append(rendered);
                     let options = {

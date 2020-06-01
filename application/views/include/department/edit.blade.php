@@ -12,27 +12,27 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Mã:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Code:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="string_id" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Name:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Tên tiếng anh:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">English Name:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name_en" required="" />
                                 </div>
                             </div>
 
-                            <h4 class="text-center">Địa điểm</h4>
+                            <h4 class="text-center">Location</h4>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Nhà máy:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="factory_id">
                                         @foreach ($factory as $row)
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Xưởng:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id">
                                         @foreach ($workshop as $row)
@@ -52,7 +52,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Khu vực:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="area_id">
                                         @foreach ($area as $area)

@@ -5,18 +5,18 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}department/add">Thêm</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}department/add">add</a>
             </h5>
             <div class="card-body">
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Mã</th>
-                            <th>Tên</th>
-                            <th>Khu vực</th>
-                            <th>Xưởng</th>
-                            <th>Nhà máy</th>
-                            <th>Hành động</th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Area</th>
+                            <th>Department</th>
+                            <th>Factory</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>

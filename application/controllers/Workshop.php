@@ -192,7 +192,7 @@ class Workshop extends MY_Controller
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
-        $where = $this->workshop_model;
+        $where = $this->workshop_model->where(array("deleted" => 0));
 
         $totalData = $where->count_rows();
         $totalFiltered = $totalData;

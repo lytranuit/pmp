@@ -6,15 +6,15 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}object/add">Thêm</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}object/add">Add</a>
             </h5>
             <div class="card-body">
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Tên</th>
-                            <th>Hành động</th>
+                            <th>Name</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>

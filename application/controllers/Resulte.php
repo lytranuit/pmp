@@ -25,9 +25,11 @@ class Resulte extends MY_Controller
             base_url() . "public/assets/scripts/jquery.cookies.2.2.0.min.js",
             base_url() . "public/assets/scripts/custom.js?v=" . $version
         );
+
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
-        if ($object_id != "3") {
-            redirect("result", "refresh");
+        $object_array = array(3);
+        if (!in_array((int) $object_id, $object_array)) {
+            $this->redirect_result($object_id);
         }
     }
 

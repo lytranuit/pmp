@@ -26,9 +26,11 @@ class Result extends MY_Controller
             base_url() . "public/assets/scripts/custom.js?v=" . $version
         );
 
+
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
-        if ($object_id == "3") {
-            redirect("resulte", "refresh");
+        $object_array = array(10, 11);
+        if (!in_array((int) $object_id, $object_array)) {
+            $this->redirect_result($object_id);
         }
     }
 

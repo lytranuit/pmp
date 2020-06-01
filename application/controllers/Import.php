@@ -134,6 +134,11 @@ class Import extends MY_Controller
             $workshop_id = $workshop->id;
             $frequency_name = $type_bc = $area_name = $target_name = "";
             $temp_area = $temp_phong = array();
+            $area_all = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+
+            foreach ($area_all as $row) {
+                $temp_area[$row->string_id] = $row;
+            }
             $phong_all = $this->department_model->where(array('deleted' => 0))->as_object()->get_all();
             foreach ($phong_all as $phong) {
                 $temp_phong[$phong->string_id] = $phong;
@@ -179,6 +184,7 @@ class Import extends MY_Controller
                             'workshop_id' => $workshop_id,
                             'factory_id' => $workshop->factory_id,
                             'from_file' => $sheet_name,
+                            'string_id' => $area_string_id
                         ));
                         $area = $temp_area[$area_string_id] = $this->area_model->get($area_id);
                     } else {
@@ -242,6 +248,225 @@ class Import extends MY_Controller
             }
         }
     }
+
+    public function vitri_tieuphan()
+    {
+        // die();
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        $file = APPPATH . '../public/upload/vitri_phong/vitri_tieuphan.xlsx';
+        echo $file;
+        //Tiến hành xác thực file
+        $objFile = PHPExcel_IOFactory::identify($file);
+        $objData = PHPExcel_IOFactory::createReader($objFile);
+
+        //Chỉ đọc dữ liệu
+        // $objData->setReadDataOnly(true);
+        // Load dữ liệu sang dạng đối tượng
+        $objPHPExcel = $objData->load($file);
+
+        //Lấy ra số trang sử dụng phương thức getSheetCount();
+        // Lấy Ra tên trang sử dụng getSheetNames();
+        //Chọn trang cần truy xuất
+        $sheet = $objPHPExcel->setActiveSheetIndex(0);
+
+        //Lấy ra số dòng cuối cùng
+        $Totalrow = $sheet->getHighestRow();
+        //Lấy ra tên cột cuối cùng
+        $LastColumn = $sheet->getHighestColumn();
+        //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+        $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+        //Tạo mảng chứa dữ liệu
+        $data = [];
+
+        $count_sheet = $objPHPExcel->getSheetCount();
+
+        $this->load->model("workshop_model");
+        $this->load->model("area_model");
+        $this->load->model("position_model");
+        $this->load->model("department_model");
+        $this->load->model("target_model");
+
+        $temp_workshop = array(
+            $this->workshop_model->where(array('id' => 4))->as_object()->get(),
+            $this->workshop_model->where(array('id' => 8))->as_object()->get(),
+        );
+        $temp_type_bc = array(
+            '2 năm' => 'TwoYear',
+            '2 năm / lần' => 'TwoYear',
+            'hàng năm' => 'Year',
+            'năm' => 'Year',
+            'nửa năm' => 'HalfYear',
+            'quý' => 'Quarter'
+        );
+        for ($k = 0; $k < $count_sheet; $k++) {
+            $sheet_name = "sheet_" . $k  . "_vitri_tieuphan.xlsx";
+            $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+            //Lấy ra số dòng cuối cùng
+            $Totalrow = $sheet->getHighestRow();
+            //Lấy ra tên cột cuối cùng
+            $LastColumn = $sheet->getHighestColumn();
+            //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+            $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+            //Tạo mảng chứa dữ liệu
+            $data = [];
+
+            //Tiến hành lặp qua từng ô dữ liệu
+            //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+            for ($i = 1; $i <= $Totalrow; $i++) {
+                //----Lặp cột
+                for ($j = 0; $j < $TotalCol; $j++) {
+                    // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                    $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                    $data[$i - 1][$j] = $cell->getValue();
+                    ///CHUYEN RICH TEXT
+                    if ($data[$i - 1][$j] instanceof PHPExcel_RichText) {
+                        $data[$i - 1][$j] = $data[$i - 1][$j]->getPlainText();
+                    }
+                    ////CHUYEN DATE 
+                    if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - 1][$j] > 0) {
+
+                        if (is_numeric($data[$i - 1][$j])) {
+                            $data[$i - 1][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - 1][$j]));
+                        } else if ($data[$i - 1][$j] == '26/09/16') {
+                            $data[$i - 1][$j] = '2016-09-26';
+                        }
+                    }
+                }
+            }
+
+
+            echo "<pre>";
+            echo $sheet_name . "<br>";
+            // if ($k == 1) {
+            //     print_r($data);
+            //     die();
+            // } else {
+            //     continue;
+            // }
+            $workshop = $temp_workshop[$k];
+            $workshop_id = $workshop->id;
+            $frequency_name = $type_bc = $area_name = $target_name = "";
+            $temp_area = $temp_phong = array();
+            $area_all = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+
+            foreach ($area_all as $row) {
+                $temp_area[$row->string_id] = $row;
+            }
+            $phong_all = $this->department_model->where(array('deleted' => 0))->as_object()->get_all();
+            foreach ($phong_all as $phong) {
+                $temp_phong[$phong->string_id] = $phong;
+            }
+            for ($i = 0; $i < count($data); $i++) {
+                // $area_string = $data[$i][3];
+                if (isset($data[$i][10]) && ($data[$i][10] == "Báo cáo"))
+                    continue;
+                $position_string_id = trim($data[$i][5]);
+
+                if ($position_string_id == "") {
+                    continue;
+                }
+                $position_name = trim($data[$i][6]);
+                $position_name_en =  trim($data[$i][7]);
+                if (isset($data[$i][17])) {
+                    $position_string_id_old = trim($data[$i][17]);
+                } else {
+                    $position_string_id_old = '';
+                }
+                if ($data[$i][8] != "") {
+                    $frequency_name =  $data[$i][8];
+                }
+
+                if ($data[$i][10] != "") {
+                    $type_bc =  strtolower(trim($data[$i][10]));
+                    $type_bc = $temp_type_bc[$type_bc];
+                }
+                // if ($data[$i][5] != "") {
+                //     $target_name = trim($data[$i][5]);
+                //     $target_id = $temp_target[$target_name];
+                // }
+
+                if ($data[$i][4] != "") {
+                    $area_string_id = trim($data[$i][4]);
+                    if (!isset($temp_area[$area_string_id])) {
+                        $area_name = "Cấp sạch $area_string_id";
+                        $area_name_en = "Grade $area_string_id";
+                        //TẠO AREA
+                        $area_id = $this->area_model->insert(array(
+                            'name' => $area_name,
+                            'name_en' => $area_name_en,
+                            'workshop_id' => $workshop_id,
+                            'factory_id' => $workshop->factory_id,
+                            'from_file' => $sheet_name,
+                            'string_id' => $area_string_id
+                        ));
+                        $area = $temp_area[$area_string_id] = $this->area_model->get($area_id);
+                    } else {
+                        $area =  $temp_area[$area_string_id];
+                    }
+                }
+                if ($data[$i][3] != "") {
+                    $phong_name = trim($data[$i][1]);
+                    $phong_name_en = trim($data[$i][2]);
+                    $phong_string_id = trim($data[$i][3]);
+                    if (isset($data[$i][15])) {
+                        $phong_string_id_old = trim($data[$i][15]);
+                    } else {
+                        $phong_string_id_old = '';
+                    }
+                    ////Tạo Phòng
+
+                    if (!isset($temp_phong[$phong_string_id])) {
+                        $data_phong = array(
+                            'name' => $phong_name,
+                            'name_en' => $phong_name_en,
+                            'string_id' => $phong_string_id,
+                            'area_id' => $area->id,
+                            'type' => $phong_string_id[0],
+                            'workshop_id' => $area->workshop_id,
+                            'factory_id' => $area->factory_id,
+                            'from_file' => $sheet_name,
+                            'string_id_old' => $phong_string_id_old
+                        );
+                        $phong_id = $this->department_model->insert($data_phong);
+                        $phong = $temp_phong[$phong_string_id] = $this->department_model->get($phong_id);
+                    } else {
+                        $phong = $temp_phong[$phong_string_id];
+                    }
+                }
+                if ($phong_string_id[0] == 1) {
+                    $object_id = 15;
+                } else {
+                    $object_id = 14;
+                }
+                ///Tạo vị trí
+                $data_position = array(
+                    'name' => $position_name,
+                    'name_en' => $position_name_en,
+                    'string_id' => $position_string_id,
+                    'frequency_name' => $frequency_name,
+                    // 'target_id' => $target_id,
+                    'department_id' => $phong->id,
+                    'area_id' => $phong->area_id,
+                    'workshop_id' => $phong->workshop_id,
+                    'factory_id' => $phong->factory_id,
+                    'from_file' => $sheet_name,
+                    'object_id' => $object_id,
+                    'type_bc' => $type_bc,
+                    'string_id_old' => $position_string_id_old
+                );
+                $position_id = $this->position_model->insert($data_position);
+                // $area = $temp_area[$area_string];
+
+                // $phong_id = $find_phong->id;
+            }
+        }
+    }
+
     public function nhanvien()
     {
         require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
@@ -464,6 +689,7 @@ class Import extends MY_Controller
             // $phong_id = $find_phong->id;
         }
     }
+
     public function result()
     {
         set_time_limit(-1);
@@ -693,7 +919,7 @@ class Import extends MY_Controller
                 ///LIST POSTION
                 $list_position = array_shift($data);
                 ///XOA 1 ROW
-                array_shift($data);
+                // array_shift($data);
                 $this->load->model("position_model");
                 echo "<pre>";
                 $positions = array();
@@ -765,6 +991,591 @@ class Import extends MY_Controller
         }
     }
 
+    public function result3()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/upload/data_3';
+
+        echo "<pre>";
+        echo $dir;
+        $this->load->model("result_model");
+        $insert = array();
+
+
+        $sortedarray1 = $this->listFolderFiles($dir);
+        $sortedarray1 = array_values($sortedarray1);
+        // print_r($sortedarray1);
+        // die();
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $file_name;
+            //Tiến hành xác thực file
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+
+            //Chỉ đọc dữ liệu
+            // $objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            for ($k = 0; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                $row_stt = 1;
+                for ($i = $row_stt; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i - $row_stt][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - $row_stt][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - $row_stt][$j] = $data[$i - $row_stt][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - $row_stt][$j] > 0) {
+
+                            if (is_numeric($data[$i - $row_stt][$j])) {
+                                $data[$i - $row_stt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - $row_stt][$j]));
+                            } else if ($data[$i - $row_stt][$j] == '26/09/16') {
+                                $data[$i - $row_stt][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+                // echo "<pre>";
+                // print_r($data);
+                // die();
+                ///LIST POSTION
+                $list_position = array_shift($data);
+                ///XOA 1 ROW
+                // array_shift($data);
+                $this->load->model("position_model");
+                echo "<pre>";
+                $positions = array();
+                $list_old = array();
+                for ($i = 0; $i < count($list_position); $i++) {
+                    $position = $list_position[$i];
+                    if ($position == "") {
+                        continue;
+                    }
+                    $find_vitri_old = $this->position_model->where(array('string_id_old' => $position))->as_object()->get_all();
+                    if (count($find_vitri_old) > 0) {
+                        $find_vitri_old = array_map(function ($item) use ($i) {
+                            $item->col = $i;
+                            return $item;
+                        }, $find_vitri_old);
+                        $list_old = array_merge($list_old, $find_vitri_old);
+                    }
+                    $find_vitri = $this->position_model->where(array('string_id' => $position))->as_object()->get();
+                    //            print_r($find_phong);
+                    if (empty($find_vitri)) {
+                        continue;
+                    }
+                    ///Tìm ngược lại list old
+                    $find_vi_tri_old = array_values(array_filter($list_old, function ($item) use ($find_vitri) {
+                        return $item->string_id = $find_vitri->string_id;
+                    }));
+                    if (isset($find_vi_tri_old[0]))
+                        $find_vitri->col_old = $find_vi_tri_old[0]->col;
+                    $find_vitri->col = $i;
+                    array_push($positions, $find_vitri);
+                }
+                // print_r($positions);
+                // print_r($data);
+                // die();
+                // print_r($temp_phong);
+                // die();
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                    foreach ($positions as $position) {
+                        $position_id = $position->id;
+                        $area_id = $position->area_id;
+                        $department_id = $position->department_id;
+                        $target_id = $position->target_id;
+                        $factory_id = $position->factory_id;
+                        $workshop_id = $position->workshop_id;
+                        $object_id = $position->object_id;
+                        $type_bc = $position->type_bc;
+                        $date = $row[0];
+                        // if ($date == '2020-03-21') {
+                        //     print_r($i);
+                        //     print($data);
+                        //     die();
+                        // }
+                        // print_r($row);
+                        //     die();
+                        // if (isset($position->col_old)) {
+
+                        //     echo  $row[$position->col_old] . "<br>";
+                        // }
+                        if ($row[$position->col] != '') {
+                            $value = $row[$position->col];
+                        } elseif (isset($position->col_old)) {
+                            $value = $row[$position->col_old];
+                        } else {
+                            continue;
+                        }
+                        if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
+                            continue;
+                        }
+                        $date = date("Y-m-d", strtotime($date));
+                        $max_stt = $this->result_model->max_stt_in_day($position_id, $date);
+                        // $data['stt_in_day'] = $max_stt;
+                        $data_up = array(
+                            'value' => $value,
+                            'position_id' => $position_id,
+                            'area_id' => $area_id,
+                            'department_id' => $department_id,
+                            'target_id' => $target_id,
+                            'factory_id' => $factory_id,
+                            'workshop_id' => $workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name,
+                            'object_id' => $object_id,
+                            'type_bc' => $type_bc,
+                            'stt_in_day' => $max_stt
+                            //                        'w,orkshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $this->result_model->insert($data_up);
+                    }
+                    // $phong_id = $find_phong->id;
+                }
+            }
+        }
+    }
+    public function result_tieuphan_dong()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/upload/data_tieuphan_dong';
+
+        echo "<pre>";
+        echo $dir;
+        $this->load->model("result_model");
+        $this->load->model("target_model");
+        $insert = array();
+
+
+        $sortedarray1 = $this->listFolderFiles($dir);
+        $sortedarray1 = array_values($sortedarray1);
+        // print_r($sortedarray1);
+        // die();
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $file_name;
+            //Tiến hành xác thực file
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+
+            //Chỉ đọc dữ liệu
+            // $objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            for ($k = 0; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                $row_stt = 1;
+                for ($i = $row_stt; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i - $row_stt][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - $row_stt][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - $row_stt][$j] = $data[$i - $row_stt][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - $row_stt][$j] > 0) {
+
+                            if (is_numeric($data[$i - $row_stt][$j])) {
+                                $data[$i - $row_stt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - $row_stt][$j]));
+                            } else if ($data[$i - $row_stt][$j] == '26/09/16') {
+                                $data[$i - $row_stt][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+                // $temp_target = array(
+                //     $this->target_model->where(array('id' => 14))->as_object()->get(), ///5
+                //     $this->target_model->where(array('id' => 16))->as_object()->get(), ///0.5
+                // );
+                $list_target = array_shift($data);
+                echo "<pre>";
+                print_r($list_target);
+                $targets = array();
+                for ($i = 0; $i < count($list_target); $i++) {
+                    $target_name = $list_target[$i];
+                    if ($target_name == "") {
+                        continue;
+                    }
+                    if (strpos($target_name, "0.5") !== FALSE || strpos($target_name, "0/5") !== FALSE) {
+                        $targets[$i] = 16;
+                    } elseif (strpos($target_name, "5") !== FALSE) {
+                        $targets[$i] = 14;
+                    } else {
+                        continue;
+                    }
+                }
+
+                echo "<pre>";
+                print_r($targets);
+                // die();
+                ///LIST POSTION
+                $list_position = array_shift($data);
+
+                ///XOA 1 ROW
+                // array_shift($data);
+                $this->load->model("position_model");
+                echo "<pre>";
+                $positions = array();
+                $list_old = array();
+                for ($i = 0; $i < count($list_position); $i++) {
+                    $position = $list_position[$i];
+                    if ($position == "" || !isset($targets[$i])) {
+                        continue;
+                    }
+                    // $find_vitri_old = $this->position_model->where(array('string_id_old' => $position))->as_object()->get_all();
+                    // if (count($find_vitri_old) > 0) {
+                    //     $find_vitri_old = array_map(function ($item) use ($i) {
+                    //         $item->col = $i;
+                    //         return $item;
+                    //     }, $find_vitri_old);
+                    //     $list_old = array_merge($list_old, $find_vitri_old);
+                    // }
+                    $find_vitri = $this->position_model->where(array('string_id' => $position))->as_object()->get();
+                    //            print_r($find_phong);
+                    if (empty($find_vitri)) {
+                        continue;
+                    }
+                    ///Tìm ngược lại list old
+                    // $find_vi_tri_old = array_values(array_filter($list_old, function ($item) use ($find_vitri) {
+                    //     return $item->string_id = $find_vitri->string_id;
+                    // }));
+                    // if (isset($find_vi_tri_old[0]))
+                    //     $find_vitri->col_old = $find_vi_tri_old[0]->col;
+                    $find_vitri->col = $i;
+                    $find_vitri->target_id = $targets[$i];
+
+                    array_push($positions, $find_vitri);
+                }
+                print_r($positions);
+                // print_r($data);
+                // die();
+                // print_r($temp_phong);
+                // die();
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                    foreach ($positions as $position) {
+                        $position_id = $position->id;
+                        $area_id = $position->area_id;
+                        $department_id = $position->department_id;
+                        $target_id = $position->target_id;
+                        $factory_id = $position->factory_id;
+                        $workshop_id = $position->workshop_id;
+                        $object_id = $position->object_id;
+                        $type_bc = $position->type_bc;
+                        $date = $row[0];
+                        // if ($date == '2020-03-21') {
+                        //     print_r($i);
+                        //     print($data);
+                        //     die();
+                        // }
+                        // print_r($row);
+                        //     die();
+                        // if (isset($position->col_old)) {
+
+                        //     echo  $row[$position->col_old] . "<br>";
+                        // }
+                        if ($row[$position->col] != '') {
+                            $value = $row[$position->col];
+                        } elseif (isset($position->col_old)) {
+                            $value = $row[$position->col_old];
+                        } else {
+                            continue;
+                        }
+                        if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
+                            continue;
+                        }
+                        $date = date("Y-m-d", strtotime($date));
+                        $max_stt = $this->result_model->max_stt_have_target_in_day($position_id, $date, $target_id);
+                        // $data['stt_in_day'] = $max_stt;
+                        $data_up = array(
+                            'value' => $value,
+                            'position_id' => $position_id,
+                            'area_id' => $area_id,
+                            'department_id' => $department_id,
+                            'target_id' => $target_id,
+                            'factory_id' => $factory_id,
+                            'workshop_id' => $workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name,
+                            'object_id' => $object_id,
+                            'type_bc' => $type_bc,
+                            'stt_in_day' => $max_stt
+                            //                        'w,orkshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $this->result_model->insert($data_up);
+                    }
+                    // $phong_id = $find_phong->id;
+                }
+            }
+        }
+    }
+    public function result_tieuphan_tinh()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/upload/data_tieuphan_tinh';
+
+        echo "<pre>";
+        echo $dir;
+        $this->load->model("result_model");
+        $this->load->model("target_model");
+        $insert = array();
+
+
+        $sortedarray1 = $this->listFolderFiles($dir);
+        $sortedarray1 = array_values($sortedarray1);
+        // print_r($sortedarray1);
+        // die();
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $file_name;
+            //Tiến hành xác thực file
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+
+            //Chỉ đọc dữ liệu
+            // $objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            for ($k = 0; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                $row_stt = 12;
+                for ($i = $row_stt; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i - $row_stt][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - $row_stt][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - $row_stt][$j] = $data[$i - $row_stt][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - $row_stt][$j] > 0) {
+
+                            if (is_numeric($data[$i - $row_stt][$j])) {
+                                $data[$i - $row_stt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - $row_stt][$j]));
+                            } else if ($data[$i - $row_stt][$j] == '26/09/16') {
+                                $data[$i - $row_stt][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+
+                echo "<pre>";
+                // print_r($data);
+                // die();
+                // $temp_target = array(
+                //     $this->target_model->where(array('id' => 14))->as_object()->get(), ///5
+                //     $this->target_model->where(array('id' => 16))->as_object()->get(), ///0.5
+                // );
+                $list_target = array_shift($data);
+                echo "<pre>";
+                echo $sheet_name . "<br>";
+                print_r($list_target);
+                $targets = array();
+                for ($i = 0; $i < count($list_target); $i++) {
+                    $target_name = $list_target[$i];
+                    if ($target_name == "") {
+                        continue;
+                    }
+                    if (strpos($target_name, "0.5") !== FALSE || strpos($target_name, "0/5") !== FALSE) {
+                        $targets[$i] = 17;
+                    } elseif (strpos($target_name, "5") !== FALSE) {
+                        $targets[$i] = 15;
+                    } else {
+                        continue;
+                    }
+                }
+
+                echo "<pre>";
+                print_r($targets);
+                // die();
+                ///LIST POSTION
+                $list_position = array_shift($data);
+
+                ///XOA 1 ROW
+                array_shift($data);
+                $this->load->model("position_model");
+                echo "<pre>";
+                $positions = array();
+                $list_old = array();
+                for ($i = 0; $i < count($list_position); $i++) {
+                    $position = $list_position[$i];
+                    if ($position == "" || !isset($targets[$i])) {
+                        continue;
+                    }
+                    // $find_vitri_old = $this->position_model->where(array('string_id_old' => $position))->as_object()->get_all();
+                    // if (count($find_vitri_old) > 0) {
+                    //     $find_vitri_old = array_map(function ($item) use ($i) {
+                    //         $item->col = $i;
+                    //         return $item;
+                    //     }, $find_vitri_old);
+                    //     $list_old = array_merge($list_old, $find_vitri_old);
+                    // }
+                    $find_vitri = $this->position_model->where(array('string_id' => $position))->as_object()->get();
+                    //            print_r($find_phong);
+                    if (empty($find_vitri)) {
+                        continue;
+                    }
+                    ///Tìm ngược lại list old
+                    // $find_vi_tri_old = array_values(array_filter($list_old, function ($item) use ($find_vitri) {
+                    //     return $item->string_id = $find_vitri->string_id;
+                    // }));
+                    // if (isset($find_vi_tri_old[0]))
+                    //     $find_vitri->col_old = $find_vi_tri_old[0]->col;
+                    $find_vitri->col = $i;
+                    $find_vitri->target_id = $targets[$i];
+
+                    array_push($positions, $find_vitri);
+                }
+                print_r($positions);
+                // print_r($data);
+                // die();
+                // print_r($temp_phong);
+                // die();
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                    foreach ($positions as $position) {
+                        $position_id = $position->id;
+                        $area_id = $position->area_id;
+                        $department_id = $position->department_id;
+                        $target_id = $position->target_id;
+                        $factory_id = $position->factory_id;
+                        $workshop_id = $position->workshop_id;
+                        $object_id = $position->object_id;
+                        $type_bc = $position->type_bc;
+                        $date = $row[1];
+                        // if ($date == '2020-03-21') {
+                        //     print_r($i);
+                        //     print($data);
+                        //     die();
+                        // }
+                        // print_r($row);
+                        //     die();
+                        // if (isset($position->col_old)) {
+
+                        //     echo  $row[$position->col_old] . "<br>";
+                        // }
+                        if ($row[$position->col] != '') {
+                            $value = $row[$position->col];
+                        } elseif (isset($position->col_old)) {
+                            $value = $row[$position->col_old];
+                        } else {
+                            continue;
+                        }
+                        if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
+                            continue;
+                        }
+                        $date = date("Y-m-d", strtotime($date));
+                        $max_stt = $this->result_model->max_stt_have_target_in_day($position_id, $date, $target_id);
+                        // $data['stt_in_day'] = $max_stt;
+                        $data_up = array(
+                            'value' => $value,
+                            'position_id' => $position_id,
+                            'area_id' => $area_id,
+                            'department_id' => $department_id,
+                            'target_id' => $target_id,
+                            'factory_id' => $factory_id,
+                            'workshop_id' => $workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name,
+                            'object_id' => $object_id,
+                            'type_bc' => $type_bc,
+                            'stt_in_day' => $max_stt
+                            //                        'w,orkshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $this->result_model->insert($data_up);
+                    }
+                    // $phong_id = $find_phong->id;
+                }
+            }
+        }
+    }
     public function result_nhanvien()
     {
         set_time_limit(-1);
@@ -936,6 +1747,7 @@ class Import extends MY_Controller
         print_r($insert);
         $this->employeeresult_model->insert($insert);
     }
+
     function listFolderFiles($dir)
     {
         $ffs = scandir($dir);

@@ -1,4 +1,3 @@
-
 <!-- ============================================================== -->
 <!-- pageheader -->
 <!-- ============================================================== -->
@@ -6,16 +5,16 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}workshop/add">Thêm</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}workshop/add">Add</a>
             </h5>
             <div class="card-body">
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Tên</th>
-                            <th>Nhà máy</th>
-                            <th>Hành động</th>
+                            <th>Name</th>
+                            <th>Factory</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,7 +27,7 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#quanlytin').DataTable({
             "processing": true,
             "serverSide": true,
@@ -37,11 +36,18 @@
                 "dataType": "json",
                 "type": "POST",
             },
-            "columns": [
-                {"data": "id"},
-                {"data": "name"},
-                {"data": "factory_name"},
-                {"data": "action"}
+            "columns": [{
+                    "data": "id"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "factory_name"
+                },
+                {
+                    "data": "action"
+                }
             ]
 
         });
