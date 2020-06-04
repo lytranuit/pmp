@@ -332,11 +332,65 @@ class Result_model extends MY_Model
                 $where  
                 GROUP BY date,stt_in_day ";
 
-        echo "<pre>";
-        print_r($sql);
-        die();
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
         $query = $this->db->query($sql);
         $result = $query->result_array();
+        return $result;
+    }
+    function get_data_table_by_target($target_list, $params)
+    {
+        $subsql = "";
+        $list_id = array();
+        foreach ($target_list as $target) {
+            $list_id[] =  $target->id;
+            $subsql .= ",SUM(IF(a.target_id = $target->id,value,NULL)) as '$target->id'";
+        }
+        $where = "WHERE a.deleted = 0 and a.target_id IN (" . implode(",", $list_id) . ")";
+        if (isset($params['position_id'])) {
+            $where .= " AND a.position_id = " . $params['position_id'];
+        }
+        if (isset($params['object_id'])) {
+            $where .= " AND a.object_id = " . $params['object_id'];
+        }
+        $where .= " AND date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
+        $sql = "SELECT date $subsql FROM
+                    pmp_result as a
+                $where  
+                GROUP BY date,stt_in_day ORDER BY DATE ASC ";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result_array();
+        return $result;
+    }
+
+    function get_data_table_by_target_minmax($target_list, $object_id, $position_id, $date_from, $date_to)
+    {
+        $subsql = "";
+        $list_id = array();
+        foreach ($target_list as $target) {
+            $list_id[] =  $target->id;
+            $subsql .= ",MIN(IF(target_id = $target->id,value,NULL)) as min_$target->id,MAX(IF(target_id = $target->id,value,NULL)) as max_$target->id";
+        }
+        $where = "WHERE deleted = 0 and target_id IN (" . implode(",", $list_id) . ") AND object_id = $object_id AND position_id = $position_id";
+        if ($date_from == "") {
+            $date_from = $date_to = date("Y-m-d");
+        }
+        $where .= " AND date between '" . $date_from . "' and '" . $date_to . "'";
+        $sql = "SELECT date $subsql FROM
+                    pmp_result 
+                $where";
+
+        // echo "<pre>";
+        // print_r($sql);
+        // die();
+        $query = $this->db->query($sql);
+        $result = $query->result_array();
+        $result = isset($result[0]) ? $result[0] : array();
         return $result;
     }
     function get_data_minmax_v2($position_list, $date_from, $date_to)
@@ -345,7 +399,7 @@ class Result_model extends MY_Model
         $list_id = array();
         foreach ($position_list as $position) {
             $list_id[] =  $position->id;
-            $subsql .= ",MIN(IF(position_id = $position->id,value,0)) as min_$position->string_id,MAX(IF(position_id = $position->id,value,0)) as max_$position->string_id";
+            $subsql .= ",MIN(IF(position_id = $position->id,value,NULL)) as min_$position->string_id,MAX(IF(position_id = $position->id,value,NULL)) as max_$position->string_id";
         }
         $where = "WHERE deleted = 0 and position_id IN (" . implode(",", $list_id) . ")";
         if ($date_from == "") {

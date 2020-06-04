@@ -1576,6 +1576,423 @@ class Import extends MY_Controller
             }
         }
     }
+
+    public function result_tieuphan_thietbi_tinh()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/upload/data_tieuphan_thietbi_tinh';
+
+        echo "<pre>";
+        echo $dir;
+        $this->load->model("result_model");
+        $this->load->model("target_model");
+        $insert = array();
+
+
+        $sortedarray1 = $this->listFolderFiles($dir);
+        $sortedarray1 = array_values($sortedarray1);
+        // print_r($sortedarray1);
+        // die();
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $file_name;
+            //Tiến hành xác thực file
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+
+            //Chỉ đọc dữ liệu
+            // $objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            for ($k = 0; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                $row_stt = 13;
+                for ($i = $row_stt; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i - $row_stt][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - $row_stt][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - $row_stt][$j] = $data[$i - $row_stt][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - $row_stt][$j] > 0) {
+
+                            if (is_numeric($data[$i - $row_stt][$j])) {
+                                $data[$i - $row_stt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - $row_stt][$j]));
+                            } else if ($data[$i - $row_stt][$j] == '26/09/16') {
+                                $data[$i - $row_stt][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+
+                echo "<pre>";
+                // print_r($data);
+                // die();
+                // $temp_target = array(
+                //     $this->target_model->where(array('id' => 14))->as_object()->get(), ///5
+                //     $this->target_model->where(array('id' => 16))->as_object()->get(), ///0.5
+                // );
+                $list_target = array_shift($data);
+                echo "<pre>";
+                echo $sheet_name . "<br>";
+                print_r($list_target);
+                $targets = array();
+                for ($i = 0; $i < count($list_target); $i++) {
+                    $target_name = $list_target[$i];
+                    if ($target_name == "") {
+                        continue;
+                    }
+                    if (strpos($target_name, "0.5") !== FALSE || strpos($target_name, "0/5") !== FALSE) {
+                        $targets[$i] = 17;
+                    } elseif (strpos($target_name, "5") !== FALSE) {
+                        $targets[$i] = 15;
+                    } else {
+                        continue;
+                    }
+                }
+
+                echo "<pre>";
+                print_r($targets);
+                // die();
+                ///LIST POSTION
+                $list_position = array_shift($data);
+
+                ///XOA 1 ROW
+                // array_shift($data);
+                $this->load->model("position_model");
+                echo "<pre>";
+                $positions = array();
+                $list_old = array();
+                for ($i = 0; $i < count($list_position); $i++) {
+                    $position = $list_position[$i];
+                    if ($position == "" || !isset($targets[$i])) {
+                        continue;
+                    }
+                    // $find_vitri_old = $this->position_model->where(array('string_id_old' => $position))->as_object()->get_all();
+                    // if (count($find_vitri_old) > 0) {
+                    //     $find_vitri_old = array_map(function ($item) use ($i) {
+                    //         $item->col = $i;
+                    //         return $item;
+                    //     }, $find_vitri_old);
+                    //     $list_old = array_merge($list_old, $find_vitri_old);
+                    // }
+                    $find_vitri = $this->position_model->where(array('string_id' => $position))->as_object()->get();
+                    //            print_r($find_phong);
+                    if (empty($find_vitri)) {
+                        continue;
+                    }
+                    ///Tìm ngược lại list old
+                    // $find_vi_tri_old = array_values(array_filter($list_old, function ($item) use ($find_vitri) {
+                    //     return $item->string_id = $find_vitri->string_id;
+                    // }));
+                    // if (isset($find_vi_tri_old[0]))
+                    //     $find_vitri->col_old = $find_vi_tri_old[0]->col;
+                    $find_vitri->col = $i;
+                    $find_vitri->target_id = $targets[$i];
+
+                    array_push($positions, $find_vitri);
+                }
+                print_r($positions);
+                // print_r($data);
+                // die();
+                // print_r($temp_phong);
+                // die();
+                $stt_date = 13;
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                    foreach ($positions as $position) {
+                        $position_id = $position->id;
+                        $area_id = $position->area_id;
+                        $department_id = $position->department_id;
+                        $target_id = $position->target_id;
+                        $factory_id = $position->factory_id;
+                        $workshop_id = $position->workshop_id;
+                        $object_id = $position->object_id;
+                        $type_bc = $position->type_bc;
+                        $date = $row[$stt_date];
+                        // if ($date == '2020-03-21') {
+                        //     print_r($i);
+                        //     print($data);
+                        //     die();
+                        // }
+                        // print_r($row);
+                        //     die();
+                        // if (isset($position->col_old)) {
+
+                        //     echo  $row[$position->col_old] . "<br>";
+                        // }
+                        if ($row[$position->col] != '') {
+                            $value = $row[$position->col];
+                        } elseif (isset($position->col_old)) {
+                            $value = $row[$position->col_old];
+                        } else {
+                            continue;
+                        }
+                        if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
+                            continue;
+                        }
+                        $date = date("Y-m-d", strtotime($date));
+                        $max_stt = $this->result_model->max_stt_have_target_in_day($position_id, $date, $target_id);
+                        // $data['stt_in_day'] = $max_stt;
+                        $data_up = array(
+                            'value' => $value,
+                            'position_id' => $position_id,
+                            'area_id' => $area_id,
+                            'department_id' => $department_id,
+                            'target_id' => $target_id,
+                            'factory_id' => $factory_id,
+                            'workshop_id' => $workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name,
+                            'object_id' => $object_id,
+                            'type_bc' => $type_bc,
+                            'stt_in_day' => $max_stt
+                            //                        'w,orkshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $this->result_model->insert($data_up);
+                    }
+                    // $phong_id = $find_phong->id;
+                }
+            }
+        }
+    }
+    public function result_tieuphan_thietbi_dong()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/upload/data_tieuphan_thietbi_dong';
+
+        echo "<pre>";
+        echo $dir;
+        $this->load->model("result_model");
+        $this->load->model("target_model");
+        $insert = array();
+
+
+        $sortedarray1 = $this->listFolderFiles($dir);
+        $sortedarray1 = array_values($sortedarray1);
+        // print_r($sortedarray1);
+        // die();
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $file_name;
+            //Tiến hành xác thực file
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+
+            //Chỉ đọc dữ liệu
+            // $objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            for ($k = 0; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                $row_stt = 1;
+                for ($i = $row_stt; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i - $row_stt][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - $row_stt][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - $row_stt][$j] = $data[$i - $row_stt][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - $row_stt][$j] > 0) {
+
+                            if (is_numeric($data[$i - $row_stt][$j])) {
+                                $data[$i - $row_stt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - $row_stt][$j]));
+                            } else if ($data[$i - $row_stt][$j] == '26/09/16') {
+                                $data[$i - $row_stt][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+
+                echo "<pre>";
+                // print_r($data);
+                // die();
+                // $temp_target = array(
+                //     $this->target_model->where(array('id' => 14))->as_object()->get(), ///5
+                //     $this->target_model->where(array('id' => 16))->as_object()->get(), ///0.5
+                // );
+                $list_target = array_shift($data);
+                echo "<pre>";
+                echo $sheet_name . "<br>";
+                print_r($list_target);
+                $targets = array();
+                for ($i = 0; $i < count($list_target); $i++) {
+                    $target_name = $list_target[$i];
+                    if ($target_name == "") {
+                        continue;
+                    }
+                    if (strpos($target_name, "0.5") !== FALSE || strpos($target_name, "0/5") !== FALSE) {
+                        $targets[$i] = 17;
+                    } elseif (strpos($target_name, "5") !== FALSE) {
+                        $targets[$i] = 15;
+                    } else {
+                        continue;
+                    }
+                }
+
+                echo "<pre>";
+                print_r($targets);
+                // die();
+                ///LIST POSTION
+                $list_position = array_shift($data);
+
+                ///XOA 1 ROW
+                // array_shift($data);
+                $this->load->model("position_model");
+                echo "<pre>";
+                $positions = array();
+                $list_old = array();
+                for ($i = 0; $i < count($list_position); $i++) {
+                    $position = $list_position[$i];
+                    if ($position == "" || !isset($targets[$i])) {
+                        continue;
+                    }
+                    // $find_vitri_old = $this->position_model->where(array('string_id_old' => $position))->as_object()->get_all();
+                    // if (count($find_vitri_old) > 0) {
+                    //     $find_vitri_old = array_map(function ($item) use ($i) {
+                    //         $item->col = $i;
+                    //         return $item;
+                    //     }, $find_vitri_old);
+                    //     $list_old = array_merge($list_old, $find_vitri_old);
+                    // }
+                    $find_vitri = $this->position_model->where(array('string_id' => $position))->as_object()->get();
+                    //            print_r($find_phong);
+                    if (empty($find_vitri)) {
+                        continue;
+                    }
+                    ///Tìm ngược lại list old
+                    // $find_vi_tri_old = array_values(array_filter($list_old, function ($item) use ($find_vitri) {
+                    //     return $item->string_id = $find_vitri->string_id;
+                    // }));
+                    // if (isset($find_vi_tri_old[0]))
+                    //     $find_vitri->col_old = $find_vi_tri_old[0]->col;
+                    $find_vitri->col = $i;
+                    $find_vitri->target_id = $targets[$i];
+
+                    array_push($positions, $find_vitri);
+                }
+                print_r($positions);
+                // print_r($data);
+                // die();
+                // print_r($temp_phong);
+                // die();
+                $stt_date = 8;
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                    foreach ($positions as $position) {
+                        $position_id = $position->id;
+                        $area_id = $position->area_id;
+                        $department_id = $position->department_id;
+                        $target_id = $position->target_id;
+                        $factory_id = $position->factory_id;
+                        $workshop_id = $position->workshop_id;
+                        $object_id = $position->object_id;
+                        $type_bc = $position->type_bc;
+                        $date = $row[$stt_date];
+                        // if ($date == '2020-03-21') {
+                        //     print_r($i);
+                        //     print($data);
+                        //     die();
+                        // }
+                        // print_r($row);
+                        //     die();
+                        // if (isset($position->col_old)) {
+
+                        //     echo  $row[$position->col_old] . "<br>";
+                        // }
+                        if ($row[$position->col] != '') {
+                            $value = $row[$position->col];
+                        } elseif (isset($position->col_old)) {
+                            $value = $row[$position->col_old];
+                        } else {
+                            continue;
+                        }
+                        if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
+                            continue;
+                        }
+                        $date = date("Y-m-d", strtotime($date));
+                        $max_stt = $this->result_model->max_stt_have_target_in_day($position_id, $date, $target_id);
+                        // $data['stt_in_day'] = $max_stt;
+                        $data_up = array(
+                            'value' => $value,
+                            'position_id' => $position_id,
+                            'area_id' => $area_id,
+                            'department_id' => $department_id,
+                            'target_id' => $target_id,
+                            'factory_id' => $factory_id,
+                            'workshop_id' => $workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name,
+                            'object_id' => $object_id,
+                            'type_bc' => $type_bc,
+                            'stt_in_day' => $max_stt
+                            //                        'w,orkshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $this->result_model->insert($data_up);
+                    }
+                    // $phong_id = $find_phong->id;
+                }
+            }
+        }
+    }
     public function result_nhanvien()
     {
         set_time_limit(-1);
