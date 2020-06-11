@@ -38,13 +38,14 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select name="targets[]" style="width: 500px;" multiple="">
+                                    <div class="dd" id="nestable2">
+                                        <?= $html_nestable ?>
+                                    </div>
+                                    <select class="form-control mt-3" id="target_add">
+                                        <option value="0">Add Target</option>
                                         @foreach($targets as $target)
-                                        <option value="{{$target->id}}">
-                                            {{$target->name}}
-                                            @if($target->parent_id > 0)
-                                            ({{$target->parent->name}})
-                                            @endif
+                                        <option value="{{$target['id']}}">
+                                            {{$target['name']}}
                                         </option>
                                         @endforeach
                                     </select>
@@ -59,11 +60,18 @@
 </div>
 <script type='text/javascript'>
     $(document).ready(function() {
+        $('#nestable').nestedSortable({
+            forcePlaceholderSize: true,
+            items: 'li',
+            opacity: .6,
+            maxLevels: 2,
+            placeholder: 'dd-placeholder',
+        });
 
         var tin = <?= json_encode($tin) ?>;
         fillForm($("#form-dang-tin"), tin);
 
-        $("select[multiple]").chosen();
+        // $("select[multiple]").chosen();
         $.validator.setDefaults({
             debug: true,
             success: "valid"
@@ -79,9 +87,64 @@
                 $(element).parents('.form-group').append(error);
             },
             submitHandler: function(form) {
+                var arraied = $('#nestable').nestedSortable('toArray', {
+                    excludeRoot: true
+                });
+                // console.log(arraied);
+                // die();
+                html = "";
+                for (let i = 0; i < arraied.length; i++) {
+                    html += "<input name='targets[]' type='hidden' value='" + arraied[i]['id'] + "' / > ";
+                    html += "<input name='parents[]' type='hidden' value='" + arraied[i]['parent_id'] + "' / > ";
+                }
+                $(form).append(html);
                 form.submit();
                 return false;
             }
         });
+        $("#target_add").change(function() {
+            let target_id = $(this).val();
+            if (target_id == 0)
+                return;
+            let object_id = tin['id'];
+            $.ajax({
+                url: path + "object/add_target",
+                data: {
+                    target_id: target_id,
+                    object_id: object_id
+                },
+                dataType: "JSON",
+                type: "POST",
+                success: function(data) {
+                    location.reload();
+                }
+            })
+        })
+        $(".dd-item-delete").click(async function() {
+            var parent = $(this).closest(".dd-item");
+            var id = parent.data("id");
+            var array = [id];
+            $(".dd-item", parent).each(function() {
+                var id = $(this).data("id");
+                array.push(id);
+            });
+            var r = confirm("Delete it?");
+            if (r == true) {
+                var promiseAll = [];
+                for (var i = 0; i < array.length; i++) {
+                    var id = array[i]
+                    var promise = $.ajax({
+                        type: "POST",
+                        data: {
+                            id: id,
+                        },
+                        url: path + "object/remove_target"
+                    })
+                    promiseAll.push(promise);
+                }
+                await Promise.all(promiseAll);
+                location.reload();
+            }
+        })
     });
 </script>

@@ -14,7 +14,6 @@
                             <th>Id</th>
                             <th>Name</th>
                             <th>Unit</th>
-                            <th>Parent</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -45,9 +44,6 @@
                 },
                 {
                     "data": "unit"
-                },
-                {
-                    "data": "parent_name"
                 },
                 {
                     "data": "action"

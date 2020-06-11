@@ -82,7 +82,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         @foreach($objects as $row)
-                        <div class="col-md-3 col-4 my-4">
+                        <div class="col-md-3 col-4 my-4 text-center">
                             <a class="btn btn-success btn-xs object_select" href="#" data-id="{{$row['id']}}" data-name="{{$row['name']}}">
                                 {{$row['name']}}
                             </a>

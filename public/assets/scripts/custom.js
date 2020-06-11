@@ -107,6 +107,8 @@ var fillForm = function (form, data) {
     $('input, select, textarea', form).not("[type=file]").each(function () {
         var type = $(this).attr('type');
         var name = $(this).attr('name');
+        if (!name)
+            return;
         name = name.replace("[]", "");
         var value = "";
         if ($(this).hasClass("input-tmp"))

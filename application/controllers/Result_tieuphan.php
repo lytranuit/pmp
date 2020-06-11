@@ -28,7 +28,7 @@ class Result_tieuphan extends MY_Controller
         );
 
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
-        $object_array = array(14, 15);
+        $object_array = array(14, 15, 16, 17);
         if (!in_array((int) $object_id, $object_array)) {
             $this->redirect_result($object_id);
         }
@@ -91,14 +91,9 @@ class Result_tieuphan extends MY_Controller
             $this->data['positions'] = $this->position_model->where(array('deleted' => 0, 'object_id' => $object_id))->as_object()->get_all();
 
             $this->load->model("objecttarget_model");
-            $this->load->model("target_model");
+            $object_target = $this->objecttarget_model->where("object_id", $object_id)->order_by("order", "ASC")->with_target()->as_array()->get_all();
+            $this->data['html_nestable_target'] = $this->html_nestable_target((array) $object_target, 'parent_id', 0);
 
-            $object = $this->objecttarget_model->where(array('object_id' => $object_id))->as_object()->get_all();
-            $list_target = array();
-            foreach ($object as $row) {
-                $list_target[] = $this->target_model->with_parent()->get($row->target_id);
-            }
-            $this->data['list_target'] = $list_target;
             // echo "<pre>";
             // print_r($list_target);
             // die();
@@ -135,16 +130,11 @@ class Result_tieuphan extends MY_Controller
             $this->load->model("position_model");
             $this->data['positions'] = $this->position_model->where(array('deleted' => 0, 'object_id' => $object_id))->as_object()->get_all();
 
-
             $this->load->model("objecttarget_model");
-            $this->load->model("target_model");
 
-            $object = $this->objecttarget_model->where(array('object_id' => $object_id))->as_object()->get_all();
-            $list_target = array();
-            foreach ($object as $row) {
-                $list_target[] = $this->target_model->with_parent()->get($row->target_id);
-            }
-            $this->data['list_target'] = $list_target;
+            $object_target = $this->objecttarget_model->where("object_id", $object_id)->order_by("order", "ASC")->with_target()->as_array()->get_all();
+            $this->data['html_nestable_target'] = $this->html_nestable_target((array) $object_target, 'parent_id', 0);
+
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
@@ -160,12 +150,39 @@ class Result_tieuphan extends MY_Controller
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
+    private function html_nestable_target($array, $column, $parent, $deep = 0)
+    {
+        // echo "<pre>";
+        // print_r($array);
+        // die();
+        $html = "";
+        $return = array_filter((array) $array, function ($item) use ($column, $parent) {
+            return $item[$column] == $parent;
+        });
+        ///Bebin Tag
+        ///Content
+        foreach ($return as $row) {
+            $is_disabled = !$row['target']->has_data ? "disabled" : "";
+            $sub_html = "";
+            if ($deep > 0) {
+                for ($i = 0; $i < $deep; $i++) {
+                    $sub_html .= "-";
+                }
+            }
+            $html .= '<option value="' . $row['target_id'] . '" ' . $is_disabled . ' data-type="' . $row['target']->type_data . '">' . $sub_html . " " . $row['target']->name . '</option>';
+            $html .= $this->html_nestable_target((array) $array, $column, $row['id'], $deep + 1);
+            // $html .= '</li>';
+        }
+        ///End Tag
 
+        return $html;
+    }
     public function table()
     {
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $this->load->model("result_model");
         $this->load->model("limit_model");
+        $this->load->model("objecttarget_model");
         $limit = $this->input->post('length');
         $start = $this->input->post('start');
         $page = ($start / $limit) + 1;
@@ -208,11 +225,9 @@ class Result_tieuphan extends MY_Controller
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $limit = $this->limit_model->where(array("area_id" => $post->area_id, 'target_id' => $post->target_id))->where("day_effect", "<=", $post->date)->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
-                if (isset($post->target->parent_id) && $post->target->parent_id > 0) {
-                    $parent_target = $this->target_model->get($post->target->parent_id);
-                    if (!empty($parent_target)) {
-                        $post->target->name .= " ($parent_target->name)";
-                    }
+                $target = $this->objecttarget_model->where(array("object_id" => $object_id, 'target_id' => $post->target_id))->with_parent(array("with" => array('relation' => 'target')))->get();
+                if (!empty($target) && isset($target->parent->target->name)) {
+                    $post->target->name .=  " (" . $target->parent->target->name . ")";
                 }
                 $nestedData['target_name'] = isset($post->target->name) ? $post->target->name : "";
                 $nestedData['position_name'] = isset($post->position->name) ? $post->position->name : "";
@@ -220,7 +235,11 @@ class Result_tieuphan extends MY_Controller
                 $nestedData['frequency_name'] = isset($post->position->frequency_name) ? $post->position->frequency_name : "";
                 $nestedData['department_name'] = isset($post->department->name) ? $post->department->name : "";
                 $nestedData['date'] = $post->date;
-                $nestedData['value'] = "<div class='text-center'>$post->value</div>";
+                if ($post->target->type_data == "float") {
+                    $nestedData['value'] = "<div class='text-center'>$post->value</div>";
+                } else {
+                    $nestedData['value'] = "<div class='text-center'>$post->value_text</div>";
+                }
                 if (!empty($limit) && $post->value > $limit->alert_limit && $post->value < $limit->action_limit) {
                     $nestedData['value'] = "<div class='bg-warning text-white text-center'>$post->value</div>";
                 } elseif (!empty($limit) && $post->value > $limit->action_limit) {

@@ -93,10 +93,10 @@ if (!function_exists('load_sort_nest')) {
 
     function load_sort_nest(&$data)
     {
-        array_push($data['stylesheet_tag'], base_url() . "public/admin/vendor/sortable-nestable/sort-nest.css");
+        array_push($data['stylesheet_tag'], base_url() . "public/lib/sortable/sortable.css");
         /////////// Plugin
         //        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/Sortable.min.js");
-        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/jquery.mjs.nestedSortable.js");
+        array_push($data['javascript_tag'], base_url() . "public/lib/sortable/jquery.mjs.nestedSortable.js");
         //        array_push($data['javascript_tag'], base_url() . "public/admin/vendor/shortable-nestable/jquery.nestable.js");
     }
 }

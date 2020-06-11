@@ -78,15 +78,8 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="target_id">
-                                        @foreach($list_target as $row)
-                                        <option value="{{$row->id}}">
-                                            {{$row->name}}
-                                            @if(isset($row->parent) && !empty($row->parent))
-                                            ({{$row->parent->name}})
-                                            @endif
-                                        </option>
-                                        @endforeach
+                                    <select class="form-control" name="target_id" id="target_id">
+                                        <?= $html_nestable_target ?>
                                     </select>
                                 </div>
                             </div>
@@ -97,10 +90,16 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row" id="html_value">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Value:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='number' name="value" required="" />
+                                    <input class="form-control" type='number' name="value" />
+                                </div>
+                            </div>
+                            <div class="form-group row d-none" id="html_value_text">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Value:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='text' name="value_text" />
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -160,7 +159,18 @@
                     $("input[name='type_bc']").val(type_bc);
                 }
             })
+        });
+        $("#target_id").change(function() {
+            let target_id = $(this).val();
+            let type = $("#target_id option[value=" + target_id + "]").data("type");
+            $("#html_value,#html_value_text").addClass("d-none");
+            if (type == "float") {
+                $("#html_value").removeClass("d-none");
+            } else {
+                $("#html_value_text").removeClass("d-none");
+            }
         })
+        $("#target_id").change();
         $.validator.setDefaults({
             debug: true,
             success: "valid"

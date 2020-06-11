@@ -23,6 +23,7 @@ class Export extends MY_Controller
         $this->load->model("workshop_model");
         $this->load->model("result_model");
         $this->load->model("limit_model");
+        $this->load->model("objecttarget_model");
         $this->load->model("object_model");
         $record = $this->report_model->where(array("id" => $id_record))->get();
         // print_r($record);
@@ -1442,25 +1443,435 @@ class Export extends MY_Controller
             $params['workshop_id'] = $workshop_id;
             $params['object_id'] = $object_id;
             ///////DATA
-            $target_results = $this->result_model->set_value_export($params)->with_target(array('with' => array('relation' => 'parent')))->group_by("target_id")->get_all();
+            $target_results = $this->result_model->set_value_export($params)->with_target()->group_by("target_id")->get_all();
             $target_parent = $target_list = array();
             foreach ($target_results as $temp) {
-                $temp = $temp->target;
-                $target_list[] = $temp;
-                if (isset($temp->parent) && !empty($temp->parent)) {
-                    if (isset($target_parent[$temp->parent_id])) {
-                        $target_parent[$temp->parent_id]->count_child++;
-                        $target_parent[$temp->parent_id]->child[] = $temp;
+                $target = $temp->target;
+                $target_object = $this->objecttarget_model->where(array("object_id" => $object_id, 'target_id' => $temp->target_id))->with_parent(array("with" => array('relation' => 'target')))->get();
+                // echo "<pre>";
+                // print_r($target_object);
+
+                if (isset($target_object->parent) && !empty($target_object->parent)) {
+                    $target->parent = $target_object->parent->target;
+                    if (isset($target_parent[$target->parent->id])) {
+                        $target_parent[$target->parent->id]->count_child++;
+                        $target_parent[$target->parent->id]->child[] = $target;
                     } else {
-                        $target_parent[$temp->parent_id] = (object) array();
-                        $target_parent[$temp->parent_id]->id = $temp->parent_id;
-                        $target_parent[$temp->parent_id]->name = $temp->parent->name;
-                        $target_parent[$temp->parent_id]->name_en = $temp->parent->name_en;
-                        $target_parent[$temp->parent_id]->unit = $temp->parent->unit;
-                        $target_parent[$temp->parent_id]->count_child = 1;
-                        $target_parent[$temp->parent_id]->child = array($temp);
+                        $target_parent[$target->parent->id] = (object) array();
+                        $target_parent[$target->parent->id]->id = $target->parent->id;
+                        $target_parent[$target->parent->id]->name = $target->parent->name;
+                        $target_parent[$target->parent->id]->name_en = $target->parent->name_en;
+                        $target_parent[$target->parent->id]->unit = $target->parent->unit;
+                        $target_parent[$target->parent->id]->count_child = 1;
+                        $target_parent[$target->parent->id]->child = array($target);
                     }
                 }
+                $target_list[] = $target;
+            }
+
+            $target_parent = array_values($target_parent);
+            usort($target_parent, function ($a, $b) {
+                return $a->id > $b->id;
+            });
+            usort($target_list, function ($a, $b) {
+                return $a->parent_id > $b->parent_id;
+            });
+            // echo "<pre>";
+            // print_r($target_list);
+            // print_r($target_parent);
+            // die();
+            $area_list = $this->result_model->set_value_export($params)->with_area()->group_by("area_id")->get_all();
+            $area_list = array_map(function ($item) {
+                return $item->area;
+            }, $area_list);
+            usort($area_list, function ($a, $b) {
+                return strcmp($a->name, $b->name);
+            });
+            // echo "<pre>";
+            // // print_r($params);
+            // print_r($area_list);
+            // die();
+            $file = APPPATH . '../public/upload/template/template_tieuphan.docx';
+            $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+            $type_bc = "Hàng năm";
+            $type_bc_en = "Yearly";
+            if ($type == "Year") {
+                $type_bc = "Hàng năm";
+                $type_bc_en = "Yearly";
+            } elseif ($type == "Month") {
+                $type_bc = "Hàng tháng";
+                $type_bc_en = "Monthly";
+            } elseif ($type == "HalfYear") {
+                $type_bc = "Nữa năm";
+                $type_bc_en = "Half Year";
+            } elseif ($type == "Quarter") {
+                $type_bc = "Hàng Quý";
+                $type_bc_en = "Quarter";
+            } elseif ($type == "TwoYear") {
+                $type_bc = "mỗi hai năm";
+                $type_bc_en = "every two year";
+            }
+            $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
+            $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
+            $templateProcessor->setValue('date_to', date("d/m/y", strtotime($params['date_to'])));
+            $templateProcessor->setValue('date_to_prev', date("d/m/y", strtotime($params['date_to_prev'])));
+            $templateProcessor->setValue('type_bc', $type_bc);
+            $templateProcessor->setValue('type_bc_en', $type_bc_en);
+            $templateProcessor->setValue('workshop_name', $workshop_name);
+            $templateProcessor->setValue('workshop_name_en', $workshop_name_en);
+            $templateProcessor->setValue('object_name', $object_name);
+            $templateProcessor->setValue('object_name_en', $object_name_en);
+            $templateProcessor->setValue('type_bc_cap', mb_strtoupper($type_bc, 'UTF-8'));
+            $templateProcessor->setValue('type_bc_cap_en', mb_strtoupper($type_bc_en, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap', mb_strtoupper($workshop_name, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap_en', mb_strtoupper($workshop_name_en, 'UTF-8'));
+            $templateProcessor->setValue('object_name_cap', mb_strtoupper($object_name, 'UTF-8'));
+            $templateProcessor->setValue('object_name_cap_en', mb_strtoupper($object_name_en, 'UTF-8'));
+
+
+            ////STYLE
+            $cellRowSpan = array('valign' => 'center');
+            $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+            $cellHCenteredLEFT = array('alignment' => 'left');
+
+            $styleCell = array('valign' => 'center');
+            $fontCell = array('align' => 'center');
+            $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
+            $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
+            $cellVCentered = array('valign' => 'center');
+            // $target_list;
+            ///TABLE LIMIT
+            $table = new Table(array('borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+
+            $table->addRow();
+            $table->addCell(null, $cellRowContinue);
+            for ($i = 0; $i < count($target_parent); $i++) {
+                $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 12, 'valign' => 'center'));
+                $textrun->addText($target_parent[$i]->name, array(), $fontCell);
+                $textrun->addText($target_parent[$i]->name_en, array('italic' => true), $fontCell);
+            }
+            $table->addRow();
+            $table->addCell(null, $cellRowContinue);
+            for ($i = 0; $i < count($target_list); $i++) {
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText($target_list[$i]->name, array(), $fontCell);
+                $textrun->addText($target_list[$i]->name_en, array('italic' => true), $fontCell);
+            }
+            foreach ($area_list as $row2) {
+                $table->addRow();
+                $cell1 = $table->addCell(null, $cellColSpan);
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row2->name, array('bold' => true));
+
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
+                $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                foreach ($target_list as $key => $target) {
+                    $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
+                    $target_list[$key]->limit = $limit;
+                    // print_r($limit);
+                    // die();  
+                    //     ///DATA
+                    $textrun = $table->addCell(null, $fontCell);
+                    $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
+                    $textrun->addText($value, array(), $fontCell);
+                }
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
+                $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                foreach ($target_list as $key => $target) {
+                    $limit = $target->limit;
+                    $textrun = $table->addCell(null, $fontCell);
+                    $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
+                    $textrun->addText($value, array(), $fontCell);
+                }
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Giới hạn hành động', array(), $fontCell);
+                $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                foreach ($target_list as $key => $target) {
+                    $limit = $target->limit;
+                    $textrun = $table->addCell(null, $fontCell);
+                    $value = isset($limit->action_limit) ? $limit->action_limit : "";
+                    $textrun->addText($value, array(), $fontCell);
+                }
+            }
+
+            $templateProcessor->setComplexBlock('table_limit', $table);
+
+            /////RESULT 
+            $area_results = $this->result_model->set_value_export($params)->with_area()->group_by("area_id")->get_all();
+            usort($area_results, function ($a, $b) {
+                return strcmp($a->area->name, $b->area->name);
+            });
+            $department_list = array();
+            $length_area = count($area_results);
+            $templateProcessor->cloneBlock("result_one_block", $length_area, true, true);
+            for ($key = 0; $key < $length_area; $key++) {
+                $area = $area_results[$key]->area;
+                $department_results = $this->result_model->set_value_export($params)->where(array('area_id' => $area->id))->with_department()->with_area()->group_by("department_id")->get_all();
+                $length_department = count($department_results);
+                $templateProcessor->setValue("one_heading#" . ($key + 1), "5." . ($key + 1));
+                $templateProcessor->setValue("one_name_heading#" . ($key + 1), htmlspecialchars($area->name));
+                $templateProcessor->setValue("one_name_en_heading#" . ($key + 1), htmlspecialchars($area->name_en));
+
+                $number_position = 0;
+                $list_department_tmp = array();
+                $table_data = array();
+                $templateProcessor->cloneBlock("result_two_block#" . ($key + 1), $length_department, true, true);
+                for ($key1 = 0; $key1 < $length_department; $key1++) {
+                    $department = $department_results[$key1]->department;
+                    $area = $department_results[$key1]->area;
+                    $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name));
+                    $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name_en));
+                    $templateProcessor->setValue("area_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name));
+                    $templateProcessor->setValue("area_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name_en));
+                    $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->string_id));
+
+                    ////DRAW RESULT
+                    $templateProcessor->setValue("two_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
+                    $templateProcessor->setValue("two_name_heading#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name));
+                    $templateProcessor->setValue("two_name_en_heading#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name_en));
+
+                    ////DATA
+                    $position_results = $this->result_model->set_value_export($params)->where(array('department_id' => $department->id))->with_position()->group_by("position_id")->get_all();
+                    $length_position = count($position_results);
+
+                    $templateProcessor->cloneBlock("position_block#" . ($key + 1) . "#" . ($key1 + 1), $length_position, true, true);
+                    for ($key2 = 0; $key2 < $length_position; $key2++) {
+                        $position = $position_results[$key2]->position;
+                        $params['position_id'] = $position->id;
+                        $templateProcessor->setValue("position_string_id#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($key2 + 1), $position->string_id);
+                        ///TABLE
+                        $table = new Table(array('borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+                        $table->addRow(null, array('tblHeader' => true));
+
+                        $cell1 = $table->addCell(null, $cellRowContinue);
+                        $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                        $textrun1->addText(htmlspecialchars("Ngày /"), array('size' => 10));
+                        $textrun1->addText(htmlspecialchars("Date"), array('size' => 10, 'italic' => true));
+                        $textrun1->addTextBreak();
+                        $textrun1->addText(htmlspecialchars('(dd/mm/yy)'), array('size' => 10));
+                        for ($i = 0; $i < count($target_parent); $i++) {
+                            $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 12, 'valign' => 'center'));
+                            $textrun->addText($target_parent[$i]->name, array(), $fontCell);
+                            $textrun->addText($target_parent[$i]->name_en, array('italic' => true), $fontCell);
+                        }
+                        $table->addRow(null, array('tblHeader' => true));
+                        $table->addCell(null, $cellRowContinue);
+                        for ($i = 0; $i < count($target_list); $i++) {
+                            $textrun = $table->addCell(null, $styleCell);
+                            $textrun->addText($target_list[$i]->name, array(), $fontCell);
+                            $textrun->addText($target_list[$i]->name_en, array('italic' => true), $fontCell);
+                        }
+
+
+                        //     ///DATA
+                        $data = $this->result_model->get_data_table_by_target($target_list, $params);
+                        $data_min_max = $this->result_model->get_data_table_by_target_minmax($target_list, $params['object_id'], $params['position_id'], $params['date_from'], $params['date_to']);
+                        $data_min_max_prev = $this->result_model->get_data_table_by_target_minmax($target_list, $params['object_id'], $params['position_id'], $params['date_from_prev'], $params['date_to_prev']);
+
+
+                        foreach ($data as $keystt => $stt) {
+                            $table->addRow();
+                            $date = date("d/m/y", strtotime($stt['date']));
+                            $cell1 = $table->addCell(null, $cellRowSpan);
+                            $textrun1 = $cell1->addTextRun($cellHCentered);
+                            $textrun1->addText(htmlspecialchars($date), array('size' => 10));
+                            foreach ($target_list as $target) {
+                                $target_id = $target->id;
+                                $value = $stt[$target_id];
+                                if ($value == "") {
+                                    $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                                } else {
+                                    $cell1 = $table->addCell(null, $cellRowSpan);
+                                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                                    $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                                }
+                            }
+                        }
+                        ///MIN MAX
+                        $table->addRow();
+                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText("Max", array('size' => 10, 'bold' => true));
+                        foreach ($target_list as $target) {
+                            $target_id = $target->id;
+                            $value = $data_min_max["max_$target_id"];
+                            if ($value == "") {
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                            } else {
+                                $cell1 = $table->addCell(null, $cellRowSpan);
+                                $textrun1 = $cell1->addTextRun($cellHCentered);
+                                $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                            }
+                        }
+                        $table->addRow();
+                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText("Min", array('size' => 10, 'bold' => true));
+                        foreach ($target_list as $target) {
+                            $target_id = $target->id;
+                            $value = $data_min_max["min_$target_id"];
+                            if ($value == "") {
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                            } else {
+                                $cell1 = $table->addCell(null, $cellRowSpan);
+                                $textrun1 = $cell1->addTextRun($cellHCentered);
+                                $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                            }
+                        }
+
+                        $table->addRow(null);
+                        $cell1 = $table->addCell(null, array('gridSpan' => count($target_list) + 1, 'valign' => 'center'));
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
+                        $textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10, 'bold' => true, 'italic' => true));
+
+                        $table->addRow();
+                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText("Max", array('size' => 10, 'bold' => true));
+                        foreach ($target_list as $target) {
+                            $target_id = $target->id;
+                            $value = $data_min_max_prev["max_$target_id"];
+                            if ($value == "") {
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                            } else {
+                                $cell1 = $table->addCell(null, $cellRowSpan);
+                                $textrun1 = $cell1->addTextRun($cellHCentered);
+                                $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                            }
+                        }
+                        $table->addRow();
+                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText("Min", array('size' => 10, 'bold' => true));
+                        foreach ($target_list as $target) {
+                            $target_id = $target->id;
+                            $value = $data_min_max_prev["min_$target_id"];
+                            if ($value == "") {
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                            } else {
+                                $cell1 = $table->addCell(null, $cellRowSpan);
+                                $textrun1 = $cell1->addTextRun($cellHCentered);
+                                $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                            }
+                        }
+
+                        $templateProcessor->setComplexBlock("result_table#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($key2 + 1), $table);
+                    }
+                    ///KIEM TRA CHART
+                    $tmp_parent = array();
+                    foreach ($target_parent as $k => $parent) {
+                        $child = $parent->child;
+                        $tmp = array();
+                        for ($j = 0; $j < count($child); $j++) {
+                            $target = $child[$j];
+                            $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+                            // echo $name_chart . "<br>";
+                            if (file_exists(APPPATH . '../public/upload/chart/' . $name_chart)) {
+                                $tmp[] = $child[$j];
+                            }
+                        }
+
+                        // $child = $tmp;
+                        $parent_clone = clone $parent;
+                        $parent_clone->child = $tmp;
+                        if (!empty($tmp)) {
+                            $tmp_parent[] = $parent_clone;
+                        }
+                    }
+                    // echo "<pre>";
+                    // print_r($tmp_parent);
+
+                    /////DRAW TREND
+                    $templateProcessor->cloneBlock("target_parent_block#" . ($key + 1) . "#" . ($key1 + 1), count($tmp_parent), true, true);
+                    for ($i = 0; $i < count($tmp_parent); $i++) {
+                        $parent = $tmp_parent[$i];
+                        $child = $parent->child;
+                        $templateProcessor->setValue("parent_name#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1), $parent->name);
+                        $templateProcessor->setValue("parent_name_en#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1), $parent->name_en);
+
+                        $templateProcessor->cloneBlock("target_block#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1), count($child), true, true);
+                        for ($j = 0; $j < count($child); $j++) {
+                            $target = $child[$j];
+                            $templateProcessor->setValue("target_name#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $target->name);
+                            $templateProcessor->setValue("target_name_en#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $target->name_en);
+
+                            $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+
+                            $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                        }
+                    }
+                }
+            }
+            // die();
+            $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . "_" . time() . ".docx";
+            $name_file = urlencode($name_file);
+            if (!file_exists(APPPATH . '../public/export')) {
+                mkdir(APPPATH . '../public/export', 0777, true);
+            }
+            $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
+            // die();
+            // $templateProcessor->cloneRow("result_block#1", 3);
+            $data_up = array(
+                'name' => $name_file,
+                'status' => 3
+            );
+            $this->report_model->update($data_up, $id_record);
+
+            // redirect("dashboard", 'refresh');
+            // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
+        } else if ($object_id == 16 || $object_id == 17) {
+            $object = $this->object_model->where(array('id' => $object_id))->as_object()->get();
+            $workshop_id = $record->workshop_id;
+
+            $workshop = $this->workshop_model->where(array('id' => $workshop_id))->with_factory()->as_object()->get();
+            $workshop_name = $workshop->name;
+            $workshop_name_en = $workshop->name_en;
+            $object_name = $object->name;
+            $object_name_en = $object->name_en;
+            $factory_name = isset($workshop->factory->name) ? $workshop->factory->name : "";
+            $factory_name_en = isset($workshop->factory->name_en) ? $workshop->factory->name_en : "";
+            $type = $record->type;
+            $selector = $record->selector;
+            $daterange = $record->selector;
+            $params = array(
+                'type' => $type,
+                'selector' => $selector,
+                'daterange' => $daterange,
+            );
+            $params = input_params($params);
+            $params['workshop_id'] = $workshop_id;
+            $params['object_id'] = $object_id;
+            ///////DATA
+            $target_results = $this->result_model->set_value_export($params)->with_target()->group_by("target_id")->get_all();
+            $target_parent = $target_list = array();
+            foreach ($target_results as $temp) {
+                $target = $temp->target;
+                $target_object = $this->objecttarget_model->where(array("object_id" => $object_id, 'target_id' => $temp->target_id))->with_parent(array("with" => array('relation' => 'target')))->get();
+                // echo "<pre>";
+                // print_r($target_object);
+
+                if (isset($target_object->parent) && !empty($target_object->parent)) {
+                    $target->parent = $target_object->parent->target;
+                    if (isset($target_parent[$target->parent->id])) {
+                        $target_parent[$target->parent->id]->count_child++;
+                        $target_parent[$target->parent->id]->child[] = $target;
+                    } else {
+                        $target_parent[$target->parent->id] = (object) array();
+                        $target_parent[$target->parent->id]->id = $target->parent->id;
+                        $target_parent[$target->parent->id]->name = $target->parent->name;
+                        $target_parent[$target->parent->id]->name_en = $target->parent->name_en;
+                        $target_parent[$target->parent->id]->unit = $target->parent->unit;
+                        $target_parent[$target->parent->id]->count_child = 1;
+                        $target_parent[$target->parent->id]->child = array($target);
+                    }
+                }
+                $target_list[] = $target;
             }
 
             $target_parent = array_values($target_parent);

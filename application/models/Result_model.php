@@ -90,7 +90,7 @@ class Result_model extends MY_Model
     }
     function chartdata($params)
     {
-        $where = "WHERE a.deleted = 0 and a.department_id = " . $this->db->escape($params['department_id']) . " and a.target_id = " . $this->db->escape($params['target_id']) . "";
+        $where = "WHERE a.deleted = 0 and a.object_id = " . $this->db->escape($params['object_id']) . " and a.department_id = " . $this->db->escape($params['department_id']) . " and a.target_id = " . $this->db->escape($params['target_id']) . "";
         if ($params['date_from_prev'] != "") {
             $where .= " AND a.date between '" . $params['date_from_prev'] . "' and '" . $params['date_to'] . "'";
         } else {

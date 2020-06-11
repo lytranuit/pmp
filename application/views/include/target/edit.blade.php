@@ -30,18 +30,37 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Parent Method:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Data:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select name="parent_id" style="width: 500px;">
-                                        @foreach($targets as $target)
-                                        <option value="{{$target->id}}">
-                                            {{$target->name}}
-                                            @if($target->parent_id > 0)
-                                            ({{$target->parent->name}})
-                                            @endif
-                                        </option>
-                                        @endforeach
+                                    <input type='hidden' class="input-tmp" name="has_data" />
+                                    <div class="switch-button switch-button-success">
+                                        <input id="has_data" name="has_data" type="checkbox" value="1">
+                                        <span>
+                                            <label for="has_data"></label>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Data Type:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="type_data">
+                                        <option value="float">Numberic</option>
+                                        <option value="varchar">Characters</option>
+                                        <option value="boolean">True/False</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Data Text:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='text' name="text_data" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">English Data Text:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='text' name="text_data_en" />
                                 </div>
                             </div>
                         </div>

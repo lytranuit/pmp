@@ -125,7 +125,7 @@ class Target extends MY_Controller
             $where = $this->target_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->with_parent()->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);
         //        die();
@@ -134,7 +134,6 @@ class Target extends MY_Controller
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
                 $nestedData['name'] = $post->name;
-                $nestedData['parent_name'] = isset($post->parent->name) ? $post->parent->name : "";
                 $nestedData['unit'] = $post->unit;
                 $nestedData['action'] = '<a href="' . base_url() . 'target/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'

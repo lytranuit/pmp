@@ -59,7 +59,7 @@
         });
         $('#quanlytin').DataTable({
             language: {
-                searchPlaceholder: "Mã vị trí"
+                searchPlaceholder: "Code"
             },
             "processing": true,
             "serverSide": true,

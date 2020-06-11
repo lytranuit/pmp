@@ -35,7 +35,7 @@
                                                             </div>
                                                         </div> 
                             -->
-                            <div class="form-group row">
+                            <!-- <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select name="targets[]" style="width: 500px;" multiple="">
@@ -49,7 +49,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
 
                     </div>

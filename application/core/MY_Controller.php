@@ -58,9 +58,9 @@ class MY_Controller extends CI_Controller
     {
         if ($object_id == 3) {
             redirect("resulte", "refresh");
-        } elseif ($object_id == 14 || $object_id == 15) {
+        } elseif ($object_id == 14 || $object_id == 15 || $object_id == 16 || $object_id == 17) {
             redirect("result_tieuphan", "refresh");
-        }else{
+        } else {
             redirect("result", "refresh");
         }
     }

@@ -269,6 +269,9 @@ class Dashboard extends MY_Controller
         $this->load->model("employee_model");
         $this->load->model("department_model");
         $this->load->model("target_model");
+        $this->load->model("object_model");
+        $this->load->model("objecttarget_model");
+
 
         $department_id = $this->input->get('department_id', TRUE);
         $area_id = $this->input->get('area_id', TRUE);
@@ -283,6 +286,8 @@ class Dashboard extends MY_Controller
         $params = input_params($params);
 
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $params['object_id'] = $object_id;
+        // $object = $this->object_model->get($object_id);
         if (!is_numeric($department_id)) {
             echo json_encode(array());
             die();
@@ -311,7 +316,15 @@ class Dashboard extends MY_Controller
 
         for ($i = 0; $i < count($target_list); $i++) {
 
-            $target = $this->target_model->with_parent()->get($target_list[$i]->target_id);
+            $target = $this->target_model->get($target_list[$i]->target_id);
+            if ($target->type_data != "float") {
+                continue;
+            }
+            $target_object = $this->objecttarget_model->where(array("object_id" => $object_id, 'target_id' => $target_list[$i]->target_id))->with_parent(array("with" => array('relation' => 'target')))->get();
+            if (!empty($target_object) && isset($target_object->parent->target->name)) {
+                $target->name .=  " (" . $target_object->parent->target->name . ")";
+                $target->name_en .=  " (" . $target_object->parent->target->name_en . ")";
+            }
             $params['target_id'] = $target->id;
             if ($this->data['object_id'] == 3) {
                 $title = "Biểu đồ xu hướng vi sinh nhân viên $department->name ($department->string_id)";
@@ -324,9 +337,12 @@ class Dashboard extends MY_Controller
                 }
 
                 $subtitle = "";
-            } else {
+            } else if ($this->data['object_id'] == 10 || $this->data['object_id'] == 11) {
                 $title = "Trend chart of microbiological monitoring";
                 $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
+            } else {
+                $title = "Trend chart of $target->name_en";
+                $subtitle = "";
             }
             $params['title'] = $title;
             $params['subtitle'] = $subtitle;

@@ -46,9 +46,7 @@
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="target_id">
-                                        @foreach ($target as $row)
-                                        <option value="{{$row->id}}">{{$row->name}}</option>
-                                        @endforeach
+                                        <?= $html_nestable_target ?>
                                     </select>
                                 </div>
                             </div>

@@ -75,6 +75,8 @@
                             Equipment
                             @elseif($object_id == 11 || $object_id == 15 )
                             Room
+                            @elseif($object_id == 16 || $object_id == 17 )
+                            Room
                             @endif
                         </b>
                         <div class="pt-1">
@@ -351,10 +353,13 @@
                 $(".page-loader-wrapper").show();
                 var department_id = $(".department_id").val();
                 if (!(department_id > 0)) {
+
+                    $(".page-loader-wrapper").hide();
                     return;
                 }
                 var area_id = $(".area_id").val();
                 if (!(area_id > 0)) {
+                    $(".page-loader-wrapper").hide();
                     return;
                 }
                 // var target_id = $("[name=target_id]").val();

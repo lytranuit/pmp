@@ -48,10 +48,10 @@ async function drawChartBestSale() {
         data: {
             labels: labels,
             datasets: [{
-                    backgroundColor: colors,
+                backgroundColor: colors,
 
-                    data: count_sale
-                }]
+                data: count_sale
+            }]
         },
         options: {
             legend: {
@@ -78,7 +78,7 @@ async function drawChart() {
     var data = await $.ajax({
         dataType: "JSON",
         url: path + "ajax/datachart",
-        data: {time_type: time_type_check}
+        data: { time_type: time_type_check }
     });
     var labels = data.map(function (item) {
         return item.time_type;
@@ -92,13 +92,13 @@ async function drawChart() {
         data: {
             labels: labels,
             datasets: [{
-                    label: 'Doanh thu',
-                    data: data_amount,
-                    backgroundColor: "rgba(89, 105, 255,0.5)",
-                    borderColor: "rgba(89, 105, 255,0.7)",
-                    borderWidth: 2
+                label: 'Doanh thu',
+                data: data_amount,
+                backgroundColor: "rgba(89, 105, 255,0.5)",
+                borderColor: "rgba(89, 105, 255,0.7)",
+                borderWidth: 2
 
-                }]
+            }]
         },
         options: {
             legend: {
@@ -118,6 +118,8 @@ var fillForm = function (form, data) {
     $('input, select, textarea', form).not("[type=file]").each(function () {
         var type = $(this).attr('type');
         var name = $(this).attr('name');
+        if (!name)
+            return;
         name = name.replace("[]", "");
         var value = "";
         if ($(this).hasClass("input-tmp"))
@@ -145,6 +147,6 @@ var fillForm = function (form, data) {
                 $(this).val(value);
                 break;
         }
-//            $('select', form).selectpicker('render');
+        //            $('select', form).selectpicker('render');
     });
 }
