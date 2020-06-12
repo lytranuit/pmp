@@ -345,7 +345,11 @@ class Result_model extends MY_Model
         $list_id = array();
         foreach ($target_list as $target) {
             $list_id[] =  $target->id;
-            $subsql .= ",SUM(IF(a.target_id = $target->id,value,NULL)) as '$target->id'";
+            if ($target->type_data == "float") {
+                $subsql .= ",SUM(IF(a.target_id = $target->id,value,NULL)) as '$target->id'";
+            } else {
+                $subsql .= ",MAX(IF(a.target_id = $target->id,value_text,NULL)) as '$target->id'";
+            }
         }
         $where = "WHERE a.deleted = 0 and a.target_id IN (" . implode(",", $list_id) . ")";
         if (isset($params['position_id'])) {
@@ -374,7 +378,11 @@ class Result_model extends MY_Model
         $list_id = array();
         foreach ($target_list as $target) {
             $list_id[] =  $target->id;
-            $subsql .= ",MIN(IF(target_id = $target->id,value,NULL)) as min_$target->id,MAX(IF(target_id = $target->id,value,NULL)) as max_$target->id";
+            if ($target->type_data == "float") {
+                $subsql .= ",MIN(IF(target_id = $target->id,value,NULL)) as min_$target->id,MAX(IF(target_id = $target->id,value,NULL)) as max_$target->id";
+            } else {
+                $subsql .= ",MIN(IF(target_id = $target->id,value_text,NULL)) as min_$target->id,MAX(IF(target_id = $target->id,value_text,NULL)) as max_$target->id";
+            }
         }
         $where = "WHERE deleted = 0 and target_id IN (" . implode(",", $list_id) . ") AND object_id = $object_id AND position_id = $position_id";
         if ($date_from == "") {
