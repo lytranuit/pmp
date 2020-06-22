@@ -12,12 +12,17 @@
                     <thead>
                         <tr>
                             <th>Effective date</th>
-                            <th>Date</th>
-                            <th>Method</th>
-                            <th>Acceptance criteria</th>
-                            <th>Alert Limit</th>
-                            <th>Action Limit</th>
-                            <th>Status</th>
+                            <th>Factory</th>
+                            <th>Department</th>
+                            @if($object_id <= 17) <th>Area</th>
+                                @else
+                                <th>System Water</th>
+                                @endif
+                                <th>Method</th>
+                                <th>Acceptance criteria</th>
+                                <th>Alert Limit</th>
+                                <th>Action Limit</th>
+                                <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,6 +46,12 @@
             },
             "columns": [{
                     "data": "day_effect"
+                },
+                {
+                    "data": "factory_name"
+                },
+                {
+                    "data": "workshop_name"
                 },
                 {
                     "data": "area_name"

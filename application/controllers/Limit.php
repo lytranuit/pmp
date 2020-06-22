@@ -122,6 +122,8 @@ class Limit extends MY_Controller
 
     public function index()
     { /////// trang ca nhan
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $this->data['object_id'] = $object_id;
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
@@ -136,7 +138,7 @@ class Limit extends MY_Controller
 
             /// Log audit trail
             $text =   "USER '" . $this->session->userdata('username') . "' added a new record($id) to the table 'pmp_limit'";
-            $this->result_model->trail($id, "insert", null, $data_up, null, $text);
+            $this->limit_model->trail($id, "insert", null, $data_up, null, $text);
             redirect('limit', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -147,17 +149,20 @@ class Limit extends MY_Controller
             $this->load->model("workshop_model");
             $factory_id = isset($this->data['factory'][0]->id) ? $this->data['factory'][0]->id : 0;
             $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $factory_id))->as_object()->get_all();
-
-            $this->load->model("area_model");
-            $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
-            $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
-
-
+            if ($object_id <= 17) {
+                $this->load->model("area_model");
+                $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
+                $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+            } else {
+                $this->load->model("system_model");
+                $this->data['system'] = $this->system_model->where(array('deleted' => 0))->as_object()->get_all();
+            }
             $this->load->model("objecttarget_model");
 
             $object_target = $this->objecttarget_model->where("object_id", $object_id)->order_by("order", "ASC")->with_target()->as_array()->get_all();
             $this->data['html_nestable_target'] = $this->html_nestable_target((array) $object_target, 'parent_id', 0);
 
+            $this->data['object_id'] = $object_id;
             // print_r($object);
             // die();
             echo $this->blade->view()->make('page/page', $this->data)->render();
@@ -169,14 +174,14 @@ class Limit extends MY_Controller
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("limit_model");
-            $prev_data = $this->result_model->as_array()->get($id);
+            $prev_data = $this->limit_model->as_array()->get($id);
             $data = $_POST;
             $data_up = $this->limit_model->create_object($data);
             $status = $this->limit_model->update($data_up, $id);
 
             /// Log audit trail
             $text =   "USER '" . $this->session->userdata('username') . "' edited record($id) to the table 'pmp_limit'";
-            $this->result_model->trail($status, "update", null, $data_up, $prev_data, $text);
+            $this->limit_model->trail($status, "update", null, $data_up, $prev_data, $text);
             redirect('limit', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -190,16 +195,21 @@ class Limit extends MY_Controller
 
             $this->load->model("workshop_model");
             $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $tin->factory_id))->as_object()->get_all();
-
-            $this->load->model("area_model");
-            $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $tin->workshop_id))->as_object()->get_all();
-
+            if ($object_id <= 17) {
+                $this->load->model("area_model");
+                $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
+                $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+            } else {
+                $this->load->model("system_model");
+                $this->data['system'] = $this->system_model->where(array('deleted' => 0))->as_object()->get_all();
+            }
 
             $this->load->model("objecttarget_model");
 
             $object_target = $this->objecttarget_model->where("object_id", $object_id)->order_by("order", "ASC")->with_target()->as_array()->get_all();
             $this->data['html_nestable_target'] = $this->html_nestable_target((array) $object_target, 'parent_id', 0);
 
+            $this->data['object_id'] = $object_id;
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
@@ -211,7 +221,7 @@ class Limit extends MY_Controller
         $status = $this->limit_model->update(array("deleted" => 1), $id);
         /// Log audit trail
         $text =   "USER '" . $this->session->userdata('username') . "' removed record($id) to the table 'pmp_limit'";
-        $this->result_model->trail($status, "delete", null, null, $id, $text);
+        $this->limit_model->trail($status, "delete", null, null, $id, $text);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
@@ -286,7 +296,7 @@ class Limit extends MY_Controller
         //            $where = $this->limit_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         //        }
 
-        $posts = $where->order_by("id", "DESC")->with_area()->with_target()->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_factory()->with_workshop()->with_system()->with_area()->with_target()->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);
         //        die();
@@ -299,7 +309,14 @@ class Limit extends MY_Controller
                 }
                 $nestedData['day_effect'] = $post->day_effect;
                 $nestedData['target_name'] = isset($post->target->name) ? $post->target->name : "";
-                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+
+                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
+                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
+                if ($object_id <= 17) {
+                    $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+                } else {
+                    $nestedData['area_name'] = isset($post->system->name) ? $post->system->name : "";
+                }
                 $nestedData['standard_limit'] = $post->standard_limit;
                 $nestedData['alert_limit'] = $post->alert_limit;
                 $nestedData['action_limit'] = $post->action_limit;

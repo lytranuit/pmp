@@ -686,6 +686,219 @@ class Import extends MY_Controller
             }
         }
     }
+    public function vitri_nuoc()
+    {
+        // die();
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        $file = APPPATH . '../public/upload/vitri_phong/vitri_nuoc.xlsx';
+        echo $file;
+        //Tiến hành xác thực file
+        $objFile = PHPExcel_IOFactory::identify($file);
+        $objData = PHPExcel_IOFactory::createReader($objFile);
+
+        //Chỉ đọc dữ liệu
+        // $objData->setReadDataOnly(true);
+        // Load dữ liệu sang dạng đối tượng
+        $objPHPExcel = $objData->load($file);
+
+        //Lấy ra số trang sử dụng phương thức getSheetCount();
+        // Lấy Ra tên trang sử dụng getSheetNames();
+        //Chọn trang cần truy xuất
+        $sheet = $objPHPExcel->setActiveSheetIndex(0);
+
+        //Lấy ra số dòng cuối cùng
+        $Totalrow = $sheet->getHighestRow();
+        //Lấy ra tên cột cuối cùng
+        $LastColumn = $sheet->getHighestColumn();
+        //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+        $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+        //Tạo mảng chứa dữ liệu
+        $data = [];
+
+        $count_sheet = $objPHPExcel->getSheetCount();
+
+        $this->load->model("workshop_model");
+        $this->load->model("area_model");
+        $this->load->model("position_model");
+        $this->load->model("department_model");
+        $this->load->model("target_model");
+
+        $temp_workshop = array(
+            $this->workshop_model->where(array('id' => 5))->as_object()->get(), ///BETA VIEN
+            $this->workshop_model->where(array('id' => 4))->as_object()->get(), //BETA TIEM
+            $this->workshop_model->where(array('id' => 4))->as_object()->get(), //BETA TIEM
+            $this->workshop_model->where(array('id' => 4))->as_object()->get(), //BETA TIEM
+            $this->workshop_model->where(array('id' => 8))->as_object()->get(), ///NON BETA TIEM
+            $this->workshop_model->where(array('id' => 8))->as_object()->get(), ///NON BETA TIEM
+            $this->workshop_model->where(array('id' => 8))->as_object()->get(), ///NON BETA TIEM
+            $this->workshop_model->where(array('id' => 11))->as_object()->get(), ///NON BETA VIEN
+            $this->workshop_model->where(array('id' => 10))->as_object()->get(), ///NON BETA VIEN
+
+        );
+        $temp_type_bc = array(
+            '2 năm' => 'TwoYear',
+            '2 năm / lần' => 'TwoYear',
+            'hàng năm' => 'Year',
+            'năm' => 'Year',
+            'nửa năm' => 'HalfYear',
+            'quý' => 'Quarter',
+            'tháng' => 'Month'
+        );
+        for ($k = 0; $k < $count_sheet; $k++) {
+            $sheet_name = "sheet_" . $k  . "_vitri_nuoc.xlsx";
+            $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+            //Lấy ra số dòng cuối cùng
+            $Totalrow = $sheet->getHighestRow();
+            //Lấy ra tên cột cuối cùng
+            $LastColumn = $sheet->getHighestColumn();
+            //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+            $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+            //Tạo mảng chứa dữ liệu
+            $data = [];
+            $cell = $sheet->getCellByColumnAndRow(10, 1);
+
+            $object_id = $cell->getValue();
+            // print_r($object_id);
+            // die();
+            //Tiến hành lặp qua từng ô dữ liệu
+            //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+            for ($i = 1; $i <= $Totalrow; $i++) {
+                //----Lặp cột
+                for ($j = 0; $j < $TotalCol; $j++) {
+                    // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                    $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                    $data[$i - 1][$j] = $cell->getValue();
+                    ///CHUYEN RICH TEXT
+                    if ($data[$i - 1][$j] instanceof PHPExcel_RichText) {
+                        $data[$i - 1][$j] = $data[$i - 1][$j]->getPlainText();
+                    }
+                    ////CHUYEN DATE 
+                    if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - 1][$j] > 0) {
+
+                        if (is_numeric($data[$i - 1][$j])) {
+                            $data[$i - 1][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - 1][$j]));
+                        } else if ($data[$i - 1][$j] == '26/09/16') {
+                            $data[$i - 1][$j] = '2016-09-26';
+                        }
+                    }
+                }
+            }
+
+
+            echo "<pre>";
+            echo $sheet_name . "<br>";
+            // if ($k == 1) {
+            // print_r($data);
+            // die();
+            // } else {
+            //     continue;
+            // }
+            $workshop = $temp_workshop[$k];
+            $workshop_id = $workshop->id;
+            $frequency_name = $type_bc = $area_name = $target_name =  $system_id = "";
+            $temp_area = $temp_phong = array();
+            // $area_all = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+
+            // foreach ($area_all as $row) {
+            //     $temp_area[$row->string_id] = $row;
+            // }
+            $phong_all = $this->department_model->where(array('deleted' => 0))->as_object()->get_all();
+            foreach ($phong_all as $phong) {
+                $temp_phong[$phong->string_id] = $phong;
+            }
+            for ($i = 0; $i < count($data); $i++) {
+                // $area_string = $data[$i][3];
+                if (isset($data[$i][9]) && ($data[$i][9] == "Báo cáo"))
+                    continue;
+                $position_string_id = trim($data[$i][1]);
+
+                if ($position_string_id == "") {
+                    continue;
+                }
+                $position_name = trim($data[$i][3]);
+                $position_name_en =  trim($data[$i][4]);
+                if (isset($data[$i][13])) {
+                    $position_string_id_old = trim($data[$i][13]);
+                } else {
+                    $position_string_id_old = '';
+                }
+                if ($data[$i][7] != "") {
+                    $frequency_name =  $data[$i][7];
+                }
+
+                if ($data[$i][9] != "") {
+                    $type_bc =  strtolower(trim($data[$i][9]));
+                    $type_bc = $temp_type_bc[$type_bc];
+                }
+                // if ($data[$i][5] != "") {
+                //     $target_name = trim($data[$i][5]);
+                //     $target_id = $temp_target[$target_name];
+                // }
+
+                if ($data[$i][12] != "") {
+                    $system_id = $data[$i][12];
+                }
+                if ($data[$i][2] != "") {
+                    $phong_name = "";
+                    $phong_name_en = "";
+                    $phong_string_id = trim($data[$i][2]);
+                    // if (isset($data[$i][15])) {
+                    //     $phong_string_id_old = trim($data[$i][15]);
+                    // } else {
+                    //     $phong_string_id_old = '';
+                    // }
+                    ////Tạo Phòng
+
+                    if (!isset($temp_phong[$phong_string_id])) {
+                        $data_phong = array(
+                            'name' => $phong_name,
+                            'name_en' => $phong_name_en,
+                            'string_id' => $phong_string_id,
+                            // 'area_id' => $area->id,
+                            // 'type' => $phong_string_id[0],
+                            'workshop_id' => $workshop_id,
+                            'factory_id' => 1,
+                            'from_file' => $sheet_name,
+                            // 'string_id_old' => $phong_string_id_old
+                        );
+                        $phong_id = $this->department_model->insert($data_phong);
+                        $phong = $temp_phong[$phong_string_id] = $this->department_model->get($phong_id);
+                    } else {
+                        $phong = $temp_phong[$phong_string_id];
+                    }
+                }
+                // if ($position_string_id[0] == "C") {
+                //     $object_id = 16;
+                // } else {
+                //     $object_id = 17;
+                // }
+                ///Tạo vị trí
+                $data_position = array(
+                    'name' => $position_name,
+                    'name_en' => $position_name_en,
+                    'string_id' => $position_string_id,
+                    'frequency_name' => $frequency_name,
+                    'system_id' => $system_id,
+                    'department_id' => $phong->id,
+                    'workshop_id' => $workshop_id,
+                    'factory_id' => 1,
+                    'from_file' => $sheet_name,
+                    'object_id' => $object_id,
+                    'type_bc' => $type_bc,
+                    'string_id_old' => $position_string_id_old
+                );
+                $position_id = $this->position_model->insert($data_position);
+                // $area = $temp_area[$area_string];
+
+                // $phong_id = $find_phong->id;
+            }
+        }
+    }
     public function nhanvien()
     {
         require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';

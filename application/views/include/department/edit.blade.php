@@ -26,7 +26,7 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">English Name:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="name_en" required="" />
+                                    <input class="form-control" type='text' name="name_en" />
                                 </div>
                             </div>
 
@@ -34,7 +34,7 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="factory_id">
+                                    <select class="form-control" name="factory_id" require>
                                         @foreach ($factory as $row)
                                         <option value="{{$row->id}}">{{$row->name}}</option>
                                         @endforeach
@@ -42,9 +42,10 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Department:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id">
+                                        <option></option>
                                         @foreach ($workshop as $row)
                                         <option value="{{$row->id}}">{{$row->name}}</option>
                                         @endforeach
@@ -52,11 +53,12 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                <b class="col-12 col-lg-3 col-form-label text-sm-right">Area:</b>
+                                <div class="col-12 col-lg-6 pt-1">
                                     <select class="form-control" name="area_id">
-                                        @foreach ($area as $area)
-                                        <option value="{{$area->id}}">{{$area->name}}</option>
+                                        <option></option>
+                                        @foreach ($area as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>

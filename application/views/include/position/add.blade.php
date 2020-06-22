@@ -27,9 +27,34 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">English Name:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="name_en" required="" />
+                                    <input class="form-control" type='text' name="name_en" />
                                 </div>
                             </div>
+
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Object:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="object_id">
+                                        @foreach ($object as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row r-system d-none">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">System Water:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="system_id">
+                                        <option></option>
+                                        @foreach ($system as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <h4 class="text-center">Location</h4>
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
@@ -44,58 +69,37 @@
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id">
+                                        <option></option>
                                         @foreach ($workshop as $row)
                                         <option value="{{$row->id}}">{{$row->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row r-area">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="area_id">
+                                        <option></option>
                                         @foreach ($area as $area)
                                         <option value="{{$area->id}}">{{$area->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row r-room">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Room/Equipment:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="department_id">
+                                        <option></option>
                                         @foreach ($department as $dep)
                                         <option value="{{$dep->id}}">{{$dep->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Object:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="object_id">
-                                        @foreach ($object as $row)
-                                        <option value="{{$row->id}}">{{$row->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="target_id">
-                                        @foreach ($target as $row)
-                                        <option value="{{$row->id}}">{{$row->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Frequency:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="frequency_name" required="" />
-                                </div>
-                            </div>
+
+                            <h4 class="text-center">Others</h4>
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Report:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
@@ -107,6 +111,23 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="target_id">
+                                        <option></option>
+                                        @foreach ($target as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Frequency:</b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input class="form-control" type='text' name="frequency_name" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -116,7 +137,16 @@
 </div>
 <script type='text/javascript'>
     $(document).ready(function() {
-
+        $("[name='object_id']").change(function() {
+            let value = $(this).val();
+            if (value > 17) {
+                $(".r-area,.r-room").addClass("d-none");
+                $(".r-system").removeClass("d-none");
+            } else {
+                $(".r-system").addClass("d-none");
+                $(".r-area,.r-room").removeClass("d-none");
+            }
+        })
         $.validator.setDefaults({
             debug: true,
             success: "valid"

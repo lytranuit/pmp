@@ -129,12 +129,13 @@ class Workshop extends MY_Controller
     public function getbyparent($params)
     {
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
-        $id = $params[0];
+
+        $id = isset($params[0]) ? $params[0] : null;
         if (!is_numeric($id)) {
             echo json_encode(array());
             die();
         }
-        
+
         $this->load->model("workshop_model");
         $data = $this->workshop_model->where(array("deleted" => 0, 'factory_id' => $id))->as_object()->get_all();
         echo json_encode($data);

@@ -5,7 +5,7 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}position/add">Add</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}systemw/add">add</a>
             </h5>
             <div class="card-body">
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
@@ -13,11 +13,6 @@
                         <tr>
                             <th>Id</th>
                             <th>Name</th>
-                            <th>Room/Equipment</th>
-                            <th>Area/System Water</th>
-                            <th>Department</th>
-                            <th>Factory</th>
-                            <th>Report</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -36,30 +31,15 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": path + "position/table",
+                "url": path + "systemw/table",
                 "dataType": "json",
                 "type": "POST",
             },
             "columns": [{
-                    "data": "string_id"
+                    "data": "id"
                 },
                 {
                     "data": "name"
-                },
-                {
-                    "data": "department_name"
-                },
-                {
-                    "data": "area_name"
-                },
-                {
-                    "data": "workshop_name"
-                },
-                {
-                    "data": "factory_name"
-                },
-                {
-                    "data": "type_bc"
                 },
                 {
                     "data": "action"

@@ -164,6 +164,9 @@ class Position extends MY_Controller
 
             $this->load->model("object_model");
             $this->data['object'] = $this->object_model->where(array('deleted' => 0))->as_object()->get_all();
+
+            $this->load->model("system_model");
+            $this->data['system'] = $this->system_model->where(array('deleted' => 0))->as_object()->get_all();
             // echo "<pre>";
             // print_r($this->data['workshop']);
             // print_r($this->data['areas']);
@@ -204,6 +207,9 @@ class Position extends MY_Controller
 
             $this->load->model("object_model");
             $this->data['object'] = $this->object_model->where(array('deleted' => 0))->as_object()->get_all();
+
+            $this->load->model("system_model");
+            $this->data['system'] = $this->system_model->where(array('deleted' => 0))->as_object()->get_all();
             //            load_chossen($this->data);
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
@@ -241,7 +247,7 @@ class Position extends MY_Controller
             $where = $this->position_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->with_department()->with_area()->with_workshop()->with_factory()->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_department()->with_system()->with_area()->with_workshop()->with_factory()->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);
         //        die();
@@ -252,7 +258,11 @@ class Position extends MY_Controller
                 $nestedData['name'] = $post->name;
                 $nestedData['frequency_name'] = $post->frequency_name;
                 $nestedData['department_name'] = isset($post->department->name) ? $post->department->name : "";
-                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+                if ($post->object_id <= 17) {
+                    $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+                } else {
+                    $nestedData['area_name'] = isset($post->system->name) ? $post->system->name : "";
+                }
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
                 $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
                 $nestedData['type_bc'] = $post->type_bc;

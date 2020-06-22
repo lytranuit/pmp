@@ -1,18 +1,18 @@
-$(document).ready(function () {
+$(document).ready(function() {
     ///MOVE MODAL RA NGOÀI
     $(".app-main .modal").detach().appendTo("body");
     ////Confirm
-    $(document).off("click", "[data-type='confirm']").on("click", "[data-type='confirm']", function (e) {
-        e.preventDefault();
-        var title = $(this).attr("title");
-        var href = $(this).attr("href");
-        if (confirm(title) == true) {
-            location.href = href;
-        }
-        return false;
-    })
-    ////ACTIVE MENU
-    setTimeout(function () {
+    $(document).off("click", "[data-type='confirm']").on("click", "[data-type='confirm']", function(e) {
+            e.preventDefault();
+            var title = $(this).attr("title");
+            var href = $(this).attr("href");
+            if (confirm(title) == true) {
+                location.href = href;
+            }
+            return false;
+        })
+        ////ACTIVE MENU
+    setTimeout(function() {
         let url = window.location.href;
         let a = $(".metismenu a[href='" + url + "']");
         a.addClass("mm-active");
@@ -23,7 +23,7 @@ $(document).ready(function () {
         }
     }, 1000);
     /// Chọn đối tượng
-    $(".object_select").click(function () {
+    $(".object_select").click(function() {
         var i = $(this).data("id");
         var name = $(this).data("name");
 
@@ -33,23 +33,24 @@ $(document).ready(function () {
         location.reload();
     });
     //// Lấy data
-    $(".clean_cache").click(async function () {
+    $(".clean_cache").click(async function() {
         await $.ajax({
             url: path + "dashboard/cleancache/",
             dataType: "JSON"
         });
         location.reload();
     });
-    $("#form-dang-tin [name=area_id]").change(async function () {
+    $("#form-dang-tin [name=area_id]").change(async function() {
 
-        $(".page-loader-wrapper").show();
         let value = $(this).val();
+        $(".page-loader-wrapper").show();
+
         let department = await $.ajax({
             url: path + "department/getbyparent/" + value,
             dataType: "JSON"
         });
-        let html = "";
-        $.each(department, function (k, item) {
+        let html = "<option></option>";
+        $.each(department, function(k, item) {
             html += "<option value='" + item.id + "'>" + item.name + "</option>";
         })
         $("#form-dang-tin [name=department_id]").html(html);
@@ -57,36 +58,39 @@ $(document).ready(function () {
 
         $(".page-loader-wrapper").hide();
     });
-    $("#form-dang-tin [name=workshop_id]").change(async function () {
-        $(".page-loader-wrapper").show();
+    $("#form-dang-tin [name=workshop_id]").change(async function() {
         let value = $(this).val();
+        $(".page-loader-wrapper").show();
+        ///AREA
         let area = await $.ajax({
             url: path + "area/getbyparent/" + value,
             dataType: "JSON"
         });
-        let html = "";
-        $.each(area, function (k, item) {
+        let html = "<option></option>";
+        $.each(area, function(k, item) {
             html += "<option value='" + item.id + "'>" + item.name + "</option>";
         })
         $("#form-dang-tin [name=area_id]").html(html);
-        if ($("#form-dang-tin [name=department_id]").length)
-            $("#form-dang-tin [name=area_id]").trigger("change");
-        else
+
+        if ($("#form-dang-tin [name=department_id]:visible").length) {
+            $("#form-dang-tin [name=area_id]:visible").trigger("change");
+        } else
             $(".page-loader-wrapper").hide();
     });
-    $("#form-dang-tin [name=factory_id]").change(async function () {
-        $(".page-loader-wrapper").show();
+    $("#form-dang-tin [name=factory_id]").change(async function() {
         let value = $(this).val();
+        $(".page-loader-wrapper").show();
         let workshop = await $.ajax({
             url: path + "workshop/getbyparent/" + value,
             dataType: "JSON"
         });
-        let html = "";
-        $.each(workshop, function (k, item) {
+        let html = "<option></option>";
+        $.each(workshop, function(k, item) {
             html += "<option value='" + item.id + "'>" + item.name + "</option>";
         })
         $("#form-dang-tin [name=workshop_id]").html(html);
-        if ($("#form-dang-tin [name=area_id]").length)
+        console.log($("#form-dang-tin [name=area_id]:visible").length);
+        if ($("#form-dang-tin [name=area_id]:visible").length)
             $("#form-dang-tin [name=workshop_id]").trigger("change");
         else
             $(".page-loader-wrapper").hide();
@@ -103,8 +107,8 @@ function init() {
     $("#btn_object_select").text(object_name);
 
 }
-var fillForm = function (form, data) {
-    $('input, select, textarea', form).not("[type=file]").each(function () {
+var fillForm = function(form, data) {
+    $('input, select, textarea', form).not("[type=file]").each(function() {
         var type = $(this).attr('type');
         var name = $(this).attr('name');
         if (!name)

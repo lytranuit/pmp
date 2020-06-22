@@ -129,12 +129,8 @@ class Area extends MY_Controller
     public function getbyparent($params)
     {
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
-        $id = $params[0];
-        if (!is_numeric($id)) {
-            echo json_encode(array());
-            die();
-        }
-        $id = $params[0];
+
+        $id = isset($params[0]) ? $params[0] : null;
         if (!is_numeric($id)) {
             echo json_encode(array());
             die();

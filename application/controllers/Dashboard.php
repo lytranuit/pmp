@@ -158,6 +158,7 @@ class Dashboard extends MY_Controller
     {
         /////// trang ca nhan
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $this->data['object_id'] = $object_id;
         if ($object_id == 3) {
             $this->load->model("employeeresult_model");
             $this->data['factory'] = $this->employeeresult_model->where(array('deleted' => 0))->with_factory()->group_by("factory_id")->as_object()->get_all();
@@ -175,7 +176,6 @@ class Dashboard extends MY_Controller
             // print_r($this->data['factory']);
             // die();
         }
-        $this->data['object_id'] = $object_id;
         load_daterangepicker($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }

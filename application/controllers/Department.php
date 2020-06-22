@@ -131,7 +131,7 @@ class Department extends MY_Controller
 
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
 
-        $id = $params[0];
+        $id = isset($params[0]) ? $params[0] : null;
         if (!is_numeric($id)) {
             echo json_encode(array());
             die();
@@ -167,6 +167,7 @@ class Department extends MY_Controller
             $this->load->model("area_model");
             $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
             $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+
             // echo "<pre>";
             // print_r($this->data['workshop']);
             // print_r($this->data['areas']);
@@ -234,7 +235,7 @@ class Department extends MY_Controller
             $where = $this->department_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->with_area()->with_workshop()->with_factory()->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_area()->with_system()->with_workshop()->with_factory()->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);
         //        die();
@@ -244,6 +245,7 @@ class Department extends MY_Controller
                 $nestedData['string_id'] = $post->string_id;
                 $nestedData['name'] = $post->name;
                 $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+                $nestedData['system_name'] = isset($post->system->name) ? $post->system->name : "";
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
                 $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
                 $nestedData['action'] = '<a href="' . base_url() . 'department/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'

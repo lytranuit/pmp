@@ -172,6 +172,12 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{base_url()}}systemw/">
+                                <i class="metismenu-icon"></i>
+                                System Water
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{base_url()}}department/">
                                 <i class="metismenu-icon"></i>
                                 Room/Equipment
