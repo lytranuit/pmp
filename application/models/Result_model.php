@@ -36,7 +36,7 @@ class Result_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'note', 'type_bc', 'deleted', 'user_id', 'stt_in_day', 'target_id', 'object_id', 'position_id', 'department_id', 'area_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
+            'note', 'type_bc', 'deleted', 'user_id', 'stt_in_day', 'target_id', 'object_id', 'position_id', 'department_id', 'area_id', 'system_id', 'factory_id', 'workshop_id', 'value', 'date', 'created_at', 'deleted_at'
         );
         $obj = array();
         foreach ($array as $key) {

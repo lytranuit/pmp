@@ -1,6 +1,6 @@
 <?php
 
-class Result_tieuphan extends MY_Controller
+class Result_nuoc extends MY_Controller
 {
 
     function __construct()
@@ -28,7 +28,7 @@ class Result_tieuphan extends MY_Controller
         );
 
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
-        $object_array = array(14, 15, 16, 17);
+        $object_array = array(18, 19, 20);
         if (!in_array((int) $object_id, $object_array)) {
             $this->redirect_result($object_id);
         }
@@ -83,7 +83,7 @@ class Result_tieuphan extends MY_Controller
             $text =   "USER '" . $this->session->userdata('username') . "' added a new record($id) to the table 'pmp_result'";
             $this->result_model->trail($id, "insert", null, $data_up, null, $text);
             // die();
-            redirect('result_tieuphan', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
+            redirect('result_nuoc', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
             load_chossen($this->data);
@@ -120,7 +120,7 @@ class Result_tieuphan extends MY_Controller
             /// Log audit trail
             $text =   "USER '" . $this->session->userdata('username') . "' edited record($id) to the table 'pmp_result'";
             $this->result_model->trail($status, "update", null, $data_up, $prev_data, $text);
-            redirect('result_tieuphan', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
+            redirect('result_nuoc', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("result_model");
             $tin = $this->result_model->where(array('id' => $id))->as_object()->get();
@@ -219,7 +219,7 @@ class Result_tieuphan extends MY_Controller
             $totalFiltered = $where->count_rows();
             $where = $this->result_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
-        $posts = $where->order_by("id", "DESC")->with_department()->with_area()->with_position()->with_target()->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_system()->with_position()->with_target()->paginate($limit, NULL, $page);
 
         $data = array();
         if (!empty($posts)) {
@@ -232,7 +232,7 @@ class Result_tieuphan extends MY_Controller
                 $nestedData['position_name'] = isset($post->position->name) ? $post->position->name : "";
                 $nestedData['position_string_id'] = isset($post->position->string_id) ? $post->position->string_id : "";
                 $nestedData['frequency_name'] = isset($post->position->frequency_name) ? $post->position->frequency_name : "";
-                $nestedData['department_name'] = isset($post->department->name) ? $post->department->name : "";
+                $nestedData['system_name'] = isset($post->system->name) ? $post->system->name : "";
                 $nestedData['date'] = $post->date;
                 if ($post->target->type_data == "float") {
                     $nestedData['value'] = "<div class='text-center'>$post->value</div>";
@@ -249,12 +249,13 @@ class Result_tieuphan extends MY_Controller
                 } else {
                     $nestedData['value'] = "<div class='text-center'>$post->value_text</div>";
                 }
+
                 $nestedData['note'] = $post->note;
-                $nestedData['action'] = '<a href="' . base_url() . 'result_tieuphan/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
+                $nestedData['action'] = '<a href="' . base_url() . 'result_nuoc/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'
                     . '</a>'
-                    . '<a href="' . base_url() . 'result_tieuphan/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                    . '<a href="' . base_url() . 'result_nuoc/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
                     . '<i class="far fa-trash-alt">'
                     . '</i>'
                     . '</a>';

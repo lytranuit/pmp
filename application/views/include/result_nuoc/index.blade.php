@@ -5,7 +5,7 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}result/add">Add</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}result_nuoc/add">Add</a>
                 <div style="margin-left:auto;">
                     <input type="text" id="daterange" class="form-control form-control-sm btn-group" style="width: 200px;" placeholder="Search Time" />
                 </div>
@@ -18,11 +18,7 @@
                             <th>Position code</th>
                             <th>Method</th>
                             <th>
-                                @if($object_id == 11 || $object_id == 15)
-                                Room
-                                @else
-                                Equipment
-                                @endif
+                                System Water
                             </th>
                             <th>Frequency</th>
                             <th>Date</th>
@@ -64,7 +60,7 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": path + "result/table",
+                "url": path + "result_nuoc/table",
                 "dataType": "json",
                 "type": "POST",
                 "data": function(d) {
@@ -77,7 +73,7 @@
                 {
                     "data": "target_name"
                 }, {
-                    "data": "department_name"
+                    "data": "system_name"
                 },
                 {
                     "data": "frequency_name"

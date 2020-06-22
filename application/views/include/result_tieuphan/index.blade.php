@@ -15,6 +15,8 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
+                            <th>Position code</th>
+                            <th>Method</th>
                             <th>
                                 @if($object_id == 11 || $object_id == 15)
                                 Room
@@ -22,8 +24,6 @@
                                 Equipment
                                 @endif
                             </th>
-                            <th>Method</th>
-                            <th>Code</th>
                             <th>Frequency</th>
                             <th>Date</th>
                             <th class="text-center">Value</th>
@@ -59,7 +59,7 @@
         });
         $('#quanlytin').DataTable({
             language: {
-                searchPlaceholder: "Code"
+                searchPlaceholder: "Position code"
             },
             "processing": true,
             "serverSide": true,
@@ -72,13 +72,12 @@
                 }
             },
             "columns": [{
-                    "data": "department_name"
+                    "data": "position_string_id"
                 },
                 {
                     "data": "target_name"
-                },
-                {
-                    "data": "position_string_id"
+                }, {
+                    "data": "department_name"
                 },
                 {
                     "data": "frequency_name"

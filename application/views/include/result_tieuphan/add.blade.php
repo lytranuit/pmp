@@ -164,7 +164,7 @@
             let target_id = $(this).val();
             let type = $("#target_id option[value=" + target_id + "]").data("type");
             $("#html_value,#html_value_text").addClass("d-none");
-            if (type == "float") {
+            if (type == "float" || type == "boolean") {
                 $("#html_value").removeClass("d-none");
             } else {
                 $("#html_value_text").removeClass("d-none");

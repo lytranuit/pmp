@@ -46,23 +46,19 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">System Water:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="area_name" required="" readonly="" />
+                                    <input class="form-control" type='text' name="system_name" required="" readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">
-                                    @if($object_id == 10 || $object_id == 14)
-                                    Equipment:
-                                    @else
-                                    Room:
-                                    @endif
+                                    Room
                                     <i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="department_name" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="department_id" required="" readonly="" />
-                                    <input class="form-control" type='hidden' name="area_id" required="" readonly="" />
+                                    <input class="form-control" type='hidden' name="system_id" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="workshop_id" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="factory_id" required="" readonly="" />
                                     <input class="form-control" type='hidden' name="object_id" required="" readonly="" />
@@ -75,7 +71,6 @@
                                     <input class="form-control" type='text' name="frequency_name" required="" readonly="" />
                                 </div>
                             </div>
-
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
@@ -118,9 +113,6 @@
 </div>
 <script type='text/javascript'>
     $(document).ready(function() {
-
-        var tin = <?= json_encode($tin) ?>;
-        fillForm($("#form-dang-tin"), tin);
         $("#position").chosen();
         $("#position").change(function() {
             let value = $(this).val();
@@ -135,36 +127,35 @@
                         name,
                         factory,
                         workshop,
-                        area,
+                        system,
                         department,
                         department_id,
                         frequency_name,
                         factory_id,
                         workshop_id,
                         object_id,
+                        system_id,
                         type_bc
                     } = data
                     let factory_name = factory.name;
                     let workshop_name = workshop.name;
-                    let area_name = area.name;
-                    let department_name = department.name;
-                    let area_id = department.area_id;
+                    let system_name = system.name;
+                    let department_name = department ? department.name : "";
                     $("input[name='frequency_name']").val(frequency_name);
                     $("input[name='position_name']").val(name);
                     $("input[name='object_id']").val(object_id);
-                    $("input[name='area_id']").val(area_id);
+                    $("input[name='system_id']").val(system_id);
                     $("input[name='factory_id']").val(factory_id);
                     $("input[name='workshop_id']").val(workshop_id);
                     $("input[name='department_id']").val(department_id);
                     $("input[name='factory_name']").val(factory_name);
                     $("input[name='workshop_name']").val(workshop_name);
-                    $("input[name='area_name']").val(area_name);
+                    $("input[name='system_name']").val(system_name);
                     $("input[name='department_name']").val(department_name);
                     $("input[name='type_bc']").val(type_bc);
                 }
             })
         })
-        $("#position").change()
         $("#target_id").change(function() {
             let target_id = $(this).val();
             let type = $("#target_id option[value=" + target_id + "]").data("type");

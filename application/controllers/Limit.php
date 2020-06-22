@@ -244,7 +244,7 @@ class Limit extends MY_Controller
                     $sub_html .= "-";
                 }
             }
-            $html .= '<option value="' . $row['target_id'] . '" ' . $is_disabled . '>' . $sub_html . " " . $row['target']->name . '</option>';
+            $html .= '<option value="' . $row['target_id'] . '" ' . $is_disabled . ' data-type="' . $row['target']->type_data . '">' . $sub_html . " " . $row['target']->name . '</option>';
             $html .= $this->html_nestable_target((array) $array, $column, $row['id'], $deep + 1);
             // $html .= '</li>';
         }
@@ -317,9 +317,24 @@ class Limit extends MY_Controller
                 } else {
                     $nestedData['area_name'] = isset($post->system->name) ? $post->system->name : "";
                 }
-                $nestedData['standard_limit'] = $post->standard_limit;
-                $nestedData['alert_limit'] = $post->alert_limit;
-                $nestedData['action_limit'] = $post->action_limit;
+                if ($post->target->type_data == "float") {
+                    $nestedData['standard_limit'] = $post->standard_limit;
+                    $nestedData['alert_limit'] = $post->alert_limit;
+                    $nestedData['action_limit'] = $post->action_limit;
+                } else {
+                    $nestedData['standard_limit'] = $post->standard_limit_text;
+                    $nestedData['alert_limit'] = $post->alert_limit_text;
+                    $nestedData['action_limit'] = $post->action_limit_text;
+                    if ($post->standard_limit_text != $post->standard_limit_text_en && $post->standard_limit_text_en != "") {
+                        $nestedData['standard_limit'] .= "<br><i>$post->standard_limit_text_en</i>";
+                    }
+                    if ($post->alert_limit_text != $post->alert_limit_text_en && $post->alert_limit_text_en != "") {
+                        $nestedData['alert_limit'] .= "<br><i>$post->alert_limit_text_en</i>";
+                    }
+                    if ($post->action_limit_text != $post->action_limit_text_en && $post->action_limit_text_en != "") {
+                        $nestedData['action_limit'] .= "<br><i>$post->action_limit_text_en</i>";
+                    }
+                }
                 $nestedData['action'] = '<a href="' . base_url() . 'limit/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'
