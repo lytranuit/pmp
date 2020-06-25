@@ -58,6 +58,19 @@
                         </div>
                     </div>
                 </div>
+                @if($object_id > 17)
+                <div class="row">
+                    <div class="col-md-3">
+                        <b class="col-form-label text-sm-right">System Water:</b>
+                        <div class="pt-1">
+                            <select class="form-control form-control-sm system_id">
+
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                @else
                 <div class="row">
                     <div class="col-md-3">
                         <b class="col-form-label text-sm-right">Area:</b>
@@ -87,6 +100,7 @@
                     </div>
 
                 </div>
+                @endif
             </div>
         </div>
         <div class="card">
@@ -114,10 +128,28 @@
                 <?= '{{name}}' ?>
                 </button>
             </div>
-            <div data-parent="#chart_template" id="collapse<?= '{{id}}' ?>" aria-labelledby="target_<?= '{{id}}' ?>" class="collapse">
+            <div id="collapse<?= '{{id}}' ?>" aria-labelledby="target_<?= '{{id}}' ?>" class="collapse">
                 <div class="card-body">
                     <div class="chart-container">
-                        <div id="chart-<?= '{{id}}' ?>">
+                        <div class="chart-<?= '{{id}}' ?>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script id="fre_html" type="x-tmpl-mustache">
+        <div class="card">
+            <div id="fre_<?= '{{type_bc}}' ?>" class="card-header">
+                <button type="button" data-toggle="collapse" data-target="#collapse_1_<?= '{{type_bc}}' ?>" aria-expanded="true" class="text-left m-0 p-0 btn btn-link btn-block">
+                <?= '{{name}}' ?>
+                </button>
+            </div>
+            <div id="collapse_1_<?= '{{type_bc}}' ?>" aria-labelledby="fre_<?= '{{type_bc}}' ?>" class="collapse">
+                <div class="card-body">
+                    <div class="chart-container">
+                        <div id="chart_template_<?= '{{type_bc}}' ?>">
                         </div>
                     </div>
                 </div>
@@ -128,6 +160,7 @@
         var date_from = moment();
         var date_to = moment();
         var date_from_prev, date_from_to;
+        var object_id = <?= $object_id ?>;
         // var ctx = document.getElementById('myChart').getContext('2d');
         // var originalLineDraw = Chart.controllers.line.prototype.draw;
         // Chart.helpers.extend(Chart.controllers.line.prototype, {
@@ -233,6 +266,9 @@
             $(".department_id").change(async function() {
                 drawChart();
             });
+            $(".system_id").change(async function() {
+                drawChartNuoc();
+            });
             $(".area_id").change(async function() {
                 $(".page-loader-wrapper").show();
                 let value = $(this).val();
@@ -253,19 +289,34 @@
             $(".workshop_id").change(async function() {
                 $(".page-loader-wrapper").show();
                 let value = $(this).val();
-                let area = await $.ajax({
-                    url: path + "dashboard/getarea/" + value,
-                    dataType: "JSON"
-                });
-                let html = "";
-                $.each(area, function(k, item) {
-                    html += "<option value='" + item.id + "'>" + item.name + "</option>";
-                })
-                $(".area_id").html(html);
-                if ($(".department_id").length)
-                    $(".area_id").trigger("change");
-                else
+                console.log(object_id);
+                if (object_id > 17) {
+                    let system = await $.ajax({
+                        url: path + "dashboard/getsystem/" + value,
+                        dataType: "JSON"
+                    });
+                    let html = "";
+                    $.each(system, function(k, item) {
+                        html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                    })
+                    $(".system_id").html(html);
+                    $(".system_id").trigger("change");
                     $(".page-loader-wrapper").hide();
+                } else {
+                    let area = await $.ajax({
+                        url: path + "dashboard/getarea/" + value,
+                        dataType: "JSON"
+                    });
+                    let html = "";
+                    $.each(area, function(k, item) {
+                        html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                    })
+                    $(".area_id").html(html);
+                    if ($(".department_id").length)
+                        $(".area_id").trigger("change");
+                    else
+                        $(".page-loader-wrapper").hide();
+                }
             });
             $(".factory_id").change(async function() {
                 $(".page-loader-wrapper").show();
@@ -279,10 +330,8 @@
                     html += "<option value='" + item.id + "'>" + item.name + "</option>";
                 })
                 $(".workshop_id").html(html);
-                if ($(".area_id").length)
-                    $(".workshop_id").trigger("change");
-                else
-                    $(".page-loader-wrapper").hide();
+                $(".workshop_id").trigger("change");
+                $(".page-loader-wrapper").hide();
                 /////LOAD SELECTOR
                 $(".type_data.active").trigger("click");
             });
@@ -322,7 +371,11 @@
             });
             ///EVENT
             $("#the_selector,#daterange").change(function() {
-                drawChart();
+                if (object_id > 17) {
+                    drawChartNuoc();
+                } else {
+                    drawChart();
+                }
             });
             $(".type_data").click(async function() {
                 let value = $("input", this).val();
@@ -418,6 +471,75 @@
                 $(".page-loader-wrapper").hide();
             }
 
+            async function drawChartNuoc() {
+
+                $(".page-loader-wrapper").show();
+                var system_id = $(".system_id").val();
+                if (!(system_id > 0)) {
+                    $(".page-loader-wrapper").hide();
+                    return;
+                }
+                // var target_id = $("[name=target_id]").val();
+                let type = $(".type_data.active input").val();
+                let selector = $("#the_selector").val();
+                let daterange = $("#daterange").val();
+                $("#chart_template").empty();
+                var all_fre = await $.ajax({
+                    url: path + 'dashboard/chartdatanuoc',
+                    data: {
+                        system_id: system_id,
+                        // target_id: target_id,
+                        type: type,
+                        selector: selector,
+                        daterange: daterange
+                    },
+                    dataType: "JSON"
+                });
+                // console.log(all_target);
+                for (fre of all_fre) {
+                    let type_bc = fre['type_bc'];
+                    let fre_html = $('#fre_html').html();
+                    let data_fre = fre['data'];
+                    let rendered = Mustache.render(fre_html, fre);
+                    $("#chart_template").append(rendered);
+                    for (target of data_fre) {
+                        let data = target['data'];
+                        let target_html = $('#target_html').html();
+                        if (target['parent']) {
+                            target['name'] += " (" + target['parent']['name'] + ")";
+                        }
+                        let rendered = Mustache.render(target_html, target);
+                        $("#chart_template_" + type_bc).append(rendered);
+                        let options = {
+                            // title: {
+                            //     text: 'Solar Employment Growth by Sector, 2010-2016'
+                            // },
+
+                            // subtitle: {
+                            //     text: 'Source: thesolarfoundation.com'
+                            // },
+                            credits: {
+                                enabled: false
+                            },
+                            legend: {
+                                layout: 'vertical',
+                                align: 'right',
+                                verticalAlign: 'middle'
+                            },
+                            exporting: {
+                                enabled: false
+                            }
+                        }
+                        options = {
+                            ...options,
+                            ...data
+                        };
+
+                        $("#chart_template_" + type_bc + ' .chart-' + target['id']).highcharts(options);
+                    }
+                }
+                $(".page-loader-wrapper").hide();
+            }
 
             ///////
             // $(".type_data.active").trigger("click");

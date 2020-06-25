@@ -230,7 +230,27 @@ class Dashboard extends MY_Controller
                 $params['title'] = $title;
                 $params['subtitle'] = $subtitle;
                 $data = $this->employeeresult_model->chart_datav2($params);
+                $row->department_id = $employee->id;
                 $row->department = $employee;
+                $row->data = $data;
+                $results[] = $row;
+            }
+        } elseif ($this->data['object_id'] == 18 || $this->data['object_id'] == 19 || $this->data['object_id'] == 20) {
+            $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by(array("system_id", "type_bc", "target_id"))->get_all();
+            foreach ($department_list as $row) {
+                $target = $row->target;
+                $params['type_bc'] = $row->type_bc;
+
+                $params['department_id'] = $row->department_id;
+                $params['system_id'] = $row->system_id;
+                $params['target_id'] = $row->target_id;
+                $title = "Trend chart of $target->name_en";
+                $subtitle = "";
+                $params['title'] = $title;
+                $params['subtitle'] = $subtitle;
+                $data = $this->result_model->chart_data_nuoc($params);
+
+                $row->department_id = $row->system_id . "_" . $row->type_bc;
                 $row->data = $data;
                 $results[] = $row;
             }
@@ -358,6 +378,113 @@ class Dashboard extends MY_Controller
 
         echo json_encode($results);
     }
+    public function chartdatanuoc()
+    {
+
+        $this->load->model("result_model");
+        $this->load->model("target_model");
+        $this->load->model("object_model");
+        $this->load->model("objecttarget_model");
+        $this->load->model("department_model");
+        $this->load->model("system_model");
+
+
+
+        $system_id = $this->input->get('system_id', TRUE);
+        $type = $this->input->get('type', TRUE);
+        $selector = $this->input->get('selector', TRUE);
+        $daterange = $this->input->get('daterange', TRUE);
+
+        $params = array(
+            'type' => $type,
+            'selector' => $selector,
+            'daterange' => $daterange
+        );
+        // print_r($params);
+        $params = input_params($params);
+
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $params['object_id'] = $object_id;
+        // $object = $this->object_model->get($object_id);
+        if (!is_numeric($system_id)) {
+            echo json_encode(array());
+            die();
+        }
+        $department = $this->system_model->where(array('id' => $system_id))->as_object()->get();
+        $params['system_id'] = $system_id;
+
+
+        $title = "";
+        $subtitle = "";
+        $list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('system_id' => $system_id, 'deleted' => 0, 'object_id' => $object_id))->with_position()->group_by("type_bc")->get_all();
+        // echo "<pre>";
+        // print_r($list);
+        // die();
+        $list_type = array(
+            'TwoYear' => "Hàng Quý",
+            'Year' => "Hàng tháng",
+            'HalfYear' => "2 tuần / lần",
+            'Month' => "Hàng ngày"
+        );
+        // foreach ($tansuat_list as $row) {
+        //     $type_bc = $row['type_bc'];
+        // }
+        $results_e = array();
+        foreach ($list as $row) {
+            $type_bc = $row->type_bc;
+            $name_bc = $list_type[$type_bc];
+            $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('system_id' => $system_id, 'deleted' => 0, 'object_id' => $object_id))->where("type_bc", $type_bc)->group_by("target_id")->get_all();
+            // echo "<pre>";
+            // print_r($target_list);
+            // die();
+            $results = [];
+
+            for ($i = 0; $i < count($target_list); $i++) {
+
+                $target = $this->target_model->get($target_list[$i]->target_id);
+                if ($target->type_data != "float") {
+                    continue;
+                }
+                $target_object = $this->objecttarget_model->where(array("object_id" => $object_id, 'target_id' => $target_list[$i]->target_id))->with_parent(array("with" => array('relation' => 'target')))->get();
+                if (!empty($target_object) && isset($target_object->parent->target->name)) {
+                    $target->name .=  " (" . $target_object->parent->target->name . ")";
+                    $target->name_en .=  " (" . $target_object->parent->target->name_en . ")";
+                }
+                $params['target_id'] = $target->id;
+                $params['type_bc'] = $type_bc;
+                if ($this->data['object_id'] == 3) {
+                    $title = "Biểu đồ xu hướng vi sinh nhân viên $department->name ($department->string_id)";
+                    $subtitle = "Trend chart of microbiological monitoring of Personnel $department->name ($department->string_id)";
+                } else if ($this->data['object_id'] == 14 || $this->data['object_id'] == 15) {
+                    if ($target->id == 14 || $target->id == 15) {
+                        $title = "Trend chart of non viable particles size (≥ 5.0 µm)";
+                    } else {
+                        $title = "Trend chart of non viable particles size (≥ 0.5 µm)";
+                    }
+
+                    $subtitle = "";
+                } else if ($this->data['object_id'] == 10 || $this->data['object_id'] == 11) {
+                    $title = "Trend chart of microbiological monitoring";
+                    $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
+                } else {
+                    $title = "Trend chart of $target->name_en";
+                    $subtitle = "";
+                }
+                $params['title'] = $title;
+                $params['subtitle'] = $subtitle;
+                // print_r($params);
+                // die();
+                // if()
+                $data = $this->result_model->chart_data_nuoc($params);
+
+                $target->data = $data;
+                $results[] = $target;
+            }
+            $results_e[] = array("type_bc" => $type_bc, 'name' => $name_bc, 'data' => $results);
+        }
+
+        echo json_encode($results_e);
+    }
     public function datedata()
     {
         $type = $this->input->get('type', TRUE);
@@ -412,6 +539,22 @@ class Dashboard extends MY_Controller
                 return $item->area;
             }, $data);
         }
+        usort($data, function ($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
+        echo json_encode($data);
+    }
+
+    function getsystem($params)
+    {
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $id = $params[0];
+        $this->load->model("result_model");
+        $data = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id, 'workshop_id' => $id))->with_system()->group_by("system_id")->as_object()->get_all();
+        $data = array_map(function ($item) {
+            return $item->system;
+        }, $data);
+
         usort($data, function ($a, $b) {
             return strcmp($a->name, $b->name);
         });

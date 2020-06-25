@@ -2799,6 +2799,214 @@ class Import extends MY_Controller
             }
         }
     }
+    public function result_nuoc()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/upload/data_nuoc';
+
+        echo "<pre>";
+        echo $dir;
+        $this->load->model("result_model");
+        $this->load->model("target_model");
+        $this->load->model("position_model");
+        $insert = array();
+
+
+        $sortedarray1 = $this->listFolderFiles($dir);
+        $sortedarray1 = array_values($sortedarray1);
+        // print_r($sortedarray1);
+        // die();
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $file_name;
+            //Tiến hành xác thực file
+            print_r($file);
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+            // die();
+            //Chỉ đọc dữ liệu
+            // $objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            // print_r($count_sheet);
+            // die();
+            for ($k = 0; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+                $title = $sheet->getTitle();
+                // echo "<br>";
+                // print_r($title . "<br>");
+                // die();
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                $row_stt = 7;
+                for ($i = $row_stt; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i - $row_stt][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - $row_stt][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - $row_stt][$j] = $data[$i - $row_stt][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - $row_stt][$j] > 0) {
+
+                            if (is_numeric($data[$i - $row_stt][$j])) {
+                                $data[$i - $row_stt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - $row_stt][$j]));
+                            } else if ($data[$i - $row_stt][$j] == '26/09/16') {
+                                $data[$i - $row_stt][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+
+                // echo "<pre>";
+                // print_r($data);
+                // die();
+                // $temp_target = array(
+                //     $this->target_model->where(array('id' => 14))->as_object()->get(), ///5
+                //     $this->target_model->where(array('id' => 16))->as_object()->get(), ///0.5
+                // );
+                // die();
+                // $explode = explode("-", $title);
+                // $target_id = $explode[0];
+                // $target = $this->target_model->get($target_id);
+                // echo "<br>$target_id<br>";
+                ///LIST POSTION
+                $list_target = array_shift($data);
+
+                ///XOA 1 ROW
+                // array_shift($data);
+                echo "<pre>";
+                $targets = array();
+                // $list_old = array();
+                for ($i = 0; $i < count($list_target); $i++) {
+                    $row = $list_target[$i];
+                    if ($row == "") {
+                        continue;
+                    }
+
+                    $explode = explode("-", $row);
+                    $target_id = $explode[0];
+                    if (!is_numeric($target_id)) {
+                        continue;
+                    }
+                    // $find_vitri_old = $this->position_model->where(array('string_id_old' => $position))->as_object()->get_all();
+                    // if (count($find_vitri_old) > 0) {
+                    //     $find_vitri_old = array_map(function ($item) use ($i) {
+                    //         $item->col = $i;
+                    //         return $item;
+                    //     }, $find_vitri_old);
+                    //     $list_old = array_merge($list_old, $find_vitri_old);
+                    // }
+                    $find = $this->target_model->get($target_id);
+                    //            print_r($find_phong);
+                    if (empty($find)) {
+                        continue;
+                    }
+                    ///Tìm ngược lại list old
+                    // $find_vi_tri_old = array_values(array_filter($list_old, function ($item) use ($find_vitri) {
+                    //     return $item->string_id = $find_vitri->string_id;
+                    // }));
+                    // if (isset($find_vi_tri_old[0]))
+                    //     $find_vitri->col_old = $find_vi_tri_old[0]->col;
+                    $find->col = $i;
+
+                    array_push($targets, $find);
+                }
+                // print_r($targets);
+                // print_r($data);
+                // die();
+                // print_r($temp_phong);
+                // die();
+                $stt_date = 1;
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                    $position_string_id = $row[1];
+                    $date = $row[2];
+                    if (!is_Date($date)) {
+                        continue;
+                    }
+                    if ($position_string_id == "") {
+                        continue;
+                    }
+                    $position = $this->position_model->where(array('string_id' => $position_string_id))->get();
+                    if (empty($position)) {
+                        continue;
+                    }
+                    foreach ($targets as $target) {
+                        $position_id = $position->id;
+                        $system_id = $position->system_id;
+                        $department_id = $position->department_id;
+                        $target_id = $target->id;
+                        $factory_id = $position->factory_id;
+                        $workshop_id = $position->workshop_id;
+                        $object_id = $position->object_id;
+                        $type_bc = $position->type_bc;
+                        if (strlen($row[$target->col]) > 0) {
+                            $value = $row[$target->col];
+                        } else {
+                            continue;
+                        }
+                        if (is_null($value) || !is_Date($date) || (!is_numeric($value) && $target->type_data == "float")) {
+                            continue;
+                        }
+                        if ($value == "Đạt") {
+                            $value = 1;
+                        } elseif ($value == "Không Đạt") {
+                            $value = 0;
+                        }
+                        $date = date("Y-m-d", strtotime($date));
+                        $max_stt = $this->result_model->max_stt_have_target_in_day($position_id, $date, $target_id);
+                        // $data['stt_in_day'] = $max_stt;
+
+                        $data_up = array(
+                            'position_id' => $position_id,
+                            'system_id' => $system_id,
+                            'department_id' => $department_id,
+                            'target_id' => $target_id,
+                            'factory_id' => $factory_id,
+                            'workshop_id' => $workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name,
+                            'object_id' => $object_id,
+                            'type_bc' => $type_bc,
+                            'stt_in_day' => $max_stt
+                        );
+                        if ($target->type_data == "float" || $target->type_data == "boolean") {
+                            $data_up['value'] = $value;
+                        } else {
+                            $data_up['value_text'] = $value;
+                        }
+                        $this->result_model->insert($data_up);
+                    }
+                    // $phong_id = $find_phong->id;
+                }
+            }
+        }
+    }
     function listFolderFiles($dir)
     {
         $ffs = scandir($dir);

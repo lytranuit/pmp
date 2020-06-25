@@ -45,12 +45,12 @@
         $("#target_accordion").empty();
 
         for (let i = 0; i < results.length; i++) {
-            let department = results[i]['department'];
             let data = results[i]['data'];
 
             let area_id = results[i]['area_id'];
+            let system_id = results[i]['system_id'];
             let target_id = results[i]['target_id'];
-            let department_id = department['id'];
+            let department_id = results[i]['department_id'];
             let object_id = params['object_id'];
 
             let obj = {
