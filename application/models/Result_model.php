@@ -557,7 +557,7 @@ class Result_model extends MY_Model
         $list_id = array();
         foreach ($target_list as $target) {
             $list_id[] =  $target->id;
-            if ($target->type_data == "float") {
+            if ($target->type_data == "float" || $target->type_data == "boolean") {
                 $subsql .= ",SUM(IF(a.target_id = $target->id,value,NULL)) as '$target->id'";
             } else {
                 $subsql .= ",MAX(IF(a.target_id = $target->id,value_text,NULL)) as '$target->id'";

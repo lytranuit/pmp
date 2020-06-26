@@ -25,6 +25,7 @@ class Export extends MY_Controller
         $this->load->model("limit_model");
         $this->load->model("objecttarget_model");
         $this->load->model("object_model");
+        $this->load->model("system_model");
         $record = $this->report_model->where(array("id" => $id_record))->get();
         // print_r($record);
         // die();
@@ -1983,8 +1984,18 @@ class Export extends MY_Controller
                         // die();  
                         //     ///DATA
                         $textrun = $table->addCell(null, $fontCell);
-                        $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
+                        if ($target->type_data == "float") {
+                            $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
+                        } else {
+                            $value = isset($limit->standard_limit_text) ? $limit->standard_limit_text : "";
+                        }
                         $textrun->addText($value, array(), $fontCell);
+                        if ($target->type_data != "float") {
+                            $value_en = isset($limit->standard_limit_text_en) ? $limit->standard_limit_text_en : "";
+                            if ($value_en != "" && $value != $value_en) {
+                                $textrun->addText($value_en, array('italic' => true), $fontCell);
+                            }
+                        }
                     }
                     $table->addRow();
                     $textrun = $table->addCell(null, $styleCell);
@@ -1993,8 +2004,18 @@ class Export extends MY_Controller
                     foreach ($child as $key => $target) {
                         $limit = $target->limit;
                         $textrun = $table->addCell(null, $fontCell);
-                        $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
+                        if ($target->type_data == "float") {
+                            $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
+                        } else {
+                            $value = isset($limit->alert_limit_text) ? $limit->alert_limit_text : "";
+                        }
                         $textrun->addText($value, array(), $fontCell);
+                        if ($target->type_data != "float") {
+                            $value_en = isset($limit->alert_limit_text_en) ? $limit->alert_limit_text_en : "";
+                            if ($value_en != "" && $value != $value_en) {
+                                $textrun->addText($value_en, array('italic' => true), $fontCell);
+                            }
+                        }
                     }
                     $table->addRow();
                     $textrun = $table->addCell(null, $styleCell);
@@ -2003,8 +2024,18 @@ class Export extends MY_Controller
                     foreach ($child as $key => $target) {
                         $limit = $target->limit;
                         $textrun = $table->addCell(null, $fontCell);
-                        $value = isset($limit->action_limit) ? $limit->action_limit : "";
+                        if ($target->type_data == "float") {
+                            $value = isset($limit->action_limit) ? $limit->action_limit : "";
+                        } else {
+                            $value = isset($limit->action_limit_text) ? $limit->action_limit_text : "";
+                        }
                         $textrun->addText($value, array(), $fontCell);
+                        if ($target->type_data != "float") {
+                            $value_en = isset($limit->action_limit_text_en) ? $limit->action_limit_text_en : "";
+                            if ($value_en != "" && $value != $value_en) {
+                                $textrun->addText($value_en, array('italic' => true), $fontCell);
+                            }
+                        }
                     }
                 }
 
@@ -2256,6 +2287,444 @@ class Export extends MY_Controller
                     }
                 }
             }
+            // die();
+            $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . "_" . time() . ".docx";
+            $name_file = urlencode($name_file);
+            if (!file_exists(APPPATH . '../public/export')) {
+                mkdir(APPPATH . '../public/export', 0777, true);
+            }
+            $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
+            // die();
+            // $templateProcessor->cloneRow("result_block#1", 3);
+            $data_up = array(
+                'name' => $name_file,
+                'status' => 3
+            );
+            $this->report_model->update($data_up, $id_record);
+
+            // redirect("dashboard", 'refresh');
+            // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
+        } else if ($object_id == 18 || $object_id == 19 || $object_id == 20) {
+            $object = $this->object_model->where(array('id' => $object_id))->as_object()->get();
+            $workshop_id = $record->workshop_id;
+
+            $workshop = $this->workshop_model->where(array('id' => $workshop_id))->with_factory()->as_object()->get();
+            $workshop_name = $workshop->name;
+            $workshop_name_en = $workshop->name_en;
+            $object_name = $object->name;
+            $object_name_en = $object->name_en;
+            $factory_name = isset($workshop->factory->name) ? $workshop->factory->name : "";
+            $factory_name_en = isset($workshop->factory->name_en) ? $workshop->factory->name_en : "";
+            $type = $record->type;
+            $selector = $record->selector;
+            $daterange = $record->selector;
+            $params = array(
+                'type' => $type,
+                'selector' => $selector,
+                'daterange' => $daterange,
+            );
+            $params = input_params($params);
+            $params['workshop_id'] = $workshop_id;
+            $params['object_id'] = $object_id;
+            ///////DATA
+            $target_results = $this->result_model->set_value_export($params)->with_target()->group_by("target_id")->get_all();
+            $target_parent = $target_list = array();
+            foreach ($target_results as $temp) {
+                $target = $temp->target;
+                $target_object = $this->objecttarget_model->where(array("object_id" => $object_id, 'target_id' => $temp->target_id))->with_parent(array("with" => array('relation' => 'target')))->get();
+                // echo "<pre>";
+                // print_r($target_object);
+
+                if (isset($target_object->parent) && !empty($target_object->parent)) {
+                    $target->parent = $target_object->parent->target;
+                    $target->parent_id = $target->parent->id;
+                    if (isset($target_parent[$target->parent->id])) {
+                        $target_parent[$target->parent->id]->count_child++;
+                        $target_parent[$target->parent->id]->child[] = $target;
+                    } else {
+                        $target_parent[$target->parent->id] = (object) array();
+                        $target_parent[$target->parent->id]->id = $target->parent->id;
+                        $target_parent[$target->parent->id]->name = $target->parent->name;
+                        $target_parent[$target->parent->id]->name_en = $target->parent->name_en;
+                        $target_parent[$target->parent->id]->unit = $target->parent->unit;
+                        $target_parent[$target->parent->id]->count_child = 1;
+                        $target_parent[$target->parent->id]->child = array($target);
+                    }
+                }
+                $target_list[] = $target;
+            }
+
+            $target_parent = array_values($target_parent);
+            usort($target_parent, function ($a, $b) {
+                return $a->id > $b->id;
+            });
+            usort($target_list, function ($a, $b) {
+                return $a->parent_id > $b->parent_id;
+            });
+            // echo "<pre>";
+            // print_r($target_list);
+            // print_r($target_parent);
+            // die();
+            $system_list = $this->result_model->set_value_export($params)->with_system()->group_by("system_id")->get_all();
+            $system_list = array_map(function ($item) {
+                return $item->system;
+            }, $system_list);
+            usort($system_list, function ($a, $b) {
+                return strcmp($a->name, $b->name);
+            });
+            // echo "<pre>";
+            // print_r($workshop);
+            // print_r($system_list);
+            // die();
+            $file = APPPATH . '../public/upload/template/template_nuoc.docx';
+            $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+            $list_type = array(
+                'TwoYear' => "Các điểm lấy mẫu hàng quý",
+                'Year' => "Các điểm lấy mẫu hàng tháng",
+                'HalfYear' => "Các điểm lấy mẫu 2 tuần",
+                'Month' => "Các điểm lấy mẫu hàng ngày"
+            );
+            $list_type_en = array(
+                'TwoYear' => "Quarter sampling points",
+                'Year' => "Monthly sampling points",
+                'HalfYear' => "Two Weekly sampling points",
+                'Month' => "Daily sampling points"
+            );
+            $type_bc = "Hàng năm";
+            $type_bc_en = "Yearly";
+            if ($type == "Year") {
+                $type_bc = "Hàng năm";
+                $type_bc_en = "Yearly";
+            } elseif ($type == "Month") {
+                $type_bc = "Hàng tháng";
+                $type_bc_en = "Monthly";
+            } elseif ($type == "HalfYear") {
+                $type_bc = "Nữa năm";
+                $type_bc_en = "Half Year";
+            } elseif ($type == "Quarter") {
+                $type_bc = "Hàng Quý";
+                $type_bc_en = "Quarter";
+            } elseif ($type == "TwoYear") {
+                $type_bc = "mỗi hai năm";
+                $type_bc_en = "every two year";
+            }
+            $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
+            $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
+            $templateProcessor->setValue('date_to', date("d/m/y", strtotime($params['date_to'])));
+            $templateProcessor->setValue('date_to_prev', date("d/m/y", strtotime($params['date_to_prev'])));
+            $templateProcessor->setValue('type_bc', $type_bc);
+            $templateProcessor->setValue('type_bc_en', $type_bc_en);
+            $templateProcessor->setValue('workshop_name', $workshop_name);
+            $templateProcessor->setValue('workshop_name_en', $workshop_name_en);
+            $templateProcessor->setValue('object_name', $object_name);
+            $templateProcessor->setValue('object_name_en', $object_name_en);
+            $templateProcessor->setValue('type_bc_cap', mb_strtoupper($type_bc, 'UTF-8'));
+            $templateProcessor->setValue('type_bc_cap_en', mb_strtoupper($type_bc_en, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap', mb_strtoupper($workshop_name, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap_en', mb_strtoupper($workshop_name_en, 'UTF-8'));
+            $templateProcessor->setValue('object_name_cap', mb_strtoupper($object_name, 'UTF-8'));
+            $templateProcessor->setValue('object_name_cap_en', mb_strtoupper($object_name_en, 'UTF-8'));
+
+
+            ////STYLE
+            $cellRowSpan = array('valign' => 'center');
+            $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+            $cellHCenteredLEFT = array('alignment' => 'left');
+
+            $styleCell = array('valign' => 'center');
+            $fontCell = array('align' => 'center');
+            $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
+            $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
+            $cellVCentered = array('valign' => 'center');
+            // $target_list;
+            ///TABLE LIMIT
+
+            $templateProcessor->cloneBlock("limit_block", count($system_list), true, true);
+            for ($j = 0; $j < count($system_list); $j++) {
+                $row2 = $system_list[$j];
+                $templateProcessor->setValue("limit_parent_name#" .  ($j + 1), $system_list[$j]->name);
+                $templateProcessor->setValue("limit_parent_name_en#" . ($j + 1), $system_list[$j]->name_en);
+
+                $table = new Table(array(
+                    'borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct',
+                    'cellMargin'  => 80, 'valign' => 'center'
+                ));
+                $target_list = $this->result_model->set_value_export($params)->where("system_id", $system_list[$j]->id)->with_target()->group_by("target_id")->get_all();
+                $target_list = array_map(function ($item) {
+                    return $item->target;
+                }, $target_list);
+                $system_list[$j]->target_list = $target_list;
+                $table->addRow();
+                $table->addCell(null, $cellRowContinue);
+                for ($i = 0; $i < count($target_list); $i++) {
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText($target_list[$i]->name, array(), $fontCell);
+                    $textrun->addText($target_list[$i]->name_en, array('italic' => true), $fontCell);
+                }
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
+                $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                foreach ($target_list as $key => $target) {
+                    $limit = $this->limit_model->where(array("system_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
+                    $target_list[$key]->limit = $limit;
+                    // print_r($limit);
+                    // die();  
+                    //     ///DATA
+                    $textrun = $table->addCell(null, $fontCell);
+                    if ($target->type_data == "float") {
+                        $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
+                    } else {
+                        $value = isset($limit->standard_limit_text) ? $limit->standard_limit_text : "";
+                    }
+                    $textrun->addText($value, array(), $fontCell);
+                    if ($target->type_data != "float") {
+                        $value_en = isset($limit->standard_limit_text_en) ? $limit->standard_limit_text_en : "";
+                        if ($value_en != "" && $value != $value_en) {
+                            $textrun->addText($value_en, array('italic' => true), $fontCell);
+                        }
+                    }
+                }
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
+                $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                foreach ($target_list as $key => $target) {
+                    $limit = $target->limit;
+                    $textrun = $table->addCell(null, $fontCell);
+                    if ($target->type_data == "float") {
+                        $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
+                    } else {
+                        $value = isset($limit->alert_limit_text) ? $limit->alert_limit_text : "";
+                    }
+                    $textrun->addText($value, array(), $fontCell);
+                    if ($target->type_data != "float") {
+                        $value_en = isset($limit->alert_limit_text_en) ? $limit->alert_limit_text_en : "";
+                        if ($value_en != "" && $value != $value_en) {
+                            $textrun->addText($value_en, array('italic' => true), $fontCell);
+                        }
+                    }
+                }
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Giới hạn hành động', array(), $fontCell);
+                $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                foreach ($target_list as $key => $target) {
+                    $limit = $target->limit;
+                    $textrun = $table->addCell(null, $fontCell);
+                    if ($target->type_data == "float") {
+                        $value = isset($limit->action_limit) ? $limit->action_limit : "";
+                    } else {
+                        $value = isset($limit->action_limit_text) ? $limit->action_limit_text : "";
+                    }
+                    $textrun->addText($value, array(), $fontCell);
+                    if ($target->type_data != "float") {
+                        $value_en = isset($limit->action_limit_text_en) ? $limit->action_limit_text_en : "";
+                        if ($value_en != "" && $value != $value_en) {
+                            $textrun->addText($value_en, array('italic' => true), $fontCell);
+                        }
+                    }
+                }
+
+
+                $templateProcessor->setComplexBlock('table_limit#' .  ($j + 1), $table);
+            }
+
+
+            /////RESULT 
+            // $area_results = $this->result_model->set_value_export($params)->with_area()->group_by("area_id")->get_all();
+            // usort($area_results, function ($a, $b) {
+            //     return strcmp($a->area->name, $b->area->name);
+            // });
+            $department_list = array();
+            $length_system = count($system_list);
+            $templateProcessor->cloneBlock("result_two_block", $length_system, true, true);
+            for ($key1 = 0; $key1 < $length_system; $key1++) {
+                $system = $system_list[$key1];
+                $target_list = $system_list[$key1]->target_list;
+                ////DRAW RESULT
+                $templateProcessor->setValue("two_heading#"  . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
+                $templateProcessor->setValue("two_name_heading#"  . ($key1 + 1), htmlspecialchars($system->name));
+                $templateProcessor->setValue("two_name_en_heading#"  . ($key1 + 1), htmlspecialchars($system->name_en));
+
+                $position_results = $this->result_model->set_value_export($params)->where(array('system_id' => $system->id))->with_position()->group_by("position_id")->get_all();
+                $length_position = count($position_results);
+
+                $templateProcessor->cloneBlock("position_block#"  . ($key1 + 1), $length_position, true, true);
+
+                // echo "<pre>";
+                // print_r($tmp_parent);
+                // die();
+                ////DATA
+                for ($key2 = 0; $key2 < $length_position; $key2++) {
+                    $position = $position_results[$key2]->position;
+                    $params['position_id'] = $position->id;
+                    $templateProcessor->setValue("position_string_id#"  . ($key1 + 1) . "#" . ($key2 + 1), $position->string_id);
+
+                    ///TABLE
+                    $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+                    $table->addRow(null, array('tblHeader' => true));
+
+                    $cell1 = $table->addCell(null, $cellRowContinue);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars("Ngày /"), array('size' => 10));
+                    $textrun1->addText(htmlspecialchars("Date"), array('size' => 10, 'italic' => true));
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars('(dd/mm/yy)'), array('size' => 10));
+                    // for ($i = 0; $i < count($target_parent); $i++) {
+                    //     $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 12, 'valign' => 'center'));
+                    //     $textrun->addText($target_parent[$i]->name, array(), $fontCell);
+                    //     $textrun->addText($target_parent[$i]->name_en, array('italic' => true), $fontCell);
+                    // }
+                    // $table->addRow(null, array('tblHeader' => true));
+                    // $table->addCell(null, $cellRowContinue);
+                    for ($i = 0; $i < count($target_list); $i++) {
+                        $textrun = $table->addCell(null, $styleCell);
+                        $textrun->addText($target_list[$i]->name, array('size' => 10), $fontCell);
+                        $textrun->addText($target_list[$i]->name_en, array('italic' => true, 'size' => 10), $fontCell);
+                    }
+
+
+                    //     ///DATA
+                    $data = $this->result_model->get_data_table_by_target($target_list, $params);
+                    $data_min_max = $this->result_model->get_data_table_by_target_minmax($target_list, $params['object_id'], $params['position_id'], $params['date_from'], $params['date_to']);
+                    $data_min_max_prev = $this->result_model->get_data_table_by_target_minmax($target_list, $params['object_id'], $params['position_id'], $params['date_from_prev'], $params['date_to_prev']);
+
+
+                    foreach ($data as $keystt => $stt) {
+                        $table->addRow();
+                        $date = date("d/m/y", strtotime($stt['date']));
+                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText(htmlspecialchars($date), array('size' => 10));
+                        foreach ($target_list as $target) {
+                            $target_id = $target->id;
+                            $value = $stt[$target_id];
+                            if ($value == "") {
+                                $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                            } else if ($target->type_data == "boolean" && $value == 1) {
+                                $cell1 = $table->addCell(null, $cellRowSpan);
+                                $textrun1 = $cell1->addTextRun($cellHCentered);
+                                $textrun1->addText("Đạt", array('size' => 10));
+                                $textrun1->addTextBreak();
+                                $textrun1->addText("Comply", array('italic' => true, 'size' => 10));
+                            } else if ($target->type_data == "boolean" && $value == 0) {
+                                $cell1 = $table->addCell(null, $cellRowSpan);
+                                $textrun1 = $cell1->addTextRun($cellHCentered);
+                                $textrun1->addText("Không Đạt", array('size' => 10));
+                                $textrun1->addTextBreak();
+                                $textrun1->addText("Not comply", array('italic' => true, 'size' => 10));
+                            } else if ($target->type_data == "float") {
+                                $cell1 = $table->addCell(null, $cellRowSpan);
+                                $textrun1 = $cell1->addTextRun($cellHCentered);
+                                $textrun1->addText(round($value, 3), array('size' => 10));
+                            } else {
+                                $cell1 = $table->addCell(null, $cellRowSpan);
+                                $textrun1 = $cell1->addTextRun($cellHCentered);
+                                $textrun1->addText(htmlspecialchars($value), array('size' => 10));
+                            }
+                        }
+                    }
+                    ///MIN MAX
+                    $table->addRow();
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText("Max", array('size' => 10, 'bold' => true));
+                    foreach ($target_list as $target) {
+                        $target_id = $target->id;
+                        $value = $data_min_max["max_$target_id"];
+                        if ($value == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $cellRowSpan);
+                            $textrun1 = $cell1->addTextRun($cellHCentered);
+                            $textrun1->addText(htmlspecialchars(round($value, 3)), array('size' => 10));
+                        }
+                    }
+                    $table->addRow();
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText("Min", array('size' => 10, 'bold' => true));
+                    foreach ($target_list as $target) {
+                        $target_id = $target->id;
+                        $value = $data_min_max["min_$target_id"];
+                        if ($value == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $cellRowSpan);
+                            $textrun1 = $cell1->addTextRun($cellHCentered);
+                            $textrun1->addText(htmlspecialchars(round($value, 3)), array('size' => 10));
+                        }
+                    }
+
+                    $table->addRow(null);
+                    $cell1 = $table->addCell(null, array('gridSpan' => count($target_list) + 1, 'valign' => 'center'));
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
+                    $textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10, 'bold' => true, 'italic' => true));
+
+                    $table->addRow();
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText("Max", array('size' => 10, 'bold' => true));
+                    foreach ($target_list as $target) {
+                        $target_id = $target->id;
+                        $value = $data_min_max_prev["max_$target_id"];
+                        if ($value == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $cellRowSpan);
+                            $textrun1 = $cell1->addTextRun($cellHCentered);
+                            $textrun1->addText(htmlspecialchars(round($value, 3)), array('size' => 10));
+                        }
+                    }
+                    $table->addRow();
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText("Min", array('size' => 10, 'bold' => true));
+                    foreach ($target_list as $target) {
+                        $target_id = $target->id;
+                        $value = $data_min_max_prev["min_$target_id"];
+                        if ($value == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $cellRowSpan);
+                            $textrun1 = $cell1->addTextRun($cellHCentered);
+                            $textrun1->addText(htmlspecialchars(round($value, 3)), array('size' => 10));
+                        }
+                    }
+
+                    $templateProcessor->setComplexBlock("result_table#"  . ($key1 + 1) . "#" . ($key2 + 1), $table);
+                }
+
+                // /////DRAW TREND
+                $target_float = array_values(array_filter($target_list, function ($item) {
+                    return $item->type_data == "float";
+                }));
+                $templateProcessor->cloneBlock("target_block#"  . ($key1 + 1), count($target_float), true, true);
+                for ($i = 0; $i < count($target_float); $i++) {
+                    $target = $target_float[$i];
+                    $templateProcessor->setValue("target_name#"  . ($key1 + 1) . "#" . ($i + 1), $target->name);
+                    $templateProcessor->setValue("target_name_en#"  . ($key1 + 1) . "#" . ($i + 1), $target->name_en);
+
+                    $fre_list = $this->result_model->set_value_export($params)->where("system_id", $system->id)->where("target_id", $target->id)->group_by("type_bc")->get_all();
+
+                    $templateProcessor->cloneBlock("fre_block#"  . ($key1 + 1) . "#" . ($i + 1), count($fre_list), true, true);
+                    for ($j = 0; $j < count($fre_list); $j++) {
+                        $fre = $fre_list[$j];
+                        $type_bc = $fre->type_bc;
+                        $type_bc_name = $list_type[$type_bc];
+                        $type_bc_name_en = $list_type_en[$type_bc];
+                        $templateProcessor->setValue("fre_name#"  . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $type_bc_name);
+                        $templateProcessor->setValue("fre_name_en#"  . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $type_bc_name_en);
+
+                        $name_chart = $object_id . "_" . $target->id . "_" . $system->id . "_" . $type_bc . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+
+                        $templateProcessor->setImageValue("chart_image#"  . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                    }
+                }
+            }
+
             // die();
             $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . "_" . time() . ".docx";
             $name_file = urlencode($name_file);
