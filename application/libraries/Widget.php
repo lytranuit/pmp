@@ -12,6 +12,7 @@ class Widget
     {
         $this->CI = &get_instance();
         $this->CI->lang->load(array('home'));
+        // $this->data['ion_auth'] =  $this->CI->ion_auth;
         //        $this->CI->load->model("user_model");
         //        $this->data['is_login'] = $this->CI->user_model->logged_in();
         //        $this->data['userdata'] = $this->CI->session->userdata();

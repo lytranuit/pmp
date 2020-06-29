@@ -111,6 +111,7 @@
                         Audit Trail
                     </a>
                 </li>
+                @if($ion_auth->is_admin())
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fa fa-lock"></i>
@@ -133,7 +134,6 @@
                     </ul>
 
                 </li>
-
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fas fa-columns"></i>
@@ -197,6 +197,7 @@
                         </li>
                     </ul>
                 </li>
+                @endif
             </ul>
         </div>
     </div>

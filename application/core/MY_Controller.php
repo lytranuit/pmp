@@ -19,6 +19,7 @@ class MY_Controller extends CI_Controller
         $this->lang->load(array('home'));
         ////
         $this->data['widget'] = $this->widget;
+        $this->data['ion_auth'] = $this->ion_auth;
         $this->data['project_name'] = $this->config->item("project_name");
         $this->data['stylesheet_tag'] = array();
         $this->data['javascript_tag'] = array(

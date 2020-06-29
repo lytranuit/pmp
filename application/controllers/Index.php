@@ -134,16 +134,24 @@ class Index extends MY_Controller
 
     function login()
     {
+        $this->load->model("user_model");
         $this->data['title'] = lang('login');
         if ($this->input->post('identity') != "" && $this->input->post('password') != "") {
             // check to see if the user is logging in
             // check for "remember me"
             $remember = (bool) $this->input->post('remember');
             if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember)) {
+                /// Log audit trail
+                $text =   "USER '" . $this->session->userdata('username') . "' login successfully!";
+                $this->user_model->trail(1, "insert", null, null, null, $text);
+
                 redirect('/report', 'refresh');
             } else {
                 // if the login was un-successful
                 // redirect them back to the login page
+                $text =   $this->input->post('identity') . " login failed!";
+                $this->user_model->trail(1, "insert", null, null, null, $text);
+
                 $this->session->set_flashdata('message', lang('alert_501'));
                 redirect('index/login', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
             }
@@ -159,7 +167,11 @@ class Index extends MY_Controller
     function logout()
     {
 
+        $this->load->model("user_model");
         $this->data['title'] = "Logout";
+
+        $text =   "USER '" . $this->session->userdata('username') . "' logout!";
+        $this->user_model->trail(1, "insert", null, null, null, $text);
 
         // log the user out
         $logout = $this->ion_auth->logout();

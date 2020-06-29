@@ -204,7 +204,10 @@ class Dashboard extends MY_Controller
             'date' => date("Y-m-d H:i:s"),
             'user_id' => $this->data['userdata']['user_id']
         );
-        $this->report_model->insert($data_up);
+        $id = $this->report_model->insert($data_up);
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' print 1 report";
+        $this->report_model->trail($id, "insert", null, $data_up, null, $text);
         $params = array(
             'type' => $type,
             'selector' => $selector,
