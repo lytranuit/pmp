@@ -435,7 +435,7 @@
                 for (target of all_target) {
                     let data = target['data'];
                     let target_html = $('#target_html').html();
-                    console.log(target);
+                    // console.log(target);
                     if (target['parent']) {
                         target['name'] += " (" + target['parent']['name'] + ")";
                     }
@@ -466,7 +466,7 @@
                         ...data
                     };
 
-                    $('#chart-' + target['id']).highcharts(options);
+                    $('.chart-' + target['id']).highcharts(options);
                 }
                 $(".page-loader-wrapper").hide();
             }
