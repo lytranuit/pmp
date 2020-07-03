@@ -22,7 +22,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Workshop:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id">
                                         @foreach ($workshop as $row)
