@@ -244,7 +244,7 @@ class Dashboard extends MY_Controller
                 $target = $row->target;
                 $params['type_bc'] = $row->type_bc;
 
-                $params['department_id'] = $row->department_id;
+                // $params['department_id'] = $row->department_id;
                 $params['system_id'] = $row->system_id;
                 $params['target_id'] = $row->target_id;
                 $title = "Trend chart of $target->name_en";
@@ -253,7 +253,7 @@ class Dashboard extends MY_Controller
                 $params['subtitle'] = $subtitle;
                 $data = $this->result_model->chart_data_nuoc($params);
 
-                $row->department_id = $row->system_id . "_" . $row->type_bc;
+                $row->department_id = $row->workshop_id . "_" . $row->system_id . "_" . $row->type_bc;
                 $row->data = $data;
                 $results[] = $row;
             }
@@ -394,6 +394,7 @@ class Dashboard extends MY_Controller
 
 
         $system_id = $this->input->get('system_id', TRUE);
+        $workshop_id = $this->input->get('workshop_id', TRUE);
         $type = $this->input->get('type', TRUE);
         $selector = $this->input->get('selector', TRUE);
         $daterange = $this->input->get('daterange', TRUE);
@@ -413,13 +414,13 @@ class Dashboard extends MY_Controller
             echo json_encode(array());
             die();
         }
-        $department = $this->system_model->where(array('id' => $system_id))->as_object()->get();
         $params['system_id'] = $system_id;
+        $params['workshop_id'] = $workshop_id;
 
 
         $title = "";
         $subtitle = "";
-        $list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('system_id' => $system_id, 'deleted' => 0, 'object_id' => $object_id))->with_position()->group_by("type_bc")->get_all();
+        $list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('system_id' => $system_id, 'workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_position()->group_by("type_bc")->get_all();
         // echo "<pre>";
         // print_r($list);
         // die();
@@ -436,7 +437,7 @@ class Dashboard extends MY_Controller
         foreach ($list as $row) {
             $type_bc = $row->type_bc;
             $name_bc = $list_type[$type_bc];
-            $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('system_id' => $system_id, 'deleted' => 0, 'object_id' => $object_id))->where("type_bc", $type_bc)->group_by("target_id")->get_all();
+            $target_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('system_id' => $system_id, 'workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->where("type_bc", $type_bc)->group_by("target_id")->get_all();
             // echo "<pre>";
             // print_r($target_list);
             // die();
@@ -455,24 +456,8 @@ class Dashboard extends MY_Controller
                 }
                 $params['target_id'] = $target->id;
                 $params['type_bc'] = $type_bc;
-                if ($this->data['object_id'] == 3) {
-                    $title = "Biểu đồ xu hướng vi sinh nhân viên $department->name ($department->string_id)";
-                    $subtitle = "Trend chart of microbiological monitoring of Personnel $department->name ($department->string_id)";
-                } else if ($this->data['object_id'] == 14 || $this->data['object_id'] == 15) {
-                    if ($target->id == 14 || $target->id == 15) {
-                        $title = "Trend chart of non viable particles size (≥ 5.0 µm)";
-                    } else {
-                        $title = "Trend chart of non viable particles size (≥ 0.5 µm)";
-                    }
-
-                    $subtitle = "";
-                } else if ($this->data['object_id'] == 10 || $this->data['object_id'] == 11) {
-                    $title = "Trend chart of microbiological monitoring";
-                    $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
-                } else {
-                    $title = "Trend chart of $target->name_en";
-                    $subtitle = "";
-                }
+                $title = "Trend chart of $target->name_en";
+                $subtitle = "";
                 $params['title'] = $title;
                 $params['subtitle'] = $subtitle;
                 // print_r($params);

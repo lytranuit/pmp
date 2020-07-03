@@ -137,7 +137,7 @@ class Workshop extends MY_Controller
         }
 
         $this->load->model("workshop_model");
-        $data = $this->workshop_model->where(array("deleted" => 0, 'factory_id' => $id))->as_object()->get_all();
+        $data = $this->workshop_model->where(array("deleted" => 0, 'factory_id' => $id))->order_by("name", "ASC")->as_object()->get_all();
         echo json_encode($data);
     }
     public function add()

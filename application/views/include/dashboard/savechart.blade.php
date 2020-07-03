@@ -139,8 +139,6 @@
                     },
                     success: function() {
                         count_upload++;
-                        console.log(count_upload)
-                        console.log(count_chart)
                         if (count_upload >= count_chart) {
                             location.href = path + "report/";
                         }

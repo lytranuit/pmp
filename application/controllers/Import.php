@@ -734,7 +734,7 @@ class Import extends MY_Controller
             $this->workshop_model->where(array('id' => 8))->as_object()->get(), ///NON BETA TIEM
             $this->workshop_model->where(array('id' => 8))->as_object()->get(), ///NON BETA TIEM
             $this->workshop_model->where(array('id' => 11))->as_object()->get(), ///NON BETA VIEN
-            $this->workshop_model->where(array('id' => 10))->as_object()->get(), ///NON BETA VIEN
+            $this->workshop_model->where(array('id' => 10))->as_object()->get(), ///NON BETA QC
 
         );
         $temp_type_bc = array(

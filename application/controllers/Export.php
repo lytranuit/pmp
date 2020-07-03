@@ -2376,6 +2376,8 @@ class Export extends MY_Controller
             // print_r($workshop);
             // print_r($system_list);
             // die();
+            //Get main section
+
             $file = APPPATH . '../public/upload/template/template_nuoc.docx';
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
             $list_type = array(
@@ -2718,7 +2720,7 @@ class Export extends MY_Controller
                         $templateProcessor->setValue("fre_name#"  . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $type_bc_name);
                         $templateProcessor->setValue("fre_name_en#"  . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $type_bc_name_en);
 
-                        $name_chart = $object_id . "_" . $target->id . "_" . $system->id . "_" . $type_bc . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+                        $name_chart = $object_id . "_" . $target->id . "_" . $workshop_id . "_" . $system->id . "_" . $type_bc . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
                         $templateProcessor->setImageValue("chart_image#"  . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
                     }
@@ -2770,6 +2772,26 @@ class Export extends MY_Controller
             }
         }
         echo 1;
+    }
+    function test()
+    {
+
+        $phpWord = \PhpOffice\PhpWord\IOFactory::load(APPPATH . '../public/upload/template/vitri/nuoc.docx');
+        $sections = $phpWord->getSections();
+        $section = $sections[0];
+        // echo "<pre>";
+        // print_r($section);
+        // die();
+        $file = APPPATH . '../public/upload/template/template_test.docx';
+        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+        $templateProcessor->setComplexBlock("result_table", $section);
+
+        $name_file = time() . ".docx";
+        $name_file = urlencode($name_file);
+        if (!file_exists(APPPATH . '../public/export')) {
+            mkdir(APPPATH . '../public/export', 0777, true);
+        }
+        $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
     }
     ////////////
 }

@@ -149,15 +149,15 @@ class Position extends MY_Controller
 
             $this->load->model("workshop_model");
             $factory_id = isset($this->data['factory'][0]->id) ? $this->data['factory'][0]->id : 0;
-            $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $factory_id))->as_object()->get_all();
+            $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $factory_id))->order_by("name", "ASC")->as_object()->get_all();
 
             $this->load->model("area_model");
             $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
-            $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
+            $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->order_by("name", "ASC")->as_object()->get_all();
 
             $this->load->model("department_model");
             $area_id = isset($this->data['area'][0]->id) ? $this->data['area'][0]->id : 0;
-            $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $area_id))->as_object()->get_all();
+            $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $area_id))->order_by("name", "ASC")->as_object()->get_all();
 
             $this->load->model("target_model");
             $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();
@@ -194,13 +194,13 @@ class Position extends MY_Controller
             $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
 
             $this->load->model("workshop_model");
-            $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $tin->factory_id))->as_object()->get_all();
+            $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $tin->factory_id))->order_by("name", "ASC")->as_object()->get_all();
 
             $this->load->model("area_model");
-            $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $tin->workshop_id))->as_object()->get_all();
+            $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $tin->workshop_id))->order_by("name", "ASC")->as_object()->get_all();
 
             $this->load->model("department_model");
-            $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $tin->area_id))->as_object()->get_all();
+            $this->data['department'] = $this->department_model->where(array('deleted' => 0, 'area_id' => $tin->area_id))->order_by("name", "ASC")->as_object()->get_all();
 
             $this->load->model("target_model");
             $this->data['target'] = $this->target_model->where(array('deleted' => 0))->as_object()->get_all();

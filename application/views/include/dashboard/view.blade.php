@@ -479,7 +479,7 @@
                     $(".page-loader-wrapper").hide();
                     return;
                 }
-                // var target_id = $("[name=target_id]").val();
+                var workshop_id = $(".workshop_id").val();
                 let type = $(".type_data.active input").val();
                 let selector = $("#the_selector").val();
                 let daterange = $("#daterange").val();
@@ -488,7 +488,7 @@
                     url: path + 'dashboard/chartdatanuoc',
                     data: {
                         system_id: system_id,
-                        // target_id: target_id,
+                        workshop_id: workshop_id,
                         type: type,
                         selector: selector,
                         daterange: daterange
