@@ -154,6 +154,12 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{base_url()}}diagram/">
+                                <i class="metismenu-icon"></i>
+                                Diagram
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{base_url()}}factory/">
                                 <i class="metismenu-icon"></i>
                                 Factory

@@ -26,6 +26,8 @@ class Export extends MY_Controller
         $this->load->model("objecttarget_model");
         $this->load->model("object_model");
         $this->load->model("system_model");
+        $this->load->model("diagram_model");
+        $this->load->model("diagram_position_model");
         $record = $this->report_model->where(array("id" => $id_record))->get();
         // print_r($record);
         // die();
@@ -716,6 +718,25 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+
+            ////BLOCK DIAGRAM
+            $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
+            $position_list = array_map(function ($item) {
+                return $item->position_id;
+            }, $position_list);
+            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "image")))->group_by("diagram_id")->get_all();
+            $diagram_list = array_map(function ($item) {
+                return $item->diagram;
+            }, $diagram_list);
+            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+            foreach ($diagram_list as $key => $row) {
+                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                if (isset($row->image->src))
+                    $templateProcessor->setImageValue("diagram_image#"  . ($key + 1), array('path' => APPPATH . '../' . $row->image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                else
+                    $templateProcessor->setValue("diagram_image#" . ($key + 1), "");
+            }
             // $target_list;
             ///TABLE LIMIT
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
@@ -1107,6 +1128,25 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+
+            ////BLOCK DIAGRAM
+            $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
+            $position_list = array_map(function ($item) {
+                return $item->position_id;
+            }, $position_list);
+            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "image")))->group_by("diagram_id")->get_all();
+            $diagram_list = array_map(function ($item) {
+                return $item->diagram;
+            }, $diagram_list);
+            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+            foreach ($diagram_list as $key => $row) {
+                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                if (isset($row->image->src))
+                    $templateProcessor->setImageValue("diagram_image#"  . ($key + 1), array('path' => APPPATH . '../' . $row->image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                else
+                    $templateProcessor->setValue("diagram_image#" . ($key + 1), "");
+            }
             // $target_list;
             ///TABLE LIMIT
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
@@ -1540,6 +1580,25 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+
+            ////BLOCK DIAGRAM
+            $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
+            $position_list = array_map(function ($item) {
+                return $item->position_id;
+            }, $position_list);
+            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "image")))->group_by("diagram_id")->get_all();
+            $diagram_list = array_map(function ($item) {
+                return $item->diagram;
+            }, $diagram_list);
+            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+            foreach ($diagram_list as $key => $row) {
+                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                if (isset($row->image->src))
+                    $templateProcessor->setImageValue("diagram_image#"  . ($key + 1), array('path' => APPPATH . '../' . $row->image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                else
+                    $templateProcessor->setValue("diagram_image#" . ($key + 1), "");
+            }
             // $target_list;
             ///TABLE LIMIT
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
@@ -1946,6 +2005,25 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+
+            ////BLOCK DIAGRAM
+            $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
+            $position_list = array_map(function ($item) {
+                return $item->position_id;
+            }, $position_list);
+            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "image")))->group_by("diagram_id")->get_all();
+            $diagram_list = array_map(function ($item) {
+                return $item->diagram;
+            }, $diagram_list);
+            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+            foreach ($diagram_list as $key => $row) {
+                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                if (isset($row->image->src))
+                    $templateProcessor->setImageValue("diagram_image#"  . ($key + 1), array('path' => APPPATH . '../' . $row->image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                else
+                    $templateProcessor->setValue("diagram_image#" . ($key + 1), "");
+            }
             // $target_list;
             ///TABLE LIMIT
 
@@ -2327,6 +2405,10 @@ class Export extends MY_Controller
             $params['workshop_id'] = $workshop_id;
             $params['object_id'] = $object_id;
             ///////DATA
+
+            // echo "<pre>";
+            // print_r($diagram_list);
+            // die();
             $target_results = $this->result_model->set_value_export($params)->with_target()->group_by("target_id")->get_all();
             $target_parent = $target_list = array();
             foreach ($target_results as $temp) {
@@ -2372,6 +2454,7 @@ class Export extends MY_Controller
             usort($system_list, function ($a, $b) {
                 return strcmp($a->name, $b->name);
             });
+
             // echo "<pre>";
             // print_r($workshop);
             // print_r($system_list);
@@ -2438,6 +2521,24 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+            ////BLOCK DIAGRAM
+            $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
+            $position_list = array_map(function ($item) {
+                return $item->position_id;
+            }, $position_list);
+            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "image")))->group_by("diagram_id")->get_all();
+            $diagram_list = array_map(function ($item) {
+                return $item->diagram;
+            }, $diagram_list);
+            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+            foreach ($diagram_list as $key => $row) {
+                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                if (isset($row->image->src))
+                    $templateProcessor->setImageValue("diagram_image#"  . ($key + 1), array('path' => APPPATH . '../' . $row->image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                else
+                    $templateProcessor->setValue("diagram_image#" . ($key + 1), "");
+            }
             // $target_list;
             ///TABLE LIMIT
 

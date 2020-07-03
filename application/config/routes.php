@@ -64,13 +64,13 @@ $route['default_controller'] = 'index';
 $route['404_override'] = 'index/page_404';
 $route['translate_uri_dashes'] = FALSE;
 
-require_once( BASEPATH . '/database/DB.php');
-$db = &DB();
-$query = $db->get('tbl_page');
-$result = $query->result_array();
-foreach ($result as $row) {
-    $route[$row['seo_url']] = $row['link'] . "/" . $row['param'];
-}
+//require_once( BASEPATH . '/database/DB.php');
+//$db = &DB();
+//$query = $db->get('tbl_page');
+//$result = $query->result_array();
+//foreach ($result as $row) {
+//    $route[$row['seo_url']] = $row['link'] . "/" . $row['param'];
+//}
 //echo "<pre>";
 //print_r($route);
 //die();

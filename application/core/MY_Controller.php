@@ -11,7 +11,7 @@ class MY_Controller extends CI_Controller
     {
         parent::__construct();
         $this->load->library(array('widget', 'ion_auth'));
-        $this->load->model("page_model");
+        // $this->load->model("page_model");
         //        $this->load->model("user_model");
         //        echo language_current();
         ////// set langue
@@ -38,16 +38,16 @@ class MY_Controller extends CI_Controller
         //        echo $class;
         //        die();
         $link = $module == "" ? $class . "/" . $method : $module . "/" . $class . "/" . $method;
-        $page = $this->page_model->where(array("deleted" => 0, 'link' => $link))->as_array()->get_all();
-        if (count($page)) {
-            $this->data['content'] = $class . "." . $method;
-            $this->data['template'] = $page[0]['template'];
-            $this->data['title'] = $page[0]['page'];
-        } else { //////// Default
-            $this->data['content'] = $class . "." . $method;
-            $this->data['template'] = "template";
-            $this->data['title'] = "";
-        }
+        // $page = $this->page_model->where(array("deleted" => 0, 'link' => $link))->as_array()->get_all();
+        // if (count($page)) {
+        //     $this->data['content'] = $class . "." . $method;
+        //     $this->data['template'] = $page[0]['template'];
+        //     $this->data['title'] = $page[0]['page'];
+        // } else { //////// Default
+        $this->data['content'] = $class . "." . $method;
+        $this->data['template'] = "template";
+        $this->data['title'] = "";
+        // }
 
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
         $this->data['object_id'] = $object_id;
