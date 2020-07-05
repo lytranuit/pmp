@@ -44,11 +44,11 @@
                                 <label class="btn btn-light type_data">
                                     <input type="radio" name="options" id="option4" value="HalfYear"> Half Year
                                 </label>
-                                <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option6" value="TwoYear"> 2 Years
-                                </label>
                                 <label class="btn btn-light type_data active">
                                     <input type="radio" name="options" id="option5" value="Year"> Year
+                                </label>
+                                <label class="btn btn-light type_data">
+                                    <input type="radio" name="options" id="option6" value="TwoYear"> 2 Years
                                 </label>
                             </div>
                             <select style="width: 200px;" class="form-control form-control-sm btn-group" id="the_selector">

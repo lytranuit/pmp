@@ -23,7 +23,7 @@ class Position_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'name', 'name_en', 'type_bc', 'deleted', 'string_id', 'frequency_id', 'department_id', 'frequency_name', 'target_id', 'system_id', 'area_id', 'factory_id', 'workshop_id', 'object_id'
+            'name', 'name_en', 'type_bc', 'deleted', 'string_id', 'frequency_id', 'department_id', 'frequency_name', 'frequency_name_en', 'target_id', 'system_id', 'area_id', 'factory_id', 'workshop_id', 'object_id'
         );
         $obj = array();
         foreach ($array as $key) {
