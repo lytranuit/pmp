@@ -212,8 +212,10 @@ class Diagram extends MY_Controller
     public function remove($params)
     { /////// trang ca nhan
         $this->load->model("diagram_model");
+        $this->load->model("diagram_position_model");
         $id = $params[0];
         $this->diagram_model->update(array("deleted" => 1), $id);
+        $this->diagram_position_model->where(array("diagram_id" => $id))->delete();
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

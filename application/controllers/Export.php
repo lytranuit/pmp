@@ -1744,6 +1744,75 @@ class Export extends MY_Controller
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
 
+            ////BLOCK POSITION
+            $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
+            $table->addRow(null, array('tblHeader' => true));
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Mã số', array(), $fontCell);
+            $cell1->addText('ID No.', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Vị trí lấy mẫu', array(), $fontCell);
+            $cell1->addText('Sampling location', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Tên Phòng', array(), $fontCell);
+            $cell1->addText('Room Name', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Mã số phòng', array(), $fontCell);
+            $cell1->addText('ID No. of room', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Tần suất', array(), $fontCell);
+            $cell1->addText('Frequency', array('italic' => true), $fontCell);
+
+            foreach ($area_list as $row) {
+                $table->addRow();
+                $cell1 = $table->addCell(null, array('gridSpan' => 5, 'valign' => 'center'));
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row->name . "/", array('bold' => true));
+                $textrun1->addText($row->name_en, array('bold' => true, 'italic' => true), $fontCell);
+
+                $position_list = $this->result_model->set_value_export($params)->where(array("area_id" => $row->id))->with_position()->with_department()->group_by("position_id")->get_all();
+                // echo "<pre>";
+                // print_r($position_list);
+                // die();
+                foreach ($position_list as $row2) {
+                    $position = $row2->position;
+                    $department = $row2->department;
+                    $table->addRow();
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars($position->string_id), array(), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars($position->name), array(), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars($position->name_en), array('italic' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars($department->name), array(), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars($department->name_en), array('italic' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars($department->string_id), array(), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name), array(), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), array('italic' => true), $fontCell);
+                }
+            }
+
+            $templateProcessor->setComplexBlock('table_position', $table);
+
             ////BLOCK DIAGRAM
             $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
             $position_list = array_map(function ($item) {
@@ -2168,6 +2237,76 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+
+
+            ////BLOCK POSITION
+            $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
+            $table->addRow(null, array('tblHeader' => true));
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Mã số', array(), $fontCell);
+            $cell1->addText('ID No.', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Vị trí lấy mẫu', array(), $fontCell);
+            $cell1->addText('Sampling location', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Tên Phòng', array(), $fontCell);
+            $cell1->addText('Room Name', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Mã số phòng', array(), $fontCell);
+            $cell1->addText('ID No. of room', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Tần suất', array(), $fontCell);
+            $cell1->addText('Frequency', array('italic' => true), $fontCell);
+
+            foreach ($area_list as $row) {
+                $table->addRow();
+                $cell1 = $table->addCell(null, array('gridSpan' => 5, 'valign' => 'center'));
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row->name . "/", array('bold' => true));
+                $textrun1->addText($row->name_en, array('bold' => true, 'italic' => true), $fontCell);
+
+                $position_list = $this->result_model->set_value_export($params)->where(array("area_id" => $row->id))->with_position()->with_department()->group_by("position_id")->get_all();
+                // echo "<pre>";
+                // print_r($position_list);
+                // die();
+                foreach ($position_list as $row2) {
+                    $position = $row2->position;
+                    $department = $row2->department;
+                    $table->addRow();
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars($position->string_id), array(), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars($position->name), array(), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars($position->name_en), array('italic' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars($department->name), array(), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars($department->name_en), array('italic' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars($department->string_id), array(), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name), array(), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), array('italic' => true), $fontCell);
+                }
+            }
+
+            $templateProcessor->setComplexBlock('table_position', $table);
 
             ////BLOCK DIAGRAM
             $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
@@ -2684,6 +2823,67 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+
+            ////BLOCK POSITION
+            $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
+            $table->addRow(null, array('tblHeader' => true));
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Mã số', array(), $fontCell);
+            $cell1->addText('ID No.', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Vị trí lấy mẫu', array(), $fontCell);
+            $cell1->addText('Sampling location', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Mã số phòng/Khu vực', array(), $fontCell);
+            $cell1->addText('ID No. of room/area', array('italic' => true), $fontCell);
+
+            $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
+            $cell1->addText('Tần suất', array(), $fontCell);
+            $cell1->addText('Frequency', array('italic' => true), $fontCell);
+
+            foreach ($system_list as $row) {
+                $table->addRow();
+                $cell1 = $table->addCell(null, array('gridSpan' => 4, 'valign' => 'center'));
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row->name, array('bold' => true));
+                $textrun1->addTextBreak();
+                $textrun1->addText($row->name_en, array('bold' => true, 'italic' => true), $fontCell);
+
+                $position_list = $this->result_model->set_value_export($params)->where(array("system_id" => $row->id))->with_position()->with_department()->group_by("position_id")->get_all();
+                // echo "<pre>";
+                // print_r($position_list);
+                // die();
+                foreach ($position_list as $row2) {
+                    $position = $row2->position;
+                    $department = $row2->department;
+                    $table->addRow();
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars($position->string_id), array(), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars($position->name), array(), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars($position->name_en), array('italic' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars($department->string_id), array(), $fontCell);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name), array(), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), array('italic' => true), $fontCell);
+                }
+            }
+
+            $templateProcessor->setComplexBlock('table_position', $table);
+
             ////BLOCK DIAGRAM
             $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
             $position_list = array_map(function ($item) {
