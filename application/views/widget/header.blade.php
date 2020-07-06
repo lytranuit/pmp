@@ -66,7 +66,7 @@
 </div>
 
 <div aria-labelledby="object-modalLabel" class="modal fade" id="object-modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title" id="object-modalLabel">
@@ -81,13 +81,95 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <div class="row">
-                        @foreach($objects as $row)
+                        <!-- @foreach($objects as $row)
                         <div class="col-md-3 col-4 my-4 text-center">
                             <a class="btn btn-success btn-xs object_select" href="#" data-id="{{$row['id']}}" data-name="{{$row['name']}}">
                                 {{$row['name']}}
                             </a>
                         </div>
-                        @endforeach
+                        @endforeach -->
+
+                        <div class="col-lg-6">
+                            <fieldset class="the-fieldset mb-4">
+                                <legend class="h5 text-center p-3">Vi sinh</legend>
+                                <div class="row no-glutters">
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="3" data-name="Vi sinh nhân viên">
+                                            Nhân viên
+                                        </a>
+                                    </div>
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="11" data-name="Vi sinh phòng sạch">
+                                            Phòng sạch
+                                        </a>
+                                    </div>
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="10" data-name="Vi sinh thiết bị">
+                                            Thiết bị
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-6">
+                            <fieldset class="the-fieldset mb-4">
+                                <legend class="h5 text-center p-3">Khí</legend>
+                                <div class="row no-glutters">
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="16" data-name="Khí nén">
+                                            Khí nén
+                                        </a>
+                                    </div>
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="17" data-name="Khí nitơ">
+                                            Khí nitơ
+                                        </a>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-6">
+                            <fieldset class="the-fieldset mb-4">
+                                <legend class="h5 text-center p-3">Tiểu phân</legend>
+                                <div class="row no-glutters">
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="15" data-name="Tiểu phẩn phòng sạch">
+                                            Phòng sạch
+                                        </a>
+                                    </div>
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="14" data-name="Tiểu phân thiết bị">
+                                            Thiết bị
+                                        </a>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-lg-6">
+
+                            <fieldset class="the-fieldset mb-4">
+                                <legend class="h5 text-center p-3">Nước</legend>
+                                <div class="row no-glutters">
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="19" data-name="Hơi tinh khiết">
+                                            Hơi tinh khiết
+                                        </a>
+                                    </div>
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="18" data-name="Nước pha tiêm">
+                                            Nước pha tiêm
+                                        </a>
+                                    </div>
+                                    <div class="col text-center">
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="20" data-name="Nước tinh khiết">
+                                            Nước tinh khiết
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </fieldset>
+                        </div>
                     </div>
                 </div>
             </div>
