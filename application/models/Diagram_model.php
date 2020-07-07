@@ -24,13 +24,24 @@ class Diagram_model extends MY_Model
             'get_relate' => TRUE /* another optional setting, which is explained below */
         );
 
-        $this->has_one['image'] = array('foreign_model' => 'File_model', 'foreign_table' => 'pmp_file', 'foreign_key' => 'id', 'local_key' => 'image_id');
+        $this->has_many_pivot['images'] = array(
+            'foreign_model' => 'File_model',
+            'pivot_table' => 'pmp_diagram_image',
+            'local_key' => 'id',
+            'pivot_local_key' => 'diagram_id', /* this is the related key in the pivot table to the local key
+              this is an optional key, but if your column name inside the pivot table
+              doesn't respect the format of "singularlocaltable_primarykey", then you must set it. In the next title
+              you will see how a pivot table should be set, if you want to  skip these keys */
+            'pivot_foreign_key' => 'image_id', /* this is also optional, the same as above, but for foreign table's keys */
+            'foreign_key' => 'id',
+            'get_relate' => TRUE /* another optional setting, which is explained below */
+        );
     }
 
     function create_object($data)
     {
         $array = array(
-            'name', 'name_en', 'image_id', 'deleted'
+            'name', 'name_en', 'deleted'
         );
         $obj = array();
         foreach ($array as $key) {

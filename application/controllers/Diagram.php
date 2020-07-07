@@ -145,6 +145,7 @@ class Diagram extends MY_Controller
             $data = $_POST;
             $this->load->model("diagram_model");
             $this->load->model("diagram_position_model");
+            $this->load->model("diagram_image_model");
             $data_up = $this->diagram_model->create_object($data);
             $id = $this->diagram_model->insert($data_up);
 
@@ -158,10 +159,25 @@ class Diagram extends MY_Controller
                     $this->diagram_position_model->insert($array);
                 }
             }
+            /*
+             * Image_other
+             */
+            $this->diagram_image_model->where(array('diagram_id' => $id))->delete();
+            if (isset($data['images'])) {
+                foreach ($data['images'] as $row) {
+                    $array = array(
+                        'diagram_id' => $id,
+                        'image_id' => $row
+                    );
+                    $this->diagram_image_model->insert($array);
+                }
+                // die();
+            }
             redirect('diagram', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
             load_chossen($this->data);
+            load_datatable($this->data);
             $this->load->model("position_model");
             $this->data['positions'] = $this->position_model->where(array('deleted' => 0))->as_object()->get_all();
             echo $this->blade->view()->make('page/page', $this->data)->render();
@@ -174,6 +190,7 @@ class Diagram extends MY_Controller
         if (isset($_POST['dangtin'])) {
             $this->load->model("diagram_model");
             $this->load->model("diagram_position_model");
+            $this->load->model("diagram_image_model");
             $data = $_POST;
             $data_up = $this->diagram_model->create_object($data);
             $this->diagram_model->update($data_up, $id);
@@ -188,20 +205,37 @@ class Diagram extends MY_Controller
                     $this->diagram_position_model->insert($array);
                 }
             }
+
+            /*
+             * Image_other
+             */
+            $this->diagram_image_model->where(array('diagram_id' => $id))->delete();
+            if (isset($data['images'])) {
+                foreach ($data['images'] as $row) {
+                    $array = array(
+                        'diagram_id' => $id,
+                        'image_id' => $row
+                    );
+                    $this->diagram_image_model->insert($array);
+                }
+                // die();
+            }
             // die();
             redirect('diagram', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("diagram_model");
-            $tin = $this->diagram_model->where(array('id' => $id))->with_positions()->with_image()->as_object()->get();
+            $tin = $this->diagram_model->where(array('id' => $id))->with_positions()->with_images()->as_object()->get();
             $users_groups = (array) $tin->positions;
-            //            echo "<pre>";
-            //            print_r($users_groups);
-            //            die();
             $tin->positions = array_keys($users_groups);
+            $tin->images = array_values((array) $tin->images);
+            // echo "<pre>";
+            // print_r($tin);
+            // die();
             $this->data['tin'] = $tin;
 
 
             load_chossen($this->data);
+            load_datatable($this->data);
             $this->load->model("position_model");
             $this->data['positions'] = $this->position_model->where(array('deleted' => 0))->as_object()->get_all();
             //            load_chossen($this->data);
@@ -213,9 +247,11 @@ class Diagram extends MY_Controller
     { /////// trang ca nhan
         $this->load->model("diagram_model");
         $this->load->model("diagram_position_model");
+        $this->load->model("diagram_image_model");
         $id = $params[0];
         $this->diagram_model->update(array("deleted" => 1), $id);
         $this->diagram_position_model->where(array("diagram_id" => $id))->delete();
+        $this->diagram_image_model->where(array("diagram_id" => $id))->delete();
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
