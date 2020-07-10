@@ -428,7 +428,8 @@ class Dashboard extends MY_Controller
             'TwoYear' => "Hàng Quý",
             'Year' => "Hàng tháng",
             'HalfYear' => "2 tuần / lần",
-            'Month' => "Hàng ngày"
+            'Month' => "Hàng ngày",
+            'Quarter' => "1 tuần / lần"
         );
         // foreach ($tansuat_list as $row) {
         //     $type_bc = $row['type_bc'];
