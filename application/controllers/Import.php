@@ -1211,7 +1211,6 @@ class Import extends MY_Controller
                     else
                         continue;
                 }
-
                 if ($data[$i][2] != "") {
                     $skuList = preg_split('/\r\n|\r|\n/', trim($data[$i][1]));
                     $thietbi_name = $skuList[0];
@@ -1237,6 +1236,7 @@ class Import extends MY_Controller
                 }
             }
         }
+        die();
     }
     public function vitri_nuoc_nm2()
     {
@@ -1535,7 +1535,8 @@ class Import extends MY_Controller
                         $object_id = 16;
                     } elseif ($position_string_id[0] == "E") {
                         $object_id = 10;
-                    } else {
+                    }
+                    else {
                         $object_id = 11;
                     }
                     echo $position_string_id;
@@ -2228,7 +2229,8 @@ class Import extends MY_Controller
                             $value = $row[$position->col];
                         } elseif (isset($position->col_old)) {
                             $value = $row[$position->col_old];
-                        } else {
+                        }
+                        else {
                             continue;
                         }
                         if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
@@ -2352,7 +2354,8 @@ class Import extends MY_Controller
                         $targets[$i] = 16;
                     } elseif (strpos($target_name, "5") !== FALSE) {
                         $targets[$i] = 14;
-                    } else {
+                    }
+                    else {
                         continue;
                     }
                 }
@@ -2430,7 +2433,8 @@ class Import extends MY_Controller
                             $value = $row[$position->col];
                         } elseif (isset($position->col_old)) {
                             $value = $row[$position->col_old];
-                        } else {
+                        }
+                        else {
                             continue;
                         }
                         if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
@@ -2559,7 +2563,8 @@ class Import extends MY_Controller
                         $targets[$i] = 17;
                     } elseif (strpos($target_name, "5") !== FALSE) {
                         $targets[$i] = 15;
-                    } else {
+                    }
+                    else {
                         continue;
                     }
                 }
@@ -2637,7 +2642,8 @@ class Import extends MY_Controller
                             $value = $row[$position->col];
                         } elseif (isset($position->col_old)) {
                             $value = $row[$position->col_old];
-                        } else {
+                        }
+                        else {
                             continue;
                         }
                         if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
@@ -2767,7 +2773,8 @@ class Import extends MY_Controller
                         $targets[$i] = 17;
                     } elseif (strpos($target_name, "5") !== FALSE) {
                         $targets[$i] = 15;
-                    } else {
+                    }
+                    else {
                         continue;
                     }
                 }
@@ -2846,7 +2853,8 @@ class Import extends MY_Controller
                             $value = $row[$position->col];
                         } elseif (isset($position->col_old)) {
                             $value = $row[$position->col_old];
-                        } else {
+                        }
+                        else {
                             continue;
                         }
                         if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
@@ -2975,7 +2983,8 @@ class Import extends MY_Controller
                         $targets[$i] = 17;
                     } elseif (strpos($target_name, "5") !== FALSE) {
                         $targets[$i] = 15;
-                    } else {
+                    }
+                    else {
                         continue;
                     }
                 }
@@ -3054,7 +3063,8 @@ class Import extends MY_Controller
                             $value = $row[$position->col];
                         } elseif (isset($position->col_old)) {
                             $value = $row[$position->col_old];
-                        } else {
+                        }
+                        else {
                             continue;
                         }
                         if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
@@ -3423,7 +3433,8 @@ class Import extends MY_Controller
                             $value = $row[$position->col];
                         } elseif (isset($position->col_old)) {
                             $value = $row[$position->col_old];
-                        } else {
+                        }
+                        else {
                             continue;
                         }
                         if (is_null($value) || !is_Date($date) || (!is_numeric($value) && $target->type_data == "float")) {
@@ -4091,7 +4102,7 @@ class Import extends MY_Controller
         require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
         //Đường dẫn file
         //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
-        $dir = APPPATH . '../public/upload/vitri2/data_khi';
+        $dir = APPPATH . '../public/upload/vitri2/data_visinh';
 
         echo "<pre>";
         echo $dir;
@@ -4229,8 +4240,8 @@ class Import extends MY_Controller
                 $stt_date = 1;
                 for ($i = 0; $i < count($data); $i++) {
                     $row = $data[$i];
-                    $position_string_id = $row[3];
-                    $date = $row[4];
+                    $position_string_id = $row[4];
+                    $date = $row[5];
                     if (!is_Date($date)) {
                         continue;
                     }

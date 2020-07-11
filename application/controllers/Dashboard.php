@@ -502,6 +502,9 @@ class Dashboard extends MY_Controller
         } else {
             $this->load->model("result_model");
             $data = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id, 'factory_id' => $id))->with_workshop()->group_by("workshop_id")->as_object()->get_all();
+            // echo "<pre>";
+            // print_r($data);
+            // die();
             $data = array_map(function ($item) {
                 return $item->workshop;
             }, $data);
@@ -540,6 +543,9 @@ class Dashboard extends MY_Controller
         $id = $params[0];
         $this->load->model("result_model");
         $data = $this->result_model->where(array('deleted' => 0, 'object_id' => $object_id, 'workshop_id' => $id))->with_system()->group_by("system_id")->as_object()->get_all();
+        // echo "<pre>";
+        // print_($data);
+        // die();
         $data = array_map(function ($item) {
             return $item->system;
         }, $data);
