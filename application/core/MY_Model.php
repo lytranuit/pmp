@@ -1667,7 +1667,7 @@ class MY_Model extends CI_Model
         if (!empty($previous_values)) $old_value = json_encode($previous_values);
 
         $new_value = json_encode($set); // For delete event it stores where condition
-
+        
         return $this->_database->insert(
             'user_audit_trails',
             array(

@@ -136,6 +136,7 @@ class Index extends MY_Controller
     {
         $this->load->model("user_model");
         $this->data['title'] = lang('login');
+        // $this->session->keep_flashdata('message');
         if ($this->input->post('identity') != "" && $this->input->post('password') != "") {
             // check to see if the user is logging in
             // check for "remember me"
@@ -152,13 +153,27 @@ class Index extends MY_Controller
                 $text =   $this->input->post('identity') . " login failed!";
                 $this->user_model->trail(1, "insert", null, null, null, $text);
 
-                $this->session->set_flashdata('message', lang('alert_501'));
+                $_SESSION['message'] = $this->ion_auth->errors();
+
+                // $this->data['message'] = $this->ion_auth->errors();
+                // echo $this->blade->view()->make('page/login', $this->data)->render();
                 redirect('index/login', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
+
+                // $this->session->keep_flashdata('message');
             }
         } else {
             // the user is not logging in so display the login page
             // set the flash data error message if there is one
-            $this->data['message'] = $this->session->flashdata('message');
+            // print_r($this->session->flashdata('message'));
+            // var_dump($_SESSION);
+            // exit;
+            $message = '';
+            if (isset($_SESSION['message'])) {
+                $message = $_SESSION['message'];
+                unset($_SESSION['message']);
+            }
+            $this->data['message'] = $message;;
+
             echo $this->blade->view()->make('page/login', $this->data)->render();
         }
     }
