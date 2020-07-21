@@ -51,20 +51,25 @@ class Result_model extends MY_Model
     function dateIn()
     {
     }
-    function get_date_has_data($type)
+    function get_date_has_data($params)
     {
 
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $type = $params['type'];
+        if ($object_id == 18 || $object_id == 19 || $object_id == 20)
+            $where = "where deleted = 0 and object_id = $object_id and system_id = " . $this->db->escape($params['system_id']) . " and workshop_id = " . $this->db->escape($params['workshop_id']);
+        else
+            $where = "where deleted = 0 and object_id = $object_id and department_id = " . $this->db->escape($params['department_id']);
         if ($type == "Year") {
-            $sql = "select YEAR(date) as value from pmp_result where deleted = 0 GROUP BY YEAR(date) ORDER BY date DESC";
+            $sql = "select YEAR(date) as value from pmp_result $where GROUP BY YEAR(date) ORDER BY date DESC";
         } else if ($type == "TwoYear") {
-            $sql = "select CONCAT(YEAR(DATE),'-',YEAR(DATE_SUB(DATE, INTERVAL 1 YEAR))) AS value FROM pmp_result WHERE deleted = 0 GROUP BY YEAR(DATE) ORDER BY DATE DESC";
+            $sql = "select CONCAT(YEAR(DATE),'-',YEAR(DATE_SUB(DATE, INTERVAL 1 YEAR))) AS value FROM pmp_result $where GROUP BY YEAR(DATE) ORDER BY DATE DESC";
         } else if ($type == "HalfYear") {
-            $sql = "select CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) as value from pmp_result where deleted = 0 GROUP BY CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) ORDER BY date DESC";
+            $sql = "select CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) as value from pmp_result $where GROUP BY CONCAT(YEAR(date),'-',FLOOR(QUARTER(DATE) / 3) + 1) ORDER BY date DESC";
         } else if ($type == "Quarter") {
-            $sql = "select CONCAT(YEAR(date),'-',QUARTER(date)) as value from pmp_result where deleted = 0 GROUP BY CONCAT(YEAR(date),'-',QUARTER(date)) ORDER BY date DESC";
+            $sql = "select CONCAT(YEAR(date),'-',QUARTER(date)) as value from pmp_result $where GROUP BY CONCAT(YEAR(date),'-',QUARTER(date)) ORDER BY date DESC";
         } else if ($type == "Month") {
-            $sql = "select DATE_FORMAT(date,'%Y-%m') as value from pmp_result where deleted = 0 and object_id = $object_id GROUP BY DATE_FORMAT(date,'%Y-%m') ORDER BY date DESC";
+            $sql = "select DATE_FORMAT(date,'%Y-%m') as value from pmp_result $where GROUP BY DATE_FORMAT(date,'%Y-%m') ORDER BY date DESC";
         } else {
             return array();
         }

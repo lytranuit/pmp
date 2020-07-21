@@ -476,13 +476,13 @@ class Dashboard extends MY_Controller
     }
     public function datedata()
     {
-        $type = $this->input->get('type', TRUE);
+        $params = $_GET;
         if ($this->data['object_id'] == 3) {
             $this->load->model("employeeresult_model");
-            $data = $this->employeeresult_model->get_date_has_data($type);
+            $data = $this->employeeresult_model->get_date_has_data($params);
         } else {
             $this->load->model("result_model");
-            $data = $this->result_model->get_date_has_data($type);
+            $data = $this->result_model->get_date_has_data($params);
         }
 
         echo json_encode($data);

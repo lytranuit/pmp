@@ -264,11 +264,18 @@
         $(document).ready(function() {
             $(".page-loader-wrapper").show();
             $(".department_id").change(async function() {
-                drawChart();
+
+                $(".type_data.active").trigger("click");
+                // drawChart();
             });
             $(".system_id").change(async function() {
-                drawChartNuoc();
+                $(".type_data.active").trigger("click");
+                // drawChartNuoc();
             });
+
+            $("#the_selector").change(function() {
+                $(".type_data.active").trigger("click");
+            })
             $(".area_id").change(async function() {
                 $(".page-loader-wrapper").show();
                 let value = $(this).val();
@@ -332,8 +339,8 @@
                 $(".workshop_id").html(html);
                 $(".workshop_id").trigger("change");
                 $(".page-loader-wrapper").hide();
-                /////LOAD SELECTOR
-                $(".type_data.active").trigger("click");
+                // /////LOAD SELECTOR
+                // $(".type_data.active").trigger("click");
             });
             //DATE RANGE
             $("#export_report").click(function() {
@@ -369,13 +376,10 @@
             }, function(start, end, label) {
                 console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
             });
+
             ///EVENT
-            $("#the_selector,#daterange").change(function() {
-                if (object_id > 17) {
-                    drawChartNuoc();
-                } else {
-                    drawChart();
-                }
+            $("#daterange").change(function() {
+                load_data();
             });
             $(".type_data").click(async function() {
                 let value = $("input", this).val();
@@ -386,10 +390,18 @@
                 } else {
 
                     $("#the_selector").removeClass("d-none");
+                    var department_id = $(".department_id").val();
+                    var area_id = $(".area_id").val();
+                    var workshop_id = $(".workshop_id").val();
+                    var system_id = $(".system_id").val();
                     let data = await $.ajax({
                         url: path + 'dashboard/datedata',
                         data: {
-                            type: value
+                            type: value,
+                            system_id: system_id,
+                            workshop_id: workshop_id,
+                            department_id: department_id,
+                            area_id: area_id,
                         },
                         dataType: "JSON"
                     });
@@ -398,7 +410,8 @@
                         html += "<option value='" + v.value + "'>" + v.value + "</option>";
                     })
                     $("#the_selector").html(html);
-                    $("#the_selector").trigger("change");
+                    load_data();
+                    // $("#the_selector").trigger("change");
                 }
             });
             async function drawChart() {
@@ -541,6 +554,13 @@
                 $(".page-loader-wrapper").hide();
             }
 
+            function load_data() {
+                if (object_id > 17) {
+                    drawChartNuoc();
+                } else {
+                    drawChart();
+                }
+            }
             ///////
             // $(".type_data.active").trigger("click");
 
