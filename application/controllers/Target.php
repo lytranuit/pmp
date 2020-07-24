@@ -63,6 +63,10 @@ class Target extends MY_Controller
             $data_up = $this->target_model->create_object($data);
             $id = $this->target_model->insert($data_up);
 
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' added a new target/method";
+            $this->object_model->trail($id, "insert", null, $data_up, null, $text);
+
             redirect('target', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("target_model");
@@ -80,6 +84,12 @@ class Target extends MY_Controller
             $data = $_POST;
             $data_up = $this->target_model->create_object($data);
             $this->target_model->update($data_up, $id);
+
+            /// Log audit trail
+            $data_prev = $this->object_model->where('id', $id)->as_array()->get();
+            $text =   "USER '" . $this->session->userdata('username') . "' edited a target/method";
+            $this->object_model->trail($id, "update", null, $data_up, $data_prev, $text);
+
             redirect('target', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("target_model");
@@ -98,6 +108,11 @@ class Target extends MY_Controller
         $this->load->model("target_model");
         $id = $params[0];
         $this->target_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' removed a target/method ";
+        $this->object_model->trail($id, "delete", null, null, null, $text);
+
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

@@ -134,6 +134,10 @@ class Object extends MY_Controller
             $this->load->model("object_model");
             $data_up = $this->object_model->create_object($data);
             $id = $this->object_model->insert($data_up);
+
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' added a new object";
+            $this->object_model->trail($id, "insert", null, $data_up, null, $text);
             redirect('object', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -168,6 +172,13 @@ class Object extends MY_Controller
                     $this->objecttarget_model->update($array, $row);
                 }
             }
+
+
+            /// Log audit trail
+            $data_prev = $this->object_model->where('id', $id)->as_array()->get();
+            $text =   "USER '" . $this->session->userdata('username') . "' edited a object";
+            $this->object_model->trail($id, "update", null, $data_up, $data_prev, $text);
+
             redirect('object', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("object_model");
@@ -202,6 +213,11 @@ class Object extends MY_Controller
         $this->load->model("object_model");
         $id = $params[0];
         $this->object_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' removed a user ";
+        $this->object_model->trail($id, "delete", null, null, null, $text);
+
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
@@ -216,7 +232,7 @@ class Object extends MY_Controller
     {
         $data = $_POST;
         $id = $data['id'];
-        
+
         $this->load->model("objecttarget_model");
         $this->objecttarget_model->where("id", $id)->delete();
         echo 1;

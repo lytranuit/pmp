@@ -62,7 +62,20 @@ class User extends MY_Controller
         $json_data = $this->user_model->where(array('id' => $id))->as_object()->get();
         echo json_encode($json_data);
     }
+    public function checkregister()
+    {
+        $username = $this->input->get('username');
+        $this->load->model("user_model");
+        $check = $this->user_model->where(array("username" => $username))->as_array()->get();
+        // account_creation_duplicate_identity
+        // account_creation_duplicate_email
+        if (!empty($check)) {
+            echo json_encode(array('success' => 0, 'msg' => lang('account_creation_duplicate_identity')));
+            die();
+        }
 
+        echo json_encode(array('success' => 1));
+    }
     public function add()
     { /////// trang ca nhan
         if (isset($_POST['dangtin'])) {
@@ -74,6 +87,7 @@ class User extends MY_Controller
             $result = $this->ion_auth_model->reset_password($_POST['username'], $_POST['newpassword']);
             if (isset($data['groups'])) {
                 $this->load->model("usergroup_model");
+
                 foreach ($data['groups'] as $row) {
                     $array = array(
                         'group_id' => $row,
@@ -83,6 +97,9 @@ class User extends MY_Controller
                 }
             }
 
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' added a new user";
+            $this->user_model->trail($id, "insert", null, $data_up, null, $text);
             redirect('user', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("group_model");
@@ -124,6 +141,12 @@ class User extends MY_Controller
                 );
                 $this->usergroup_model->where($array)->delete();
             }
+
+            /// Log audit trail
+            $data_prev = $this->user_model->where('id', $id)->as_array()->get();
+            $text =   "USER '" . $this->session->userdata('username') . "' edited user '" . $data['username'] . "'";
+            $this->user_model->trail($id, "update", null, $data_up, $data_prev, $text);
+
             redirect('user', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("user_model");
@@ -148,6 +171,11 @@ class User extends MY_Controller
         $this->load->model("user_model");
         $id = $params[0];
         $this->user_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' removed a user ";
+        $this->user_model->trail($id, "delete", null, null, null, $text);
+
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

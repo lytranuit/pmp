@@ -2,17 +2,17 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}user/add">Thêm User</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}user/add">Add User</a>
             </h5>
             <div class="card-body">
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Username</th>
-                            <th>Tên</th>
-                            <th>Nhóm</th>
+                            <th>Identity</th>
+                            <th>Name</th>
+                            <th>Groups</th>
                             <th>Active</th>
-                            <th>Hành động</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
