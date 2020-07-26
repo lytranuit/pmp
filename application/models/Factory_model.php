@@ -10,6 +10,7 @@ class Factory_model extends MY_Model
     {
         $this->table = 'pmp_factory';
         $this->primary_key = 'id';
+        $this->name = "factory";
         parent::__construct();
     }
 

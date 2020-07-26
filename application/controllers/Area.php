@@ -131,7 +131,7 @@ class Area extends MY_Controller
         $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
 
         $id = isset($params[0]) ? $params[0] : null;
-       
+
         if (!is_numeric($id)) {
             echo json_encode(array());
             die();
@@ -148,6 +148,8 @@ class Area extends MY_Controller
             $data_up = $this->area_model->create_object($data);
             $id = $this->area_model->insert($data_up);
 
+            /// Log audit trail
+            $this->area_model->trail($id, "insert", null, $data_up, null, null);
             redirect('area', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -168,9 +170,13 @@ class Area extends MY_Controller
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("area_model");
+            ///old
+            $data_prev = $this->area_model->where('id', $id)->as_array()->get();
             $data = $_POST;
             $data_up = $this->area_model->create_object($data);
             $this->area_model->update($data_up, $id);
+            /// Log audit trail
+            $this->area_model->trail($id, "update", null, $data_up, $data_prev, null);
             redirect('area', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("area_model");
@@ -194,6 +200,8 @@ class Area extends MY_Controller
         $this->load->model("area_model");
         $id = $params[0];
         $this->area_model->update(array("deleted" => 1), $id);
+        /// Log audit trail
+        $this->area_model->trail($id, "delete", null, null, null, null);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

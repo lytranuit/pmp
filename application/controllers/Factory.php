@@ -133,6 +133,9 @@ class Factory extends MY_Controller
             $data_up = $this->factory_model->create_object($data);
             $id = $this->factory_model->insert($data_up);
 
+            /// Log audit trail
+            $this->factory_model->trail($id, "insert", null, $data_up, null, null);
+
             redirect('factory', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             echo $this->blade->view()->make('page/page', $this->data)->render();
@@ -144,9 +147,17 @@ class Factory extends MY_Controller
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("factory_model");
+            ///old
+            $data_prev = $this->factory_model->where('id', $id)->as_array()->get();
+
             $data = $_POST;
             $data_up = $this->factory_model->create_object($data);
             $this->factory_model->update($data_up, $id);
+
+            /// Log audit trail
+            $this->factory_model->trail($id, "update", null, $data_up, $data_prev, null);
+
+
             redirect('factory', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("factory_model");
@@ -163,6 +174,10 @@ class Factory extends MY_Controller
         $this->load->model("factory_model");
         $id = $params[0];
         $this->factory_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $this->factory_model->trail($id, "delete", null, null, null, null);
+
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

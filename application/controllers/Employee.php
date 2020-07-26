@@ -64,6 +64,9 @@ class Employee extends MY_Controller
             $data_up = $this->employee_model->create_object($data);
             $id = $this->employee_model->insert($data_up);
 
+
+            /// Log audit trail
+            $this->employee_model->trail($id, "update", null, $data_up, $data_prev, null);
             redirect('employee', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             echo $this->blade->view()->make('page/page', $this->data)->render();
@@ -75,9 +78,13 @@ class Employee extends MY_Controller
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("employee_model");
+            ///old
+            $data_prev = $this->employee_model->where('id', $id)->as_array()->get();
             $data = $_POST;
             $data_up = $this->employee_model->create_object($data);
             $this->employee_model->update($data_up, $id);
+            /// Log audit trail
+            $this->employee_model->trail($id, "update", null, $data_up, $data_prev, null);
             redirect('employee', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("employee_model");
@@ -92,6 +99,8 @@ class Employee extends MY_Controller
         $this->load->model("employee_model");
         $id = $params[0];
         $this->employee_model->update(array("deleted" => 1), $id);
+        /// Log audit trail
+        $this->employee_model->trail($id, "delete", null, null, null, null);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

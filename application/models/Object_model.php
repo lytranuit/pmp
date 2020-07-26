@@ -10,6 +10,7 @@ class Object_model extends MY_Model
     {
         $this->table = 'pmp_object';
         $this->primary_key = 'id';
+        $this->name = "object";
         parent::__construct();  
         $this->has_many_pivot['targets'] = array(
             'foreign_model' => 'Target_model',

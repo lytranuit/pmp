@@ -133,7 +133,8 @@ class Systemw extends MY_Controller
             $this->load->model("system_model");
             $data_up = $this->system_model->create_object($data);
             $id = $this->system_model->insert($data_up);
-
+            /// Log audit trail
+            $this->system_model->trail($id, "insert", null, $data_up, null, null);
             redirect('systemw', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             echo $this->blade->view()->make('page/page', $this->data)->render();
@@ -145,9 +146,13 @@ class Systemw extends MY_Controller
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("system_model");
+            //old
+            $data_prev = $this->system_model->where('id', $id)->as_array()->get();
             $data = $_POST;
             $data_up = $this->system_model->create_object($data);
             $this->system_model->update($data_up, $id);
+            /// Log audit trail
+            $this->system_model->trail($id, "update", null, $data_up, $data_prev, null);
             redirect('systemw', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("system_model");
@@ -163,6 +168,8 @@ class Systemw extends MY_Controller
         $this->load->model("system_model");
         $id = $params[0];
         $this->system_model->update(array("deleted" => 1), $id);
+        /// Log audit trail
+        $this->system_model->trail($id, "delete", null, null, null, null);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

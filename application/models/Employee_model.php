@@ -10,6 +10,7 @@ class Employee_model extends MY_Model
     {
         $this->table = 'pmp_employee';
         $this->primary_key = 'id';
+        $this->name = 'employee';
         parent::__construct();
     }
 

@@ -148,6 +148,9 @@ class Workshop extends MY_Controller
             $data_up = $this->workshop_model->create_object($data);
             $id = $this->workshop_model->insert($data_up);
 
+            /// Log audit trail
+            $this->workshop_model->trail($id, "insert", null, $data_up, null, null);
+
             redirect('workshop', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -162,9 +165,15 @@ class Workshop extends MY_Controller
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("workshop_model");
+            //old
+            $data_prev = $this->workshop_model->where('id', $id)->as_array()->get();
+            
             $data = $_POST;
             $data_up = $this->workshop_model->create_object($data);
             $this->workshop_model->update($data_up, $id);
+            /// Log audit trail
+            $this->workshop_model->trail($id, "update", null, $data_up, $data_prev, null);
+
             redirect('workshop', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("workshop_model");
@@ -183,6 +192,10 @@ class Workshop extends MY_Controller
         $this->load->model("workshop_model");
         $id = $params[0];
         $this->workshop_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $this->workshop_model->trail($id, "delete", null, null, null, null);
+
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

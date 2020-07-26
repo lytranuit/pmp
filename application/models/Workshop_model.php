@@ -10,6 +10,7 @@ class Workshop_model extends MY_Model
     {
         $this->table = 'pmp_workshop';
         $this->primary_key = 'id';
+        $this->name = "department";
         parent::__construct();
         $this->has_one['factory'] = array('foreign_model' => 'Factory_model', 'foreign_table' => 'pmp_factory', 'foreign_key' => 'id', 'local_key' => 'factory_id');
     }

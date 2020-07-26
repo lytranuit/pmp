@@ -10,6 +10,7 @@ class Diagram_model extends MY_Model
     {
         $this->table = 'pmp_diagram';
         $this->primary_key = 'id';
+        $this->name = "diagram";
         parent::__construct();
         $this->has_many_pivot['positions'] = array(
             'foreign_model' => 'Position_model',

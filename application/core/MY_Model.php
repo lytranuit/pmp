@@ -148,6 +148,7 @@ class MY_Model extends CI_Model
     public $all_pages;
     public $pagination_delimiters;
     public $pagination_arrows;
+    public $name;
 
     /* validation */
     private $validated = TRUE;
@@ -1644,7 +1645,7 @@ class MY_Model extends CI_Model
      * @param null $previous_values
      * @return bool|int
      */
-    public function trail($status, $event, $table = NULL, $set = NULL, $previous_values = NULL, $description = "")
+    public function trail($status, $event, $table = NULL, $set = NULL, $previous_values = NULL, $description = null)
     {
         if ($table == NULL) $table = $this->table;
         //return without save resource
@@ -1655,7 +1656,6 @@ class MY_Model extends CI_Model
         if ($event === 'delete' && !$this->CI->config->item('track_delete')) return 1; // delete tracking not enabled
         if (in_array($table, $this->CI->config->item('not_allowed_tables'))) return 1; // table tracking not allowed
 
-
         if ($event == 'update') {
             $this->diff_on_update($previous_values, $set);
             //data has not been update
@@ -1665,8 +1665,16 @@ class MY_Model extends CI_Model
 
         $old_value = null;
         if (!empty($previous_values)) $old_value = json_encode($previous_values);
-
         $new_value = json_encode($set); // For delete event it stores where condition
+        if (is_null($description)) {
+            if ($event === 'insert') {
+                $description =   "USER '" . $this->session->userdata('username') . "' added a $this->name";
+            } elseif ($event == "update") {
+                $description =   "USER '" . $this->session->userdata('username') . "' edited a $this->name";
+            } elseif ($event == "delete") {
+                $description = "USER '" . $this->session->userdata('username') . "' removed a $this->name";
+            }
+        }
         
         return $this->_database->insert(
             'user_audit_trails',

@@ -10,6 +10,7 @@ class System_model extends MY_Model
     {
         $this->table = 'pmp_system';
         $this->primary_key = 'id';
+        $this->name = "system water";
         parent::__construct();
     }
 

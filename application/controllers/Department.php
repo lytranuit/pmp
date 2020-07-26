@@ -154,6 +154,8 @@ class Department extends MY_Controller
             $this->load->model("department_model");
             $data_up = $this->department_model->create_object($data);
             $id = $this->department_model->insert($data_up);
+            /// Log audit trail
+            $this->area_model->trail($id, "insert", null, $data_up, null, null);
             redirect('department', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -181,9 +183,12 @@ class Department extends MY_Controller
         $id = $param[0];
         if (isset($_POST['dangtin'])) {
             $this->load->model("department_model");
+            $data_prev = $this->department_model->where('id', $id)->as_array()->get();
             $data = $_POST;
             $data_up = $this->department_model->create_object($data);
             $this->department_model->update($data_up, $id);
+            /// Log audit trail
+            $this->department_model->trail($id, "update", null, $data_up, $data_prev, null);
             redirect('department', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("department_model");
@@ -208,6 +213,8 @@ class Department extends MY_Controller
         $this->load->model("department_model");
         $id = $params[0];
         $this->department_model->update(array("deleted" => 1), $id);
+        /// Log audit trail
+        $this->department_model->trail($id, "delete", null, null, null, null);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

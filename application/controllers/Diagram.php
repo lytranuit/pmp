@@ -173,6 +173,11 @@ class Diagram extends MY_Controller
                 }
                 // die();
             }
+
+
+            /// Log audit trail
+            $this->diagram_model->trail($id, "insert", null, $data_up, null, null);
+
             redirect('diagram', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 
@@ -191,6 +196,9 @@ class Diagram extends MY_Controller
             $this->load->model("diagram_model");
             $this->load->model("diagram_position_model");
             $this->load->model("diagram_image_model");
+            //old
+            $data_prev = $this->diagram_model->where('id', $id)->as_array()->get();
+
             $data = $_POST;
             $data_up = $this->diagram_model->create_object($data);
             $this->diagram_model->update($data_up, $id);
@@ -221,6 +229,9 @@ class Diagram extends MY_Controller
                 // die();
             }
             // die();
+
+            /// Log audit trail
+            $this->diagram_model->trail($id, "update", null, $data_up, $data_prev, null);
             redirect('diagram', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("diagram_model");
@@ -252,6 +263,11 @@ class Diagram extends MY_Controller
         $this->diagram_model->update(array("deleted" => 1), $id);
         $this->diagram_position_model->where(array("diagram_id" => $id))->delete();
         $this->diagram_image_model->where(array("diagram_id" => $id))->delete();
+
+
+        /// Log audit trail
+        $this->diagram_model->trail($id, "delete", null, null, null, null);
+
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
