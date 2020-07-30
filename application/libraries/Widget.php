@@ -35,10 +35,10 @@ class Widget
 
     public function footer()
     {
-        $this->CI->load->model("pageweb_model");
-        $this->data['all_page'] = $this->CI->pageweb_model->where(array("deleted" => 0, 'active' => 1))->as_array()->get_all();
-        $this->CI->load->model("option_model");
-        $this->data['options'] = $this->CI->option_model->get_options_in(array("dia_chi", 'mo_ta', 'email', 'hot_line', 'fan_page', 'phone'));
+        // $this->CI->load->model("pageweb_model");
+        // $this->data['all_page'] = $this->CI->pageweb_model->where(array("deleted" => 0, 'active' => 1))->as_array()->get_all();
+        // $this->CI->load->model("option_model");
+        // $this->data['options'] = $this->CI->option_model->get_options_in(array("dia_chi", 'mo_ta', 'email', 'hot_line', 'fan_page', 'phone'));
         echo $this->blade->view()->make('widget/footer', $this->data)->render();
     }
 
@@ -129,8 +129,8 @@ class Widget
     function page()
     {
 
-        $this->CI->load->model("pageweb_model");
-        $this->data['all_page'] = $this->CI->pageweb_model->where(array("deleted" => 0, 'active' => 1))->as_array()->get_all();
+        // $this->CI->load->model("pageweb_model");
+        // $this->data['all_page'] = $this->CI->pageweb_model->where(array("deleted" => 0, 'active' => 1))->as_array()->get_all();
 
         echo $this->blade->view()->make('widget/widget_page', $this->data)->render();
     }

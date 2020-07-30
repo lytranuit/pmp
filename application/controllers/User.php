@@ -9,6 +9,7 @@ class User extends MY_Controller
         $this->data['userdata'] = $this->session->userdata();
         $this->data['template'] = "admin";
         $this->data['title'] = "Admin";
+        $this->group = array("admin");
         $version = $this->config->item("version");
         $this->data['stylesheet_tag'] = array(
             base_url() . "public/assets/css/main.css?v=" . $version,
@@ -31,9 +32,8 @@ class User extends MY_Controller
         if (!method_exists($this, $method)) {
             show_404();
         }
-        $group = array('admin', 'manager');
 
-        if (!$this->ion_auth->in_group($group)) {
+        if (!$this->ion_auth->in_group($this->group)) {
             //redirect them to the login page
             redirect("index/login", "refresh");
         } elseif ($this->has_right($method, $params)) {
@@ -212,7 +212,7 @@ class User extends MY_Controller
             foreach ($posts as $post) {
                 $groups = "";
                 foreach ($post->groups as $row) {
-                    $groups .= "<p>$row->name</p>";
+                    $groups .= "<p>$row->description</p>";
                 }
                 $nestedData['username'] = $post->username;
                 $nestedData['last_name'] = $post->last_name;

@@ -134,6 +134,8 @@
                     </ul>
 
                 </li>
+                @endif
+                @if($ion_auth->in_group(array("admin","manager")))
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fas fa-columns"></i>

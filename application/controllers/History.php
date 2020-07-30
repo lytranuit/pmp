@@ -32,9 +32,8 @@ class History extends MY_Controller
         if (!method_exists($this, $method)) {
             show_404();
         }
-        $group = array('admin', 'manager');
 
-        if (!$this->ion_auth->in_group($group)) {
+        if (!$this->ion_auth->in_group($this->group)) {
             //redirect them to the login page
             redirect("index/login", "refresh");
         } elseif ($this->has_right($method, $params)) {
@@ -43,7 +42,6 @@ class History extends MY_Controller
             show_404();
         }
     }
-
     private function has_right($method, $params = array())
     {
 

@@ -32,9 +32,8 @@ class Employee extends MY_Controller
         if (!method_exists($this, $method)) {
             show_404();
         }
-        $group = array('admin', 'manager');
 
-        if (!$this->ion_auth->in_group($group)) {
+        if (!$this->ion_auth->in_group($this->group)) {
             //redirect them to the login page
             redirect("index/login", "refresh");
         } elseif ($this->has_right($method, $params)) {
@@ -43,6 +42,7 @@ class Employee extends MY_Controller
             show_404();
         }
     }
+
 
     private function has_right($method, $params = array())
     {
@@ -61,12 +61,13 @@ class Employee extends MY_Controller
         if (isset($_POST['dangtin'])) {
             $data = $_POST;
             $this->load->model("employee_model");
+
             $data_up = $this->employee_model->create_object($data);
             $id = $this->employee_model->insert($data_up);
 
 
             /// Log audit trail
-            $this->employee_model->trail($id, "update", null, $data_up, $data_prev, null);
+            $this->employee_model->trail($id, "insert", null, $data_up, null, null);
             redirect('employee', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             echo $this->blade->view()->make('page/page', $this->data)->render();

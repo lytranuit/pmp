@@ -1,8 +1,10 @@
 <?php
 
-class Admin extends MY_Controller {
+class Admin extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         $this->data['userdata'] = $this->session->userdata();
@@ -24,14 +26,15 @@ class Admin extends MY_Controller {
         );
     }
 
-    public function _remap($method, $params = array()) {
+
+    public function _remap($method, $params = array())
+    {
         if (!method_exists($this, $method)) {
             show_404();
         }
-        $group = array('admin', 'manager');
 
-        if (!$this->ion_auth->in_group($group)) {
-//redirect them to the login page
+        if (!$this->ion_auth->in_group($this->group)) {
+            //redirect them to the login page
             redirect("index/login", "refresh");
         } elseif ($this->has_right($method, $params)) {
             $this->$method($params);
@@ -40,82 +43,85 @@ class Admin extends MY_Controller {
         }
     }
 
-    private function has_right($method, $params = array()) {
+
+    private function has_right($method, $params = array())
+    {
 
         /*
          * SET PERMISSION
          */
-//        $role_user = $this->session->userdata('role');
-//        $this->user_model->set_permission($role_user);
-//
-//        /* Change method */
-//        switch ($method) {
-//            case 'updatetintuc':
-//                $method = 'edittintuc';
-//                break;
-//            case 'editmenu':
-//                $method = 'quanlymenu';
-//                break;
-//            case 'updatenoibat':
-//                $method = 'editnoibat';
-//                break;
-//            case 'updatenoibo':
-//                $method = 'editnoibo';
-//                break;
-//            case 'updateproduct':
-//                $method = 'editproduct';
-//                break;
-//            case 'viewtin':
-//                $method = 'quanlynoibo';
-//                break;
-//            case 'updatepage':
-//                $method = "editpage";
-//                break;
-//            case 'slider':
-//            case 'saveslider':
-//            case 'gioithieu':
-//            case 'savegioithieu':
-//            case 'quanlycategory':
-//            case 'themcategory':
-//            case 'editcategory':
-//            case 'updatecategory':
-//            case 'removecategory':
-//            case 'quanlyclient':
-//            case 'themclient':
-//            case 'editclient':
-//            case 'updateclient':
-//            case 'removeclient':
-//            case 'quanlyhappy':
-//            case 'themhappy':
-//            case 'edithappy':
-//            case 'updatehappy':
-//            case 'removehappy':
-//                $method = 'trangchu';
-//                break;
-//        }
-//        if (has_permission($method) && !is_permission($method)) {
-//            return false;
-//        }
+        //        $role_user = $this->session->userdata('role');
+        //        $this->user_model->set_permission($role_user);
+        //
+        //        /* Change method */
+        //        switch ($method) {
+        //            case 'updatetintuc':
+        //                $method = 'edittintuc';
+        //                break;
+        //            case 'editmenu':
+        //                $method = 'quanlymenu';
+        //                break;
+        //            case 'updatenoibat':
+        //                $method = 'editnoibat';
+        //                break;
+        //            case 'updatenoibo':
+        //                $method = 'editnoibo';
+        //                break;
+        //            case 'updateproduct':
+        //                $method = 'editproduct';
+        //                break;
+        //            case 'viewtin':
+        //                $method = 'quanlynoibo';
+        //                break;
+        //            case 'updatepage':
+        //                $method = "editpage";
+        //                break;
+        //            case 'slider':
+        //            case 'saveslider':
+        //            case 'gioithieu':
+        //            case 'savegioithieu':
+        //            case 'quanlycategory':
+        //            case 'themcategory':
+        //            case 'editcategory':
+        //            case 'updatecategory':
+        //            case 'removecategory':
+        //            case 'quanlyclient':
+        //            case 'themclient':
+        //            case 'editclient':
+        //            case 'updateclient':
+        //            case 'removeclient':
+        //            case 'quanlyhappy':
+        //            case 'themhappy':
+        //            case 'edithappy':
+        //            case 'updatehappy':
+        //            case 'removehappy':
+        //                $method = 'trangchu';
+        //                break;
+        //        }
+        //        if (has_permission($method) && !is_permission($method)) {
+        //            return false;
+        //        }
         /* Tin đăng check */
-//        $fun_tin = array(
-//            "edittin",
-//            "activate_tin",
-//            "deactivate_tin",
-//            "remove_tin",
-//        );
-//        if (in_array($method, $fun_tin)) {
-//            $id = $params[0];
-//            $id_user = $this->session->userdata('user_id');
-//            $this->load->model("tin_model");
-//            $tin = $this->tin_model->where(array('deleted' => 0, 'id_user' => $id_user, 'id_tin' => $id))->as_array()->get_all();
-//            if (!count($tin)) {
-//                return false;
-//            }
-//        }
+        //        $fun_tin = array(
+        //            "edittin",
+        //            "activate_tin",
+        //            "deactivate_tin",
+        //            "remove_tin",
+        //        );
+        //        if (in_array($method, $fun_tin)) {
+        //            $id = $params[0];
+        //            $id_user = $this->session->userdata('user_id');
+        //            $this->load->model("tin_model");
+        //            $tin = $this->tin_model->where(array('deleted' => 0, 'id_user' => $id_user, 'id_tin' => $id))->as_array()->get_all();
+        //            if (!count($tin)) {
+        //                return false;
+        //            }
+        //        }
         return true;
     }
 
-    public function index() { /////// trang ca nhan
+    public function index()
+    { /////// trang ca nhan
         $this->load->model("saleorder_model");
         $this->load->model("debt_model");
         $this->load->model("product_model");
@@ -124,16 +130,17 @@ class Admin extends MY_Controller {
         $this->data['amount_sale_in_day'] = $this->saleorder_model->amount_sale_in_day();
         $this->data['amount_debt'] = $this->debt_model->amount_debt();
         $this->data['amount_debt_has_order'] = $this->saleorder_model->amount_debt_has_order();
-//        $this->data['amount_food'] = 
-//        print_r($count_product);
-//        die();
+        //        $this->data['amount_food'] = 
+        //        print_r($count_product);
+        //        die();
         load_datatable($this->data);
         array_push($this->data['javascript_tag'], base_url() . "public/assets/color-hash.js");
         array_push($this->data['javascript_tag'], base_url() . "public/admin/vendor/charts/charts-bundle/Chart.bundle.js");
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 
-    public function account() { /////// trang ca nhan
+    public function account()
+    { /////// trang ca nhan
         $id_user = $this->session->userdata('user_id');
         $this->load->model("user_model");
         if (isset($_POST['edit_user'])) {
@@ -153,7 +160,8 @@ class Admin extends MY_Controller {
         }
     }
 
-    function changepass() {
+    function changepass()
+    {
         $id_user = $this->session->userdata('user_id');
         $this->load->model("user_model");
         if (!isset($_POST['password']) || (isset($_POST['password']) && $this->ion_auth->hash_password_db($id_user, $_POST['password']) === FALSE)) {
@@ -174,7 +182,8 @@ class Admin extends MY_Controller {
      * UPload hình ảnh
      */
 
-    public function uploadimage() {
+    public function uploadimage()
+    {
         ini_set('post_max_size', '64M');
         ini_set('upload_max_filesize', '64M');
         $this->load->helper('file');
@@ -308,7 +317,8 @@ class Admin extends MY_Controller {
         }
     }
 
-    public function uploadhinhanh() {
+    public function uploadhinhanh()
+    {
         ini_set('post_max_size', '64M');
         ini_set('upload_max_filesize', '64M');
         $this->load->helper('file');
@@ -460,7 +470,8 @@ class Admin extends MY_Controller {
         }
     }
 
-    public function uploadfile() {
+    public function uploadfile()
+    {
         ini_set('post_max_size', '64M');
         ini_set('upload_max_filesize', '64M');
         $this->load->helper('file');
@@ -477,9 +488,9 @@ class Admin extends MY_Controller {
         $files = $_FILES;
 
         $file_count = count($_FILES['file_up']['name']);
-//        echo "<pre>";
-//        print_r($_FILES['file_up']);
-//        die();
+        //        echo "<pre>";
+        //        print_r($_FILES['file_up']);
+        //        die();
         for ($i = 0; $i < $file_count; $i++) {
 
             $ext = pathinfo($_FILES['file_up']['name'][$i], PATHINFO_EXTENSION);
@@ -622,7 +633,8 @@ class Admin extends MY_Controller {
         }
     }
 
-    public function checkusername() {
+    public function checkusername()
+    {
         $username = $this->input->get('username');
         $this->load->model("user_model");
         $check = $this->user_model->where(array("username" => $username))->as_array()->get_all();
@@ -633,7 +645,8 @@ class Admin extends MY_Controller {
         }
     }
 
-    function changepasswithout() {
+    function changepasswithout()
+    {
         $id_user = $this->input->post('id_user');
         $this->load->model("user_model");
         $this->load->model("ion_auth_model");
@@ -643,9 +656,9 @@ class Admin extends MY_Controller {
         }
         $user = $this->user_model->where(array("id" => $id_user))->as_object()->get();
         $user_name = $user->username;
-//        print_r($additional_data);
-//        echo $id_user;
-//        die();
+        //        print_r($additional_data);
+        //        echo $id_user;
+        //        die();
 
         $result = $this->ion_auth_model->reset_password($user_name, $_POST['newpassword']);
         if ($result) {
@@ -657,7 +670,8 @@ class Admin extends MY_Controller {
         }
     }
 
-    public function deleteImage($params) {//gets the job done but you might want to add error checking and security
+    public function deleteImage($params)
+    { //gets the job done but you might want to add error checking and security
         $this->load->model('hinhanh_model');
         $id = $params[0];
         $file = $this->hinhanh_model->where('id_hinhanh', $id)->as_array()->get();
@@ -679,26 +693,27 @@ class Admin extends MY_Controller {
         }
         $data = array('deleted' => 1);
         $this->hinhanh_model->update($data, $id);
-//        $info = new StdClass;
-//        $info->sucess = $success;
-//        if (IS_AJAX) {
-////I don't think it matters if this is set but good for error checking in the console/firebug
-//            echo json_encode(array($info));
-//        } else {
-////here you will need to decide what you want to show for a successful delete        
-//            $file_data['delete_data'] = $file;
-////$this->load->view('admin/delete_success', $file_data);
-//        }
+        //        $info = new StdClass;
+        //        $info->sucess = $success;
+        //        if (IS_AJAX) {
+        ////I don't think it matters if this is set but good for error checking in the console/firebug
+        //            echo json_encode(array($info));
+        //        } else {
+        ////here you will need to decide what you want to show for a successful delete        
+        //            $file_data['delete_data'] = $file;
+        ////$this->load->view('admin/delete_success', $file_data);
+        //        }
         echo json_encode(1);
     }
 
 
-    function _load_language() {
+    function _load_language()
+    {
         $translations = array();
         $arrray_lang = $this->config->item("language_list");
         foreach ($arrray_lang as $k => $row) {
             $path = APPPATH . "language/" . $k . "/home_lang.php";
-//            echo $path;
+            //            echo $path;
             $masterModule = $this->_load_module($path);
             foreach ($masterModule as $lineNumber => $line) {
                 // Extract each key and value
@@ -711,7 +726,8 @@ class Admin extends MY_Controller {
         return $translations;
     }
 
-    function _load_module($modulePath) {
+    function _load_module($modulePath)
+    {
 
         /* TODO: Add error checking for non-existent files? */
 
@@ -726,7 +742,8 @@ class Admin extends MY_Controller {
      * @param $line string
      * @return boolean
      */
-    function _is_lang_key($line) {
+    function _is_lang_key($line)
+    {
         $line = trim($line);
         if (empty($line) || mb_stripos($line, '$lang[') === FALSE) {
             return FALSE;
@@ -740,7 +757,8 @@ class Admin extends MY_Controller {
      * @param $line string
      * @return string
      */
-    function _get_lang_key($line) {
+    function _get_lang_key($line)
+    {
         // Trim forward to the first quote mark
         $line = trim(mb_substr($line, mb_strpos($line, '[') + 1));
         // Trim forward to the second quote mark
@@ -754,7 +772,8 @@ class Admin extends MY_Controller {
      * @param $line string
      * @return string
      */
-    function _get_lang($line) {
+    function _get_lang($line)
+    {
 
         /* Agricultural solution */
         // Trim forward to the first quote mark
@@ -788,7 +807,8 @@ class Admin extends MY_Controller {
      *
      * @return string
      */
-    function _escape_templates($line) {
+    function _escape_templates($line)
+    {
         return preg_replace('/{(.*)}/', '\\{$1\\}', $line);
     }
 
@@ -797,7 +817,8 @@ class Admin extends MY_Controller {
      *
      * @return string
      */
-    function _unescape_templates($line) {
+    function _unescape_templates($line)
+    {
         return preg_replace('/\\\{(.*)\\\}/', '{$1}', $line);
     }
 
@@ -810,7 +831,8 @@ class Admin extends MY_Controller {
      * @param $php string
      * @return int
      */
-    function _invalid_php_syntax($php, &$err = '', &$bad_code = '') {
+    function _invalid_php_syntax($php, &$err = '', &$bad_code = '')
+    {
 
         // Remove opening and closing PHP tags
         $php = str_replace('<?php', '', $php);
@@ -839,5 +861,4 @@ class Admin extends MY_Controller {
 
         return $line;
     }
-
 }

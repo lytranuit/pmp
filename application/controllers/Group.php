@@ -10,6 +10,7 @@ class Group extends MY_Controller
         $this->data['userdata'] = $this->session->userdata();
         $this->data['template'] = "admin";
         $this->data['title'] = "Admin";
+        $this->group = array("admin");
         $version = $this->config->item("version");
         $this->data['stylesheet_tag'] = array(
             base_url() . "public/assets/css/main.css?v=" . $version,
@@ -32,9 +33,8 @@ class Group extends MY_Controller
         if (!method_exists($this, $method)) {
             show_404();
         }
-        $group = array('admin', 'manager');
 
-        if (!$this->ion_auth->in_group($group)) {
+        if (!$this->ion_auth->in_group($this->group)) {
             //redirect them to the login page
             redirect("index/login", "refresh");
         } elseif ($this->has_right($method, $params)) {

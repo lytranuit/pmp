@@ -26,15 +26,13 @@ class Systemw extends MY_Controller
             base_url() . "public/assets/scripts/custom.js?v=" . $version
         );
     }
-
     public function _remap($method, $params = array())
     {
         if (!method_exists($this, $method)) {
             show_404();
         }
-        $group = array('admin', 'manager');
 
-        if (!$this->ion_auth->in_group($group)) {
+        if (!$this->ion_auth->in_group($this->group)) {
             //redirect them to the login page
             redirect("index/login", "refresh");
         } elseif ($this->has_right($method, $params)) {

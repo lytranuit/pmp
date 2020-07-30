@@ -53,7 +53,7 @@
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select name="groups[]" style="width: 200px;" multiple="">
                                         @foreach($groups as $row)
-                                        <option value="{{$row['id']}}">{{$row['name']}}</option>
+                                        <option value="{{$row['id']}}">{{$row['description']}}</option>
                                         @endforeach
                                     </select>
                                 </div>

@@ -32,9 +32,8 @@ class Workshop extends MY_Controller
         if (!method_exists($this, $method)) {
             show_404();
         }
-        $group = array('admin', 'manager');
 
-        if (!$this->ion_auth->in_group($group)) {
+        if (!$this->ion_auth->in_group($this->group)) {
             //redirect them to the login page
             redirect("index/login", "refresh");
         } elseif ($this->has_right($method, $params)) {
@@ -167,7 +166,7 @@ class Workshop extends MY_Controller
             $this->load->model("workshop_model");
             //old
             $data_prev = $this->workshop_model->where('id', $id)->as_array()->get();
-            
+
             $data = $_POST;
             $data_up = $this->workshop_model->create_object($data);
             $this->workshop_model->update($data_up, $id);
