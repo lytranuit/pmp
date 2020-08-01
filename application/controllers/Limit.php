@@ -195,7 +195,7 @@ class Limit extends MY_Controller
             $this->data['workshop'] = $this->workshop_model->where(array('deleted' => 0, 'factory_id' => $tin->factory_id))->as_object()->get_all();
             if ($object_id <= 17) {
                 $this->load->model("area_model");
-                $workshop_id = isset($this->data['workshop'][0]->id) ? $this->data['workshop'][0]->id : 0;
+                $workshop_id = $tin->workshop_id;
                 $this->data['area'] = $this->area_model->where(array('deleted' => 0, 'workshop_id' => $workshop_id))->as_object()->get_all();
             } else {
                 $this->load->model("system_model");
