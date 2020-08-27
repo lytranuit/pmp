@@ -4,6 +4,7 @@
             <input type="hidden" name="parent_id" value="0" />
             <section class="card card-fluid">
                 <h5 class="card-header">
+                    Position
                     <div class="d-inline-block w-100">
                         <button type="submit" name="dangtin" class="btn btn-sm btn-primary float-right">Save</button>
                     </div>

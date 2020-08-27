@@ -131,6 +131,39 @@ class Ajax extends MY_Controller
             echo json_encode($data_up);
         }
     }
+    public function position_tree()
+    {
+        $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
 
+        if (!$factory = $this->cache->get('factory_cache')) {
+            $this->load->model("factory_model");
+            $this->load->model("workshop_model");
+            $this->load->model("area_model");
+            $this->load->model("department_model");
+            $this->load->model("position_model");
+            $factory = $this->factory_model->where(array("deleted" => 0))->get_all();
+            foreach ($factory as &$row) {
+                $workshops = $this->workshop_model->where(array("deleted" => 0, 'factory_id' => $row->id))->get_all();
+                foreach ($workshops as &$workshop) {
+                    $areas = $this->area_model->where(array("deleted" => 0, 'workshop_id' => $workshop->id))->get_all();
+                    foreach ($areas as &$area) {
+                        $rooms = $this->department_model->where(array("deleted" => 0, 'area_id' => $area->id))->get_all();
+                        foreach ($rooms as &$room) {
+                            $positions = $this->position_model->where(array("deleted" => 0, 'department_id' => $room->id))->get_all();
+
+                            $room->child = $positions;
+                        }
+                        $area->child = $rooms;
+                    }
+                    $workshop->child = $areas;
+                }
+                $row->child = $workshops;
+            }
+            // Save into the cache for 5 minutes
+            $this->cache->save('factory_cache', $factory, 60);
+        }
+        $this->data['factory'] = $factory;
+        echo $this->blade->view()->make('include/dashboard/position_tree', $this->data)->render();
+    }
     ////////////
 }

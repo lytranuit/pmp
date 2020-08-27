@@ -1,3 +1,5 @@
+
+<?= $widget->position_tree_header("factory"); ?>
 <!-- ============================================================== -->
 <!-- pageheader -->
 <!-- ============================================================== -->
@@ -25,6 +27,7 @@
     </div>
 </div>
 
+<?= $widget->position_tree("factory"); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#quanlytin').DataTable({
@@ -47,5 +50,6 @@
             ]
 
         });
+
     });
 </script>

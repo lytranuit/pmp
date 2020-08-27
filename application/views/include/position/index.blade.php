@@ -1,6 +1,7 @@
 <!-- ============================================================== -->
 <!-- pageheader -->
 <!-- ============================================================== -->
+<?= $widget->position_tree_header("position"); ?>
 <div class="row clearfix">
     <div class="col-12">
         <section class="card card-fluid">
@@ -30,6 +31,7 @@
     </div>
 </div>
 
+<?= $widget->position_tree("position"); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#quanlytin').DataTable({

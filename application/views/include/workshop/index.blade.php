@@ -1,3 +1,5 @@
+
+<?= $widget->position_tree_header("workshop"); ?>
 <!-- ============================================================== -->
 <!-- pageheader -->
 <!-- ============================================================== -->
@@ -26,6 +28,7 @@
     </div>
 </div>
 
+<?= $widget->position_tree("workshop"); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#quanlytin').DataTable({

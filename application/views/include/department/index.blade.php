@@ -1,3 +1,5 @@
+
+<?= $widget->position_tree_header("department"); ?>
 <!-- ============================================================== -->
 <!-- pageheader -->
 <!-- ============================================================== -->
@@ -28,6 +30,7 @@
     </div>
 </div>
 
+<?= $widget->position_tree("department"); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#quanlytin').DataTable({

@@ -141,4 +141,20 @@ class Widget
         $this->data['product'] = $this->CI->product_model->get_product_by_category(29);
         echo $this->blade->view()->make('widget/widget_product_hot', $this->data)->render();
     }
+
+    function position_tree($type = NULL)
+    {
+        $this->data['factory'] = [];
+
+        // die();
+        echo $this->blade->view()->make('widget/position_tree', $this->data)->render();
+    }
+
+    function position_tree_header($type = "factory")
+    {
+        $this->data['type'] = $type;
+
+        // die();
+        echo $this->blade->view()->make('widget/position_tree_header', $this->data)->render();
+    }
 }

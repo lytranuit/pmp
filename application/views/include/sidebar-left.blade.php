@@ -164,37 +164,15 @@
                         <li>
                             <a href="{{base_url()}}factory/">
                                 <i class="metismenu-icon"></i>
-                                Factory
+                                Position Tree
                             </a>
                         </li>
-                        <li>
-                            <a href="{{base_url()}}workshop/">
-                                <i class="metismenu-icon"></i>
-                                Department
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{base_url()}}area/">
-                                <i class="metismenu-icon"></i>
-                                Area
-                            </a>
-                        </li>
+
+
                         <li>
                             <a href="{{base_url()}}systemw/">
                                 <i class="metismenu-icon"></i>
                                 System Water
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{base_url()}}department/">
-                                <i class="metismenu-icon"></i>
-                                Room/Equipment
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{base_url()}}position/">
-                                <i class="metismenu-icon"></i>
-                                Position
                             </a>
                         </li>
                         <li>
