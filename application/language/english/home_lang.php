@@ -1,19 +1,4 @@
 <?php
-$lang['footer_about'] = '';
-$lang['footer_fp'] = '';
-$lang['footer_page'] = '';
-$lang['header_widget_page'] = '';
-$lang['home'] = '';
-$lang['login'] = 'Login';
-$lang['login_identity_label'] = 'Username';
-$lang['login_password_label'] = 'Password';
-$lang['remember_me'] = 'Remember';
-$lang['widget_header_page'] = '';
-$lang['widget_header_product_new'] = '';
-$lang['widget_header_seen'] = '';
-$lang['header_quick_order'] = "";
-
-
 // Login
 $lang['login_heading'] = 'Login';
 $lang['login_subheading'] = 'Email.';
@@ -22,20 +7,41 @@ $lang['login_password_label'] = 'Password';
 $lang['login_remember_label'] = 'Remember me';
 $lang['login_submit_btn'] = 'Login';
 $lang['login_forgot_password'] = 'Forgot password?';
+$lang['info'] = "Info";
+$lang['logout'] = "Logout";
+$lang['choose_object'] = "Choose Object";
+$lang['vi_sinh'] = "Microbiology";
+$lang['khi'] = "Gas";
+$lang['tieu_phan'] = "Particle";
+$lang['nuoc'] = "Water";
 
-// Index
-$lang['index_heading'] = 'Tài khoản';
-$lang['index_subheading'] = 'Danh sách tài khoản.';
-$lang['index_fname_th'] = 'Tên';
-$lang['index_lname_th'] = 'Họ';
-$lang['index_email_th'] = 'Email';
-$lang['index_groups_th'] = 'Nhóm';
-$lang['index_status_th'] = 'Trạng thái';
-$lang['index_action_th'] = 'Tác vụ';
-$lang['index_active_link'] = 'Kích hoạt';
-$lang['index_inactive_link'] = 'Khoá';
-$lang['index_create_user_link'] = 'Tạo tài khoản mới';
-$lang['index_create_group_link'] = 'Tạo nhóm mới';
+$lang['field'] = "Field";
+$lang['object'] = "Object";
+$lang['method'] = "Method";
+$lang['diagram'] = "Diagram";
+$lang['positon_tree'] = "Position tree";
+$lang['system_water'] = "System Water";
+$lang['factory'] = "Factory";
+$lang['department'] = "Department";
+$lang['area'] = "Area";
+$lang['room'] = "room";
+$lang['equipment'] = "Equiqment";
+$lang['position'] = "Position";
+$lang['employee'] = "Employee";
+
+$lang['position_diagram'] = "Position Diagram";
+
+$lang['dashboard'] = "Dashboard";
+$lang['chart'] = "Charts";
+$lang['report'] = "Reports";
+
+$lang['input'] = "Input";
+$lang['data'] = "Data";
+$lang['limit'] = "Limit";
+
+$lang['setting'] = "Settings";
+$lang['audit_trail'] = "Audit Trail";
+$lang['user_manager'] = "User";
 // Account Creation
 $lang['account_creation_successful']            = 'Account Successfully Created';
 $lang['account_creation_unsuccessful']          = 'Unable to Create Account';
@@ -222,3 +228,6 @@ $lang['reset_password_new_password_confirm_label']            = 'Confirm New Pas
 $lang['reset_password_submit_btn']                            = 'Change';
 $lang['reset_password_validation_new_password_label']         = 'New Password';
 $lang['reset_password_validation_new_password_confirm_label'] = 'Confirm New Password';
+
+
+$lang['choose_language'] = "Choose Language";

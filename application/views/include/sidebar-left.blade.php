@@ -68,103 +68,87 @@
     <div class="scrollbar-sidebar">
         <div class="app-sidebar__inner">
             <ul class="vertical-nav-menu">
-                <li class="app-sidebar__heading">Dashboard</li>
+                <li class="app-sidebar__heading">{{lang("dashboard")}}</li>
                 <li>
                     <a href="{{base_url()}}dashboard/view" class="">
                         <i class="metismenu-icon far fa-chart-bar"></i>
-                        Charts
+                        {{lang("chart")}}
                     </a>
                 </li>
                 <li>
                     <a href="{{base_url()}}report/" class="">
                         <i class="metismenu-icon fas fa-file-word"></i>
-                        Reports
+                        {{lang("report")}}
                     </a>
                 </li>
-                <li class="app-sidebar__heading">Input</li>
+                <li class="app-sidebar__heading">{{lang("input")}}</li>
                 @if($object_id == "3")
                 <li>
                     <a href="{{base_url()}}resulte/" class="">
                         <i class="metismenu-icon fa fa-database"></i>
-                        Data
+                        {{lang("data")}}
                     </a>
                 </li>
                 @else
                 <li>
                     <a href="{{base_url()}}result/" class="">
                         <i class="metismenu-icon fa fa-database"></i>
-                        Data
+                        {{lang("data")}}
                     </a>
                 </li>
                 @endif
                 <li>
                     <a href="{{base_url()}}limit/" class="">
                         <i class="metismenu-icon fas fa-bell"></i>
-                        Limit
+                        {{lang("limit")}}
                     </a>
                 </li>
 
-                <li class="app-sidebar__heading">Settings</li>
+                <li class="app-sidebar__heading">{{lang("setting")}}</li>
                 <li>
                     <a href="{{base_url()}}history/" class="">
                         <i class="metismenu-icon far fa-clipboard"></i>
-                        Audit Trail
+                        {{lang("audit_trail")}}
                     </a>
                 </li>
                 @if($ion_auth->is_admin())
                 <li>
-                    <a href="#">
-                        <i class="metismenu-icon fa fa-lock"></i>
-                        Permissions
-                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                    <a href="{{base_url()}}user/">
+                        <i class="metismenu-icon fas fa-users"></i>
+                        {{lang("user_manager")}}
                     </a>
-                    <ul>
-                        <li>
-                            <a href="{{base_url()}}user/">
-                                <i class="metismenu-icon"></i>
-                                User
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{base_url()}}group/">
-                                <i class="metismenu-icon"></i>
-                                Group
-                            </a>
-                        </li>
-                    </ul>
-
                 </li>
                 @endif
                 @if($ion_auth->in_group(array("admin","manager")))
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fas fa-columns"></i>
-                        Field
+                        {{lang("field")}}
                         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                     </a>
                     <ul>
                         <li>
                             <a href="{{base_url()}}object/">
                                 <i class="metismenu-icon"></i>
-                                Object
+                                {{lang("object")}}
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}target/">
                                 <i class="metismenu-icon"></i>
-                                Method/Target
+                                {{lang("method")}}
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}diagram/">
                                 <i class="metismenu-icon"></i>
-                                Diagram
+                                {{lang("diagram")}}
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}factory/">
                                 <i class="metismenu-icon"></i>
-                                Position Tree
+                                {{lang("positon_tree")}}
                             </a>
                         </li>
 
@@ -172,13 +156,13 @@
                         <li>
                             <a href="{{base_url()}}systemw/">
                                 <i class="metismenu-icon"></i>
-                                System Water
+                                {{lang("system_water")}}
                             </a>
                         </li>
                         <li>
                             <a href="{{base_url()}}employee/">
                                 <i class="metismenu-icon"></i>
-                                Employee
+                                {{lang("employee")}}
                             </a>
                         </li>
                     </ul>

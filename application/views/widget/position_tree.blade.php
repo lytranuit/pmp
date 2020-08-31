@@ -2,6 +2,9 @@
     <div class="col-12">
         <section class="wizard-card card card-fluid">
             <div class="card-body">
+                <div class="float-right">
+                    <button class="btn btn-success reload"><i class="fas fa-sync-alt"></i></button>
+                </div>
                 <div class="tree">
 
                 </div>
@@ -144,13 +147,23 @@ Thanks :)*/
             ul.toggleClass("d-none");
         })
 
+        position_tree();
+        $(".reload").click(function() {
+            position_tree(1);
+        });
+    })
 
+    function position_tree(is_reload = 0) {
+        $(".tree").html("<div class='text-center'><i class='fas fa-sync-alt'></i></div>");
         $.ajax({
             url: path + "ajax/position_tree",
+            data: {
+                is_reload: is_reload
+            },
             dataType: "HTML",
             success: function(html) {
                 $(".tree").html(html);
             }
         })
-    })
+    }
 </script>

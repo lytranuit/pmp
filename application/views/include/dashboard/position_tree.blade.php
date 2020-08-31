@@ -1,5 +1,5 @@
 <ul>
-    <li><a href="#">Position diagram</a>
+    <li><a href="#">{{lang("position_diagram")}}</a>
 
         <ul>
             @foreach($factory as $fac)

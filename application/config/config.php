@@ -58,8 +58,7 @@ $config['language'] = 'english';
 
 $config['language_list'] = array(
   'vietnamese' => 'vi',
-  'english' => 'en',
-  'japanese' => 'jp'
+  'english' => 'en'
 );
 
 /*

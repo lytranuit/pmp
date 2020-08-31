@@ -129,6 +129,8 @@
                         ].join("_");
                     }
                 }
+                console.log(count_chart);
+
                 $.ajax({
                     url: path + 'ajax/uploadchart',
                     type: "POST",
@@ -139,6 +141,9 @@
                     },
                     success: function() {
                         count_upload++;
+
+                        console.log(count_upload);
+
                         if (count_upload >= count_chart) {
                             location.href = path + "report/";
                         }

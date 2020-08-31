@@ -1,5 +1,5 @@
-$(document).ready(function () {
-    $(document).off('click', "[data-type=confirm]").on('click', "[data-type=confirm]", function (e) {
+$(document).ready(function() {
+    $(document).off('click', "[data-type=confirm]").on('click', "[data-type=confirm]", function(e) {
         e.preventDefault();
         var title = $(this).attr("title");
         var r = confirm(title);
@@ -10,13 +10,14 @@ $(document).ready(function () {
     });
     if ($("#doanhthu").length) {
         drawChart();
-        $("#doanhthu [name=options]").change(function () {
+        $("#doanhthu [name=options]").change(function() {
             drawChart();
         });
     }
     if ($('#best_sale').length) {
         drawChartBestSale()
     }
+
 })
 
 async function drawChartBestSale() {
@@ -33,13 +34,13 @@ async function drawChartBestSale() {
         url: path + "ajax/bestsale",
         data: {}
     });
-    var labels = data.map(function (item) {
+    var labels = data.map(function(item) {
         return item.name;
     });
-    var count_sale = data.map(function (item) {
+    var count_sale = data.map(function(item) {
         return item.count_sale;
     })
-    var colors = data.map(function (item) {
+    var colors = data.map(function(item) {
         return colorHash.hex(item.name);
     })
     var ctx = document.getElementById("chartjs_doughnut").getContext('2d');
@@ -80,10 +81,10 @@ async function drawChart() {
         url: path + "ajax/datachart",
         data: { time_type: time_type_check }
     });
-    var labels = data.map(function (item) {
+    var labels = data.map(function(item) {
         return item.time_type;
     });
-    var data_amount = data.map(function (item) {
+    var data_amount = data.map(function(item) {
         return item.amount / 1000;
     })
     var ctx = document.getElementById('revenue').getContext('2d');
@@ -114,8 +115,8 @@ async function drawChart() {
         }
     });
 }
-var fillForm = function (form, data) {
-    $('input, select, textarea', form).not("[type=file]").each(function () {
+var fillForm = function(form, data) {
+    $('input, select, textarea', form).not("[type=file]").each(function() {
         var type = $(this).attr('type');
         var name = $(this).attr('name');
         if (!name)

@@ -131,11 +131,38 @@ class Ajax extends MY_Controller
             echo json_encode($data_up);
         }
     }
+    function uploadchart()
+    {
+        $data = $this->input->post('image');
+        $name = $this->input->post('name');
+        if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+            $data = substr($data, strpos($data, ',') + 1);
+            $type = strtolower($type[1]); // jpg, png, gif
+
+            if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                throw new \Exception('invalid image type');
+            }
+
+            $data = base64_decode($data);
+
+            if ($data === false) {
+                throw new \Exception('base64_decode failed');
+            }
+        } else {
+            throw new \Exception('did not match data URI with image data');
+        }
+        if (!file_exists(APPPATH . '../public/upload/chart')) {
+            mkdir(APPPATH . '../public/upload/chart', 0777, true);
+        }
+        file_put_contents(APPPATH . '../public/upload/chart/' . $name . "." . $type, $data);
+        echo 1;
+    }
     public function position_tree()
     {
+        $is_reload = $this->input->get('is_reload', TRUE);
         $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
 
-        if (!$factory = $this->cache->get('factory_cache')) {
+        if ($is_reload || !$factory = $this->cache->get('factory_cache')) {
             $this->load->model("factory_model");
             $this->load->model("workshop_model");
             $this->load->model("area_model");

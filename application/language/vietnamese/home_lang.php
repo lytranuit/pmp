@@ -1,20 +1,5 @@
 <?php
 
-$lang['footer_about'] = 'Giới thiệu';
-$lang['footer_fp'] = 'Kết nối với fanpage';
-$lang['footer_page'] = 'Chính sách bán hàng';
-$lang['header_widget_page'] = 'Bạn cần biết';
-$lang['home'] = 'Trang chủ';
-$lang['login'] = 'Đăng nhập';
-$lang['login_identity_label'] = 'Username';
-$lang['login_password_label'] = 'Password';
-$lang['remember_me'] = 'Ghi nhớ';
-$lang['widget_header_page'] = 'Bạn cần biết';
-$lang['widget_header_product_new'] = 'Hàng mới về';
-$lang['widget_header_seen'] = 'Mua sản phẩm đã xem';
-
-
-
 
 /**
  * Name:  Auth Lang - Vietnamese
@@ -40,6 +25,42 @@ $lang['login_password_label'] = 'Mật khẩu';
 $lang['login_remember_label'] = 'Nhớ mật khẩu';
 $lang['login_submit_btn'] = 'Đăng nhập';
 $lang['login_forgot_password'] = 'Quên mật khẩu?';
+$lang['info'] = "Thông tin Cá nhân";
+$lang['logout'] = "Đăng xuất";
+
+$lang['choose_object'] = "Chọn đối tượng";
+$lang['vi_sinh'] = "Vi sinh";
+$lang['khi'] = "Khí";
+$lang['tieu_phan'] = "Tiểu phân";
+$lang['nuoc'] = "Nước";
+
+$lang['field'] = "Trường dữ liệu";
+$lang['object'] = "Đối tượng";
+$lang['method'] = "Phương thức lấy mẫu";
+$lang['diagram'] = "Sơ đồ hình ảnh";
+$lang['positon_tree'] = "Sơ đồ vị trí";
+$lang['system_water'] = "Hệ thống nước";
+$lang['factory'] = "Nhà máy";
+$lang['department'] = "Bộ phận";
+$lang['area'] = "Khu vực";
+$lang['room'] = "Phòng";
+$lang['equipment'] = "Thiết bị";
+$lang['position'] = "Vị trí";
+$lang['employee'] = "Nhân viên";
+
+$lang['position_diagram'] = "Sơ đồ vị trí";
+
+$lang['dashboard'] = "Tổng quan";
+$lang['chart'] = "Biểu đồ";
+$lang['report'] = "Báo cáo";
+
+$lang['input'] = "Đầu vào";
+$lang['data'] = "Dữ liệu";
+$lang['limit'] = "Giới hạn";
+
+$lang['setting'] = "Cài đặt";
+$lang['audit_trail'] = "Audit Trail";
+$lang['user_manager'] = "Quản lý người dùng";
 // Index
 $lang['index_heading'] = 'Tài khoản';
 $lang['index_subheading'] = 'Danh sách tài khoản.';
@@ -200,4 +221,6 @@ $lang['email_forgotten_password_subject'] = 'Xác nhận quên mật khẩu';
 $lang['email_forgot_password_heading'] = 'Khôi phục mật khẩu cho %s';
 $lang['email_forgot_password_subheading'] = 'Vui lòng click vào link này để %s.';
 $lang['email_forgot_password_link'] = 'Khôi phục mật khẩu của bạn';
-?>
+
+
+$lang['choose_language'] = "Chọn ngôn ngữ";

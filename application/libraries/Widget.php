@@ -29,7 +29,12 @@ class Widget
         $this->data['userdata'] = $this->CI->session->userdata();
 
         $this->CI->load->model("object_model");
-        $this->data['objects'] = $this->CI->object_model->where(array("deleted" => 0))->as_array()->get_all();
+        $objects = $this->CI->object_model->where(array("deleted" => 0))->as_array()->get_all();
+        $array = array();
+        foreach ($objects as $object) {
+            $array[$object['id']] = $object;
+        }
+        $this->data['object']  = $array;
         echo $this->blade->view()->make('widget/header', $this->data)->render();
     }
 

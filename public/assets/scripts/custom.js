@@ -22,7 +22,19 @@ $(document).ready(function() {
             $(">a", p).trigger("click");
         }
     }, 1000);
-    /// Chọn đối tượng
+    ///LANGUAGE
+    $(".language").click(function() {
+            let language = $(this).data("language");
+            $.ajax({
+                url: path + "ajax/setlanguage",
+                type: "POST",
+                data: { language: language },
+                success: function() {
+                    location.reload();
+                }
+            });
+        })
+        /// Chọn đối tượng
     $(".object_select").click(function() {
         var i = $(this).data("id");
         var name = $(this).data("name");

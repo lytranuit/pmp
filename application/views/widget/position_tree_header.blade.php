@@ -1,19 +1,19 @@
 <ul id="progressbar" class="text-center w-100 row">
     <div class="connecting-line"></div>
     <li class="col" name="step1">
-        <a class="box {{ $type == 'factory' ? 'bg-warning' : '' }}" href="{{base_url()}}factory/">Factory</a>
+        <a class="box {{ $type == 'factory' ? 'bg-warning' : '' }}" href="{{base_url()}}factory/">{{lang("factory")}}</a>
     </li>
     <li class="col" name="step2">
-        <a class="box {{ $type == 'workshop' ? 'bg-warning' : '' }}" href="{{base_url()}}workshop/">Department</a>
+        <a class="box {{ $type == 'workshop' ? 'bg-warning' : '' }}" href="{{base_url()}}workshop/">{{lang("department")}}</a>
     </li>
     <li class="col" name="step3">
-        <a class="box {{ $type == 'area' ? 'bg-warning' : '' }}" href="{{base_url()}}area/">Area</a>
+        <a class="box {{ $type == 'area' ? 'bg-warning' : '' }}" href="{{base_url()}}area/">{{lang("area")}}</a>
     </li>
     <li class="col" name="step3">
-        <a class="box {{ $type == 'department' ? 'bg-warning' : '' }}" href="{{base_url()}}department/">Room/Equipment</a>
+        <a class="box {{ $type == 'department' ? 'bg-warning' : '' }}" href="{{base_url()}}department/">{{lang("room")}}/{{lang("equipment")}}</a>
     </li>
     <li class="col" name="step3">
-        <a class="box {{ $type == 'position' ? 'bg-warning' : '' }}" href="{{base_url()}}position/">Position</a>
+        <a class="box {{ $type == 'position' ? 'bg-warning' : '' }}" href="{{base_url()}}position/">{{lang("position")}}</a>
     </li>
 </ul>
 <style>

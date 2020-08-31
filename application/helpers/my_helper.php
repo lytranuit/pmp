@@ -263,15 +263,17 @@ if (!function_exists('short_language_current')) {
 
 if (!function_exists('pick_language')) {
 
-    function pick_language($data, $struct = 'name_')
+    function pick_language($data, $struct = 'name')
     {
         $CI = &get_instance();
         $short_lang = short_language_current();
         $data = (array) $data;
-        if (isset($data[$struct . $short_lang]) && $data[$struct . $short_lang] != "") {
-            return $struct . $short_lang;
+        if (isset($data[$struct . "_" . $short_lang]) && $data[$struct . "_" . $short_lang] != "") {
+            return $data[$struct . "_" . $short_lang];
+        } else if (isset($data[$struct])) {
+            return $data[$struct];
         } else {
-            return $struct . 'vi';
+            return "undefind";
         }
     }
 }

@@ -31,9 +31,29 @@
     </div>
     <div class="app-header__content">
         <div class="app-header-left">
-            <button class="btn btn-primary" id="btn_object_select" tabindex="-1" data-target='#object-modal' data-toggle='modal'>Vi Sinh</button>
+            <button class="btn btn-primary" id="btn_object_select" tabindex="-1" data-target='#object-modal' data-toggle='modal'></button>
         </div>
         <div class="app-header-right">
+            <div class="header-dots">
+                <div class="dropdown">
+                    <button type="button" data-toggle="dropdown" class="p-0 mr-2 btn btn-link" aria-expanded="true">
+                        @if(language_current() == "english")
+                        <img src="{{base_url()}}public/img/en.png" width="42">
+                        @else
+                        <img src="{{base_url()}}public/img/vn.png" width="42">
+                        @endif
+                    </button>
+                    <div tabindex="-1" role="menu" aria-hidden="true" class="rm-pointers dropdown-menu dropdown-menu-right" x-placement="bottom-end">
+                        <h6 tabindex="-1" class="dropdown-header">{{lang("choose_language")}}</h6>
+                        <button type="button" tabindex="0" class="dropdown-item language" data-language="english">
+                            <img src="{{base_url()}}public/img/en.png">
+                        </button>
+                        <button type="button" tabindex="0" class="dropdown-item language" data-language="vietnamese">
+                            <img src="{{base_url()}}public/img/vn.png">
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div class="header-btn-lg pr-0">
                 <div class="widget-content p-0">
                     <div class="widget-content-wrapper">
@@ -52,9 +72,9 @@
                                     <i class="fa fa-angle-down ml-2 opacity-8"></i>
                                 </a>
                                 <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu-right">
-                                    <a type="button" tabindex="0" class="dropdown-item" href="{{base_url()}}/admin/account">User Account</a>
+                                    <a type="button" tabindex="0" class="dropdown-item" href="{{base_url()}}/admin/account">{{lang("info")}}</a>
                                     <div tabindex="-1" class="dropdown-divider"></div>
-                                    <a type="button" tabindex="0" class="dropdown-item" href="{{base_url()}}/index/logout">Logout</a>
+                                    <a type="button" tabindex="0" class="dropdown-item" href="{{base_url()}}/index/logout">{{lang("logout")}}</a>
                                 </div>
                             </div>
                         </div>
@@ -70,7 +90,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title" id="object-modalLabel">
-                    Select Object
+                    {{lang("choose_object")}}
                 </h6>
                 <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                     <span aria-hidden="true">
@@ -91,21 +111,21 @@
 
                         <div class="col-lg-6">
                             <fieldset class="the-fieldset mb-4">
-                                <legend class="h5 text-center p-3">Vi sinh</legend>
+                                <legend class="h5 text-center p-3">{{lang("vi_sinh")}}</legend>
                                 <div class="row no-glutters">
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="3" data-name="Vi sinh nhân viên">
-                                            Nhân viên
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="3" data-name="{{ pick_language($object['3'],'name') }}">
+                                            {{ pick_language($object['3'],'name') }}
                                         </a>
                                     </div>
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="11" data-name="Vi sinh phòng sạch">
-                                            Phòng sạch
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="10" data-name="{{ pick_language($object['10'],'name') }}">
+                                            {{ pick_language($object['10'],'name') }}
                                         </a>
                                     </div>
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="10" data-name="Vi sinh thiết bị">
-                                            Thiết bị
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="11" data-name="{{ pick_language($object['11'],'name') }}">
+                                            {{ pick_language($object['11'],'name') }}
                                         </a>
                                     </div>
 
@@ -114,16 +134,16 @@
                         </div>
                         <div class="col-lg-6">
                             <fieldset class="the-fieldset mb-4">
-                                <legend class="h5 text-center p-3">Khí</legend>
+                                <legend class="h5 text-center p-3">{{lang("khi")}}</legend>
                                 <div class="row no-glutters">
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="16" data-name="Khí nén">
-                                            Khí nén
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="16" data-name="{{ pick_language($object['16'],'name') }}">
+                                            {{ pick_language($object['16'],'name') }}
                                         </a>
                                     </div>
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="17" data-name="Khí nitơ">
-                                            Khí nitơ
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="17" data-name="{{ pick_language($object['17'],'name') }}">
+                                            {{ pick_language($object['17'],'name') }}
                                         </a>
                                     </div>
                                 </div>
@@ -131,16 +151,16 @@
                         </div>
                         <div class="col-lg-6">
                             <fieldset class="the-fieldset mb-4">
-                                <legend class="h5 text-center p-3">Tiểu phân</legend>
+                                <legend class="h5 text-center p-3">{{lang("tieu_phan")}}</legend>
                                 <div class="row no-glutters">
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="15" data-name="Tiểu phẩn phòng sạch">
-                                            Phòng sạch
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="15" data-name="{{ pick_language($object['15'],'name') }}">
+                                            {{ pick_language($object['15'],'name') }}
                                         </a>
                                     </div>
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="14" data-name="Tiểu phân thiết bị">
-                                            Thiết bị
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="14" data-name="{{ pick_language($object['14'],'name') }}">
+                                            {{ pick_language($object['14'],'name') }}
                                         </a>
                                     </div>
                                 </div>
@@ -149,24 +169,23 @@
                         <div class="col-lg-6">
 
                             <fieldset class="the-fieldset mb-4">
-                                <legend class="h5 text-center p-3">Nước</legend>
+                                <legend class="h5 text-center p-3">{{lang("nuoc")}}</legend>
                                 <div class="row no-glutters">
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="19" data-name="Hơi tinh khiết">
-                                            Hơi tinh khiết
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="19" data-name="{{ pick_language($object['19'],'name') }}">
+                                            {{ pick_language($object['19'],'name') }}
                                         </a>
                                     </div>
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="18" data-name="Nước pha tiêm">
-                                            Nước pha tiêm
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="18" data-name="{{ pick_language($object['18'],'name') }}">
+                                            {{ pick_language($object['18'],'name') }}
                                         </a>
                                     </div>
                                     <div class="col text-center">
-                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="20" data-name="Nước tinh khiết">
-                                            Nước tinh khiết
+                                        <a class="btn btn-success btn-xs object_select" href="#" data-id="20" data-name="{{ pick_language($object['20'],'name') }}">
+                                            {{ pick_language($object['20'],'name') }}
                                         </a>
                                     </div>
-
                                 </div>
                             </fieldset>
                         </div>
