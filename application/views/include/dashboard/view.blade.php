@@ -2,13 +2,13 @@
     <div class="col-12">
         <div class="card mb-3">
             <div class="card-header">
-                Filter
+                {{lang("filter")}}
             </div>
             <div class="card-body" id="form-dang-tin">
 
                 <div class="row">
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">{{lang("factory")}}:<i class="text-danger">*</i></b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm factory_id">
                                 @foreach ($factory as $row)
@@ -18,7 +18,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">{{lang("department")}}:<i class="text-danger">*</i></b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm workshop_id">
 
@@ -26,29 +26,29 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <b class="col-form-label text-sm-right">Time:<i class="text-danger">*</i></b>
+                        <b class="col-form-label text-sm-right">{{lang("time")}}:<i class="text-danger">*</i></b>
                         <div class="pt-1">
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
 
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="Custom"> Custom
+                                    <input type="radio" name="options" id="option4" value="Custom"> {{lang("custom")}}
                                 </label>
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="Month"> Month
-                                </label>
-
-                                <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="Quarter"> Quarter
+                                    <input type="radio" name="options" id="option4" value="Month"> {{lang("month")}}
                                 </label>
 
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="HalfYear"> Half Year
+                                    <input type="radio" name="options" id="option4" value="Quarter"> {{lang("quarter")}}
+                                </label>
+
+                                <label class="btn btn-light type_data">
+                                    <input type="radio" name="options" id="option4" value="HalfYear"> {{lang("half_year")}}
                                 </label>
                                 <label class="btn btn-light type_data active">
-                                    <input type="radio" name="options" id="option5" value="Year"> Year
+                                    <input type="radio" name="options" id="option5" value="Year"> {{lang("year")}}
                                 </label>
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option6" value="TwoYear"> 2 Years
+                                    <input type="radio" name="options" id="option6" value="TwoYear"> {{lang("two_year")}}
                                 </label>
                             </div>
                             <select style="width: 200px;" class="form-control form-control-sm btn-group" id="the_selector">
@@ -61,7 +61,7 @@
                 @if($object_id > 17)
                 <div class="row">
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">System Water:</b>
+                        <b class="col-form-label text-sm-right">{{lang("system_water")}}:</b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm system_id">
 
@@ -73,7 +73,7 @@
                 @else
                 <div class="row">
                     <div class="col-md-3">
-                        <b class="col-form-label text-sm-right">Area:</b>
+                        <b class="col-form-label text-sm-right">{{lang("area")}}:</b>
                         <div class="pt-1">
                             <select class="form-control form-control-sm area_id">
 
@@ -83,13 +83,13 @@
                     <div class="col-md-3">
                         <b class="col-form-label text-sm-right">
                             @if($object_id == 3)
-                            Employee
+                            {{lang("employee")}}
                             @elseif($object_id == 10 || $object_id == 14 )
-                            Equipment
+                            {{lang("equipment")}}
                             @elseif($object_id == 11 || $object_id == 15 )
-                            Room
+                            {{lang("room")}}
                             @elseif($object_id == 16 || $object_id == 17 )
-                            Room
+                            {{lang("room")}}
                             @endif
                         </b>
                         <div class="pt-1">
@@ -105,7 +105,7 @@
         </div>
         <div class="card">
             <div class="card-header">
-                Trend Chart
+                {{lang("trend_chart")}}
                 <div style="margin-left:auto">
                     <div class="btn-group">
                         <button class="btn btn-primary btn-sm" id="export_report"><i class="fas fa-print"></i></button>

@@ -131,7 +131,7 @@ class Resulte extends MY_Controller
 
         /// Log audit trail
         $text =   "USER '" . $this->session->userdata('username') . "' removed record($id) to the table 'pmp_employee_result'";
-        $this->result_model->trail($status, "delete", null, null, $id, $text);
+        $this->employeeResult_model->trail($status, "delete", null, null, $id, $text);
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
@@ -180,7 +180,7 @@ class Resulte extends MY_Controller
             $where = $this->employeeResult_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->with_area()->with_employee()->paginate($limit, NULL, $page);
+        $posts = $where->order_by("id", "DESC")->with_area()->with_workshop()->with_factory()->with_employee()->paginate($limit, NULL, $page);
         //        echo "<pre>";
         //        print_r($posts);
         //        die();
@@ -191,7 +191,7 @@ class Resulte extends MY_Controller
 
                 $nestedData['employee_string_id'] = isset($post->employee->string_id) ? $post->employee->string_id : "";
                 $nestedData['employee_name'] = isset($post->employee->name) ? $post->employee->name : "";
-                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name . " - " . $post->workshop->name . " - " . $post->factory->name : "";
                 $nestedData['date'] = $post->date;
 
                 $nestedData['value_H'] = "<div class='text-center'>$post->value_H</div>";

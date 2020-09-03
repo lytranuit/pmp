@@ -11,9 +11,9 @@
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>User</th>
-                            <th>Description</th>
+                            <th>{{lang("date")}}</th>
+                            <th>{{lang("user")}}</th>
+                            <th>{{lang("description")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,6 +30,9 @@
         $('#quanlytin').DataTable({
             "processing": true,
             "serverSide": true,
+            "language": {
+                "url": url
+            },
             "ajax": {
                 "url": path + "history/table",
                 "dataType": "json",

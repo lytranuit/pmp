@@ -4,9 +4,9 @@
             <input type="hidden" name="parent_id" value="0" />
             <section class="card card-fluid">
                 <h5 class="card-header">
-                    Position
-                    <div class="d-inline-block w-100">
-                        <button type="submit" name="dangtin" class="btn btn-sm btn-primary float-right">Save</button>
+                    {{lang("position")}}
+                    <div class="ml-auto">
+                        <button type="submit" name="dangtin" class="btn btn-sm btn-primary float-right">{{lang("save")}}</button>
                     </div>
                 </h5>
                 <div class="card-body">
@@ -14,25 +14,26 @@
                         <div class="col-12">
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Id:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("code")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="string_id" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Name:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("login_name_label")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">English Name:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("login_name_en_label")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name_en" />
                                 </div>
                             </div>
+
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Object:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("object")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="object_id">
                                         @foreach ($object as $row)
@@ -42,30 +43,9 @@
                                 </div>
                             </div>
 
-                            <h4 class="text-center">Location</h4>
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="factory_id">
-                                        @foreach ($factory as $row)
-                                        <option value="{{$row->id}}">{{$row->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="workshop_id">
-                                        <option></option>
-                                        @foreach ($workshop as $row)
-                                        <option value="{{$row->id}}">{{$row->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+
                             <div class="form-group row r-system d-none">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">System Water:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("system_water")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="system_id">
                                         <option></option>
@@ -75,8 +55,30 @@
                                     </select>
                                 </div>
                             </div>
+                            <h4 class="text-center">{{lang("location")}}</h4>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("factory")}}:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="factory_id">
+                                        @foreach ($factory as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("department")}}:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <select class="form-control" name="workshop_id">
+                                        <option></option>
+                                        @foreach ($workshop as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                             <div class="form-group row r-area">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("area")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="area_id">
                                         <option></option>
@@ -87,7 +89,7 @@
                                 </div>
                             </div>
                             <div class="form-group row r-room">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Room/Equipment:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("room")}}/{{lang("equipment")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="department_id">
                                         <option></option>
@@ -98,20 +100,20 @@
                                 </div>
                             </div>
 
-                            <h4 class="text-center">Others</h4>
+                            <h4 class="text-center">{{lang("others")}}</h4>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Report:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("report")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="type_bc">
-                                        <option value="Year">Year</option>
-                                        <option value="HalfYear">Half Year</option>
-                                        <option value="Quarter">Quarter</option>
-                                        <option value="Month">Month</option>
+                                        <option value="Year">{{lang("year")}}</option>
+                                        <option value="HalfYear">{{lang("half_year")}}</option>
+                                        <option value="Quarter">{{lang("quarter")}}</option>
+                                        <option value="Month">{{lang("month")}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("method")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="target_id">
                                         <option></option>
@@ -121,16 +123,14 @@
                                     </select>
                                 </div>
                             </div>
+
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Frequency:</b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("frequency")}}:</b>
+                                <div class="col-12 col-sm-4 col-lg-3 pt-1">
                                     <input class="form-control" type='text' name="frequency_name" />
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">English Frequency:</b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="frequency_name_en" />
+                                <div class="col-12 col-sm-4 col-lg-3 pt-1">
+                                    <input class="form-control" type='text' name="frequency_name_en" placeholder="{{lang('login_name_en_label')}}" />
                                 </div>
                             </div>
                         </div>

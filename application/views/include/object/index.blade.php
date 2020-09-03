@@ -1,4 +1,3 @@
-
 <!-- ============================================================== -->
 <!-- pageheader -->
 <!-- ============================================================== -->
@@ -13,8 +12,8 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Name</th>
-                            <th>Action</th>
+                            <th>{{lang("login_name_label")}}</th>
+                            <th>{{lang("index_action_th")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,19 +26,27 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#quanlytin').DataTable({
             "processing": true,
+            "language": {
+                url: url
+            },
             "serverSide": true,
             "ajax": {
                 "url": path + "object/table",
                 "dataType": "json",
                 "type": "POST",
             },
-            "columns": [
-                {"data": "id"},
-                {"data": "name"},
-                {"data": "action"}
+            "columns": [{
+                    "data": "id"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "action"
+                }
             ]
 
         });

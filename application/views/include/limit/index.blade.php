@@ -5,24 +5,24 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}limit/add">Add</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}limit/add">{{lang("add")}}</a>
             </h5>
             <div class="card-body">
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Effective date</th>
-                            <th>Factory</th>
-                            <th>Department</th>
-                            @if($object_id <= 17) <th>Area</th>
+                            <th>{{lang("effective_date")}}</th>
+                            <th>{{lang("factory")}}</th>
+                            <th>{{lang("department")}}</th>
+                            @if($object_id <= 17) <th>{{lang("area")}}</th>
                                 @else
-                                <th>System Water</th>
+                                <th>{{lang("system_water")}}</th>
                                 @endif
-                                <th>Method</th>
-                                <th>Acceptance criteria</th>
-                                <th>Alert Limit</th>
-                                <th>Action Limit</th>
-                                <th>Status</th>
+                                <th>{{lang("method")}}</th>
+                                <th>{{lang("acceptance_criteria")}}</th>
+                                <th>{{lang("alert_limit")}}</th>
+                                <th>{{lang("action_limit")}}</th>
+                                <th>{{lang("status")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,6 +39,9 @@
         $('#quanlytin').DataTable({
             "processing": true,
             "serverSide": true,
+            "language": {
+                url: url
+            },
             "ajax": {
                 "url": path + "limit/table",
                 "dataType": "json",

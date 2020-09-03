@@ -1,4 +1,3 @@
-
 <?= $widget->position_tree_header("workshop"); ?>
 <!-- ============================================================== -->
 <!-- pageheader -->
@@ -7,16 +6,16 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}workshop/add">Add</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}workshop/add">{{lang("add")}}</a>
             </h5>
             <div class="card-body">
                 <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Name</th>
-                            <th>Factory</th>
-                            <th>Action</th>
+                            <th>{{lang("login_name_label")}}</th>
+                            <th>{{lang("factory")}}</th>
+                            <th>{{lang("index_action_th")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,6 +33,9 @@
         $('#quanlytin').DataTable({
             "processing": true,
             "serverSide": true,
+            "language": {
+                url: url
+            },
             "ajax": {
                 "url": path + "workshop/table",
                 "dataType": "json",

@@ -12,7 +12,7 @@
                         <div class="col-12">
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Factory:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("factory")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="factory_id">
                                         @foreach ($factory as $row)
@@ -22,7 +22,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Department:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("department")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id">
                                         @foreach ($workshop as $row)
@@ -33,7 +33,7 @@
                             </div>
                             @if($object_id > 17)
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">System Water:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("system_water")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="system_id">
                                         @foreach ($system as $row)
@@ -45,7 +45,7 @@
                             @else
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Area:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("area")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="area_id">
                                         @foreach ($area as $row)
@@ -55,9 +55,8 @@
                                 </div>
                             </div>
                             @endif
-
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("method")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="target_id">
                                         <?= $html_nestable_target ?>
@@ -66,14 +65,14 @@
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Effective date:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("effective_date")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='date' name="day_effect" required="" />
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Acceptance criteria:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("acceptance_criteria")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1 number">
                                     <input class="form-control " type='number' name="standard_limit" />
                                 </div>
@@ -81,11 +80,11 @@
                                     <input class="form-control" type='text' name="standard_limit_text" />
                                 </div>
                                 <div class="col-12 col-sm-8 col-lg-3 pt-1 text">
-                                    <input class="form-control" type='text' placeholder="English Name" name="standard_limit_text_en" />
+                                    <input class="form-control" type='text' placeholder="{{lang('login_name_en_label')}}" name="standard_limit_text_en" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Alert limit:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("alert_limit")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1 number">
                                     <input class="form-control" type='number' name="alert_limit" />
                                 </div>
@@ -93,11 +92,11 @@
                                     <input class="form-control" type='text' name="alert_limit_text" />
                                 </div>
                                 <div class="col-12 col-sm-8 col-lg-3 pt-1 text">
-                                    <input class="form-control" type='text' placeholder="English Name" name="alert_limit_text_en" />
+                                    <input class="form-control" type='text' placeholder="{{lang('login_name_en_label')}}" name="alert_limit_text_en" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Action limit:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("action_limit")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1 number">
                                     <input class="form-control " type='number' name="action_limit" />
                                 </div>
@@ -105,7 +104,7 @@
                                     <input class="form-control" type='text' name="action_limit_text" />
                                 </div>
                                 <div class="col-12 col-sm-8 col-lg-3 pt-1 text">
-                                    <input class="form-control" type='text' placeholder="English Name" name="action_limit_text_en" />
+                                    <input class="form-control" type='text' placeholder="{{lang('login_name_en_label')}}" name="action_limit_text_en" />
                                 </div>
                             </div>
                         </div>

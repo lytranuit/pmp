@@ -294,15 +294,21 @@ class Diagram extends MY_Controller
             $where = $this->diagram_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
         }
 
-        $posts = $where->order_by("id", "DESC")->paginate($limit, NULL, $page);
-        //        echo "<pre>";
-        //        print_r($posts);
-        //        die();
+        $posts = $where->order_by("id", "DESC")->with_images()->paginate($limit, NULL, $page);
+        // echo "<pre>";
+        // print_r($posts);
+        // die();
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
                 $nestedData['name'] = $post->name;
+                if (isset($post->images)) {
+                    $nestedData['image'] = "";
+                    foreach ($post->images as $image) {
+                        $nestedData['image']  .= "<a href='" . base_url() .  $image->src . "' class='mx-2'target='_blank'><img src='" . base_url() .  $image->src . "' width='50' /> </a>";
+                    }
+                }
                 $nestedData['action'] = '<a href="' . base_url() . 'diagram/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'

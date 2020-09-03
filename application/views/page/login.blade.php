@@ -68,14 +68,11 @@
     <!-- ============================================================== -->
     <div class="splash-container">
         <div class="card">
-            <div class="card-header text-center"><span>{{lang('login')}}</span></div>
+            <div class="card-header text-center"><span>{{lang('login_heading')}}</span></div>
             <div class="card-body">
                 @if($message != '')
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <?= $message ?>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
                 @endif
                 <form id="form-login" method="POST">
@@ -85,12 +82,12 @@
                     <div class="form-group">
                         <input class="form-control" id="password" name="password" type="password" placeholder="<?= lang('login_password_label') ?>">
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label class="custom-control custom-checkbox">
                             <input class="custom-control-input" type="checkbox" value="1" checked="" name="remember"><span class="custom-control-label">{{lang('remember_me')}}</span>
                         </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg btn-block" id="button_login">{{lang('login')}}</button>
+                    </div> -->
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" id="button_login">{{lang('login_heading')}}</button>
                 </form>
             </div>
         </div>

@@ -12,13 +12,13 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Department</th>
-                            <th>Report type</th>
-                            <th>Time</th>
-                            <th>User</th>
-                            <th>Import time</th>
-                            <th>File</th>
-                            <th>Status</th>
+                            <th>{{lang("department")}}</th>
+                            <th>{{lang("report_type")}}</th>
+                            <th>{{lang("time")}}</th>
+                            <th>{{lang("user")}}</th>
+                            <th>{{lang("import_time")}}</th>
+                            <th>{{lang("file")}}</th>
+                            <th>{{lang("status")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,6 +32,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        
         $('#quanlytin').DataTable({
             "processing": true,
             "serverSide": true,
@@ -40,9 +41,12 @@
                 "dataType": "json",
                 "type": "POST",
             },
+            "language": {
+                "url": url
+            },
             "columns": [{
                     "data": "id"
-                },{
+                }, {
                     "data": "workshop_name"
                 },
                 {

@@ -6,7 +6,7 @@
 
 <link rel="shortcut icon" type="image/x-icon" href="<?= base_url() ?>public/img/favicon.png">
 <title>
-    @section("title") 
+    @section("title")
     {{$project_name}}
     @show
 </title>
@@ -18,6 +18,11 @@
 @endforeach
 <script>
     var path = '<?= base_url() ?>';
+    var language = '<?= language_current() ?>';
+    if (language == "vietnamese")
+        url = "//cdn.datatables.net/plug-ins/1.10.21/i18n/Vietnamese.json";
+    else
+        url = "//cdn.datatables.net/plug-ins/1.10.21/i18n/English.json";
 </script>
 @foreach($javascript_tag as $url)
 <script src="{{$url}}"></script>

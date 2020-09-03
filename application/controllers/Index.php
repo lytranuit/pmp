@@ -136,6 +136,8 @@ class Index extends MY_Controller
     {
         $this->load->model("user_model");
         $this->data['title'] = lang('login');
+        // echo language_current();
+        // die();
         // $this->session->keep_flashdata('message');
         if ($this->input->post('identity') != "" && $this->input->post('password') != "") {
             // check to see if the user is logging in

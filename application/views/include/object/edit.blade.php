@@ -13,15 +13,15 @@
                         <div class="col-12">
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Name:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("login_name_label")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="name" required="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">English Name:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("login_name_en_label")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="name_en" required="" />
+                                    <input class="form-control" type='text' name="name_en" />
                                 </div>
                             </div>
                             <!--                            <div class="form-group row">
@@ -36,13 +36,13 @@
                                                         </div> 
                             -->
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Method:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("method")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <div class="dd" id="nestable2">
                                         <?= $html_nestable ?>
                                     </div>
                                     <select class="form-control mt-3" id="target_add">
-                                        <option value="0">Add Target</option>
+                                        <option value="0">{{lang("add")}}</option>
                                         @foreach($targets as $target)
                                         <option value="{{$target['id']}}">
                                             {{$target['name']}}

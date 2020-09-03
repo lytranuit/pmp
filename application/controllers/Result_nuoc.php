@@ -91,6 +91,9 @@ class Result_nuoc extends MY_Controller
 
             $this->load->model("objecttarget_model");
             $object_target = $this->objecttarget_model->where("object_id", $object_id)->order_by("order", "ASC")->with_target()->as_array()->get_all();
+            // echo "<pre>";
+            // print_r($object_target);
+            // die();
             $this->data['html_nestable_target'] = $this->html_nestable_target((array) $object_target, 'parent_id', 0);
 
             // echo "<pre>";

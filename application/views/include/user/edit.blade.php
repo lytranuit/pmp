@@ -12,20 +12,32 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Identity:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("login_identity_label")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input type="text" class="form-control" value="" name="username" required="" readonly="">
+                                    <input type="text" class="form-control" value="" name="username" required="">
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Name:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("login_name_label")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input type="text" class="form-control" value="" name="last_name" minlength="3" required="">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Is Active:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("create_user_password_label")}}:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input type="password" class="form-control" name="newpassword" minlength="6" required="" aria-required="true">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("create_user_password_confirm_label")}}:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
+                                    <input type="password" class="form-control" name="confirmpassword" minlength="6" required="" aria-required="true">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("index_active_link")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <div class="switch-button switch-button-success">
                                         <input type="hidden" name="active" value="0" class="input-tmp">
@@ -37,7 +49,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">Groups:</b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("index_groups_th")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select name="groups[]" style="width: 200px;" multiple="">
                                         @foreach($groups as $row)
@@ -46,12 +58,11 @@
                                     </select>
                                 </div>
                             </div>
-
                         </div>
 
                         <div class="col-md-12" style="margin-bottom: 20px;">
                             <a href="#" class='btn btn-primary' data-target="#password-modal" data-toggle="modal">
-                                <span>Change password</span>
+                                <span>{{lang("thay_doi_password")}}</span>
                             </a>
                         </div>
                     </div>
@@ -67,7 +78,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="comment-modalLabel">
-                    Change Password
+                    {{lang("thay_doi_password")}}
                 </h4>
             </div>
             <div class="modal-body">
@@ -76,18 +87,18 @@
                     <form id="form-password">
                         <input type="hidden" name="id_user" value="{{$tin->id}}" />
                         <div class="form-group">
-                            <b class="form-label">New password</b>
+                            <b class="form-label">{{lang("change_password_new_password_label")}}</b>
                             <div class="form-line">
                                 <input type="password" class="form-control" name="newpassword" minlength="6" required="" aria-required="true">
                             </div>
                         </div>
                         <div class="form-group">
-                            <b class="form-label">Confirm password</b>
+                            <b class="form-label">{{lang("change_password_new_password_confirm_label")}}</b>
                             <div class="form-line">
                                 <input type="password" class="form-control" name="confirmpassword" minlength="6" required="" aria-required="true">
                             </div>
                         </div>
-                        <button class="btn btn-primary waves-effect" type="submit" name="edit_password">Save</button>
+                        <button class="btn btn-primary waves-effect" type="submit" name="edit_password">{{lang("save")}}</button>
                     </form>
                 </div>
             </div>
