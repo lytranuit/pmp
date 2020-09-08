@@ -143,7 +143,7 @@ class Target extends MY_Controller
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
-                $nestedData['name'] = $post->name;
+                $nestedData['name'] = $post->name . "<i class='d-block'>" . $post->name_en . "</i>";
                 $nestedData['unit'] = $post->unit;
                 $nestedData['action'] = '<a href="' . base_url() . 'target/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'

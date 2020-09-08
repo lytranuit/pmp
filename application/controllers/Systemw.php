@@ -203,7 +203,7 @@ class Systemw extends MY_Controller
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
-                $nestedData['name'] = $post->name;
+                $nestedData['name'] = $post->name . "<i class='d-block'>" . $post->name_en . "</i>";
                 $nestedData['action'] = '<a href="' . base_url() . 'systemw/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'

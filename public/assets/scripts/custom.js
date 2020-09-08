@@ -63,7 +63,7 @@ $(document).ready(function() {
         });
         let html = "<option></option>";
         $.each(department, function(k, item) {
-            html += "<option value='" + item.id + "'>" + item.name + "</option>";
+            html += "<option value='" + item.id + "'>" + (language == "english" ? item.name_en : item.name) + "</option>";
         })
         $("#form-dang-tin [name=department_id]").html(html);
         $("#form-dang-tin [name=department_id]").trigger("change");
@@ -80,7 +80,7 @@ $(document).ready(function() {
         });
         let html = "<option></option>";
         $.each(area, function(k, item) {
-            html += "<option value='" + item.id + "'>" + item.name + "</option>";
+            html += "<option value='" + item.id + "'>" + (language == "english" ? item.name_en : item.name) + "</option>";
         })
         $("#form-dang-tin [name=area_id]").html(html);
 
@@ -98,7 +98,7 @@ $(document).ready(function() {
         });
         let html = "<option></option>";
         $.each(workshop, function(k, item) {
-            html += "<option value='" + item.id + "'>" + item.name + "</option>";
+            html += "<option value='" + item.id + "'>" + (language == "english" ? item.name_en : item.name) + "</option>";
         })
         $("#form-dang-tin [name=workshop_id]").html(html);
         console.log($("#form-dang-tin [name=area_id]:visible").length);

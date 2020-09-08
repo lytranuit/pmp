@@ -29,7 +29,7 @@
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="factory_id">
                                         @foreach ($factory as $row)
-                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        <option value="{{$row->id}}">{{pick_language($row,'name')}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -39,7 +39,7 @@
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id">
                                         @foreach ($workshop as $row)
-                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                        <option value="{{$row->id}}">{{pick_language($row,'name')}}</option>
                                         @endforeach
                                     </select>
                                 </div>

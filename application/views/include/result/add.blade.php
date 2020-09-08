@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-12">
 
-                        <div class="form-group row">
+                            <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("position_code")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="position_id" id="position">
@@ -122,39 +122,46 @@
                 success: function(data) {
                     let {
                         name,
+                        name_en,
                         factory,
                         workshop,
                         area,
                         department,
                         target,
                         department_id,
+                        area_id,
                         target_id,
                         frequency_name,
+                        frequency_name_en,
                         factory_id,
                         workshop_id,
                         object_id,
                         type_bc
                     } = data
-                    let factory_name = factory.name;
-                    let workshop_name = workshop.name;
-                    let area_name = area.name;
-                    let department_name = department.name;
-                    let target_name = target.name;
-                    let area_id = department.area_id;
-                    $("input[name='frequency_name']").val(frequency_name);
-                    $("input[name='position_name']").val(name);
+                    if (language == "english") {
+                        name = name_en;
+                        frequency_name = frequency_name_en;
+                    }
+                    let factory_name = language == "english" ? factory.name_en : factory.name;
+                    let workshop_name = language == "english" ? workshop.name_en : workshop.name;
+                    let area_name = language == "english" ? area.name_en : area.name;
+                    let department_name = language == "english" ? department.name_en : department.name;
+                    let target_name = language == "english" ? target.name_en : target.name;
                     $("input[name='object_id']").val(object_id);
                     $("input[name='area_id']").val(area_id);
                     $("input[name='factory_id']").val(factory_id);
                     $("input[name='workshop_id']").val(workshop_id);
                     $("input[name='department_id']").val(department_id);
+                    $("input[name='target_id']").val(target_id);
+                    $("input[name='type_bc']").val(type_bc);
+
+                    $("input[name='position_name']").val(name);
+                    $("input[name='frequency_name']").val(frequency_name);
                     $("input[name='factory_name']").val(factory_name);
                     $("input[name='workshop_name']").val(workshop_name);
                     $("input[name='area_name']").val(area_name);
                     $("input[name='department_name']").val(department_name);
-                    $("input[name='target_id']").val(target_id);
                     $("input[name='target_name']").val(target_name);
-                    $("input[name='type_bc']").val(type_bc);
                 }
             })
         })

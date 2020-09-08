@@ -191,7 +191,7 @@ class Resulte extends MY_Controller
 
                 $nestedData['employee_string_id'] = isset($post->employee->string_id) ? $post->employee->string_id : "";
                 $nestedData['employee_name'] = isset($post->employee->name) ? $post->employee->name : "";
-                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name . " - " . $post->workshop->name . " - " . $post->factory->name : "";
+                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name . " - " . $post->workshop->name . " - " . $post->factory->name .  "<i class='d-block'>" . $post->area->name_en . " - " . $post->workshop->name_en . " - " . $post->factory->name_en . "</i>" : "";
                 $nestedData['date'] = $post->date;
 
                 $nestedData['value_H'] = "<div class='text-center'>$post->value_H</div>";

@@ -12,7 +12,7 @@
                         <div class="pt-1">
                             <select class="form-control form-control-sm factory_id">
                                 @foreach ($factory as $row)
-                                <option value="{{$row->id}}">{{$row->name}}</option>
+                                <option value="{{$row->id}}">{{language_current() != "vietnamese" ? $row->name_en : $row->name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -285,7 +285,7 @@
                 });
                 let html = "";
                 $.each(department, function(k, item) {
-                    html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                    html += "<option value='" + item.id + "'>" + (language != "vietnamese" && object_id != 3 ? item.name_en : item.name) + "</option>";
                 })
                 $(".department_id").html(html);
                 if ($(".department_id").length)
@@ -304,7 +304,7 @@
                     });
                     let html = "";
                     $.each(system, function(k, item) {
-                        html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                        html += "<option value='" + item.id + "'>" + (language != "vietnamese" ? item.name_en : item.name) + "</option>";
                     })
                     $(".system_id").html(html);
                     $(".system_id").trigger("change");
@@ -316,7 +316,7 @@
                     });
                     let html = "";
                     $.each(area, function(k, item) {
-                        html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                        html += "<option value='" + item.id + "'>" + (language != "vietnamese" ? item.name_en : item.name) + "</option>";
                     })
                     $(".area_id").html(html);
                     if ($(".department_id").length)
@@ -334,7 +334,7 @@
                 });
                 let html = "";
                 $.each(workshop, function(k, item) {
-                    html += "<option value='" + item.id + "'>" + item.name + "</option>";
+                    html += "<option value='" + item.id + "'>" + (language != "vietnamese" ? item.name_en : item.name) + "</option>";
                 })
                 $(".workshop_id").html(html);
                 $(".workshop_id").trigger("change");

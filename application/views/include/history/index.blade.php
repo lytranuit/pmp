@@ -14,6 +14,8 @@
                             <th>{{lang("date")}}</th>
                             <th>{{lang("user")}}</th>
                             <th>{{lang("description")}}</th>
+                            <th>{{lang("old_values")}}</th>
+                            <th>{{lang("new_values")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,6 +47,12 @@
                 },
                 {
                     "data": "description"
+                },
+                {
+                    "data": "old_values"
+                },
+                {
+                    "data": "new_values"
                 }
             ]
 

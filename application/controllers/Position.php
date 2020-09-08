@@ -262,16 +262,16 @@ class Position extends MY_Controller
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $nestedData['string_id'] = $post->string_id;
-                $nestedData['name'] = $post->name;
-                $nestedData['frequency_name'] = $post->frequency_name;
-                $nestedData['department_name'] = isset($post->department->name) ? $post->department->name : "";
+                $nestedData['frequency_name'] = $post->frequency_name . "<i class='d-block'>" . $post->frequency_name_en . "</i>";
+                $nestedData['department_name'] = isset($post->department->name) ? $post->department->name . "<i class='d-block'>" . $post->department->name_en . "</i>" : "";
                 if ($post->object_id <= 17) {
-                    $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+                    $nestedData['area_name'] = isset($post->area->name) ? $post->area->name . "<i class='d-block'>" . $post->area->name_en . "</i>" : "";
                 } else {
-                    $nestedData['area_name'] = isset($post->system->name) ? $post->system->name : "";
+                    $nestedData['area_name'] = isset($post->system->name) ? $post->system->name . "<i class='d-block'>" . $post->system->name_en . "</i>" : "";
                 }
-                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
-                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
+                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name . "<i class='d-block'>" . $post->workshop->name_en . "</i>" : "";
+                $nestedData['name'] = $post->name . "<i class='d-block'>" . $post->name_en . "</i>";
+                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name . "<i class='d-block'>" . $post->factory->name_en . "</i>" : "";
                 $nestedData['type_bc'] = $post->type_bc;
                 $nestedData['action'] = '<a href="' . base_url() . 'position/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'

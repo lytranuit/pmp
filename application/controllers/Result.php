@@ -186,11 +186,11 @@ class Result extends MY_Controller
             foreach ($posts as $post) {
                 $limit = $this->limit_model->where(array("area_id" => $post->area_id, 'target_id' => $post->target_id))->where("day_effect", "<=", $post->date)->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
 
-                $nestedData['target_name'] = isset($post->target->name) ? $post->target->name : "";
-                $nestedData['position_name'] = isset($post->position->name) ? $post->position->name : "";
+                $nestedData['target_name'] = isset($post->target->name) ? $post->target->name . "<i class='d-block'>" . $post->target->name_en . "</i>": "";
+                // $nestedData['position_name'] = isset($post->position->name) ? $post->position->name : "";
                 $nestedData['position_string_id'] = isset($post->position->string_id) ? $post->position->string_id : "";
-                $nestedData['frequency_name'] = isset($post->position->frequency_name) ? $post->position->frequency_name : "";
-                $nestedData['department_name'] = isset($post->department->name) ? $post->department->name : "";
+                $nestedData['frequency_name'] = isset($post->position->frequency_name) ? $post->position->frequency_name . "<i class='d-block'>" . $post->position->frequency_name_en . "</i>" : "";
+                $nestedData['department_name'] = isset($post->department->name) ? $post->department->name . "<i class='d-block'>" . $post->department->name_en . "</i>" : "";
                 $nestedData['date'] = $post->date;
                 $nestedData['value'] = "<div class='text-center'>$post->value</div>";
                 if (!empty($limit) && $post->value > $limit->alert_limit && $post->value < $limit->action_limit) {

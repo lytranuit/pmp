@@ -87,6 +87,8 @@ class History extends MY_Controller
                 $nestedData['created_at'] = $post->created_at;
                 $nestedData['description'] = $post->description;
                 $nestedData['name'] = $post->name;
+                $nestedData['old_values'] = $post->old_values;
+                $nestedData['new_values'] = $post->new_values;
                 $nestedData['action'] = '';
                 $data[] = $nestedData;
             }

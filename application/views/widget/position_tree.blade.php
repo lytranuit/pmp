@@ -107,7 +107,7 @@ right connector from last child*/
         font-family: arial, verdana, tahoma;
         font-size: 11px;
         display: inline-block;
-
+        white-space: nowrap;
         border-radius: 5px;
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;

@@ -238,9 +238,9 @@ class Area extends MY_Controller
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
-                $nestedData['name'] = $post->name;
-                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
-                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
+                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name . "<i class='d-block'>" . $post->workshop->name_en . "</i>" : "";
+                $nestedData['name'] = $post->name . "<i class='d-block'>" . $post->name_en . "</i>";
+                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name . "<i class='d-block'>" . $post->factory->name_en . "</i>" : "";
                 $nestedData['action'] = '<a href="' . base_url() . 'area/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'

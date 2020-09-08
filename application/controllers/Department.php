@@ -27,7 +27,7 @@ class Department extends MY_Controller
         );
     }
 
-   
+
     public function _remap($method, $params = array())
     {
         if (!method_exists($this, $method)) {
@@ -251,11 +251,12 @@ class Department extends MY_Controller
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $nestedData['string_id'] = $post->string_id;
-                $nestedData['name'] = $post->name;
-                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
-                $nestedData['system_name'] = isset($post->system->name) ? $post->system->name : "";
-                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
-                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
+                $nestedData['area_name'] = isset($post->area->name) ? $post->area->name . "<i class='d-block'>" . $post->area->name_en . "</i>" : "";
+                $nestedData['system_name'] = isset($post->system->name) ? $post->system->name . "<i class='d-block'>" . $post->system->name_en . "</i>" : "";
+
+                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name . "<i class='d-block'>" . $post->workshop->name_en . "</i>" : "";
+                $nestedData['name'] = $post->name . "<i class='d-block'>" . $post->name_en . "</i>";
+                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name . "<i class='d-block'>" . $post->factory->name_en . "</i>" : "";
                 $nestedData['action'] = '<a href="' . base_url() . 'department/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'

@@ -45,7 +45,7 @@
                                         <option value="0">{{lang("add")}}</option>
                                         @foreach($targets as $target)
                                         <option value="{{$target['id']}}">
-                                            {{$target['name']}}
+                                            {{pick_language($target,'name')}}
                                         </option>
                                         @endforeach
                                     </select>

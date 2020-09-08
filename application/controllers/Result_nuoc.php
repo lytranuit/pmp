@@ -171,7 +171,7 @@ class Result_nuoc extends MY_Controller
                     $sub_html .= "-";
                 }
             }
-            $html .= '<option value="' . $row['target_id'] . '" ' . $is_disabled . ' data-type="' . $row['target']->type_data . '">' . $sub_html . " " . $row['target']->name . '</option>';
+            $html .= '<option value="' . $row['target_id'] . '" ' . $is_disabled . ' data-type="' . $row['target']->type_data . '">' . $sub_html . " " . pick_language($row['target'], 'name') . '</option>';
             $html .= $this->html_nestable_target((array) $array, $column, $row['id'], $deep + 1);
             // $html .= '</li>';
         }
@@ -230,11 +230,11 @@ class Result_nuoc extends MY_Controller
                 if (!empty($target) && isset($target->parent->target->name)) {
                     $post->target->name .=  " (" . $target->parent->target->name . ")";
                 }
-                $nestedData['target_name'] = isset($post->target->name) ? $post->target->name : "";
-                $nestedData['position_name'] = isset($post->position->name) ? $post->position->name : "";
+                $nestedData['target_name'] = isset($post->target->name) ? $post->target->name . "<i class='d-block'>" . $post->target->name_en . "</i>" : "";
+                // $nestedData['position_name'] = isset($post->position->name) ? $post->position->name : "";
                 $nestedData['position_string_id'] = isset($post->position->string_id) ? $post->position->string_id : "";
-                $nestedData['frequency_name'] = isset($post->position->frequency_name) ? $post->position->frequency_name : "";
-                $nestedData['system_name'] = isset($post->system->name) ? $post->system->name : "";
+                $nestedData['frequency_name'] = isset($post->position->frequency_name) ? $post->position->frequency_name . "<i class='d-block'>" . $post->position->frequency_name_en . "</i>" : "";
+                $nestedData['system_name'] = isset($post->system->name) ? $post->system->name . "<i class='d-block'>" . $post->system->name_en . "</i>" : "";
                 $nestedData['date'] = $post->date;
                 if ($post->target->type_data == "float") {
                     $nestedData['value'] = "<div class='text-center'>$post->value</div>";

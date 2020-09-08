@@ -125,34 +125,42 @@
                 success: function(data) {
                     let {
                         name,
+                        name_en,
                         factory,
                         workshop,
                         system,
+                        system_id,
                         department,
                         department_id,
                         frequency_name,
+                        frequency_name_en,
                         factory_id,
                         workshop_id,
                         object_id,
-                        system_id,
                         type_bc
                     } = data
-                    let factory_name = factory.name;
-                    let workshop_name = workshop.name;
-                    let system_name = system.name;
-                    let department_name = department ? department.name : "";
-                    $("input[name='frequency_name']").val(frequency_name);
-                    $("input[name='position_name']").val(name);
+                    if (language == "english") {
+                        name = name_en;
+                        frequency_name = frequency_name_en;
+                    }
+                    let factory_name = language == "english" ? factory.name_en : factory.name;
+                    let workshop_name = language == "english" ? workshop.name_en : workshop.name;
+                    let system_name = language == "english" ? system.name_en : system.name;
+                    let department_name = language == "english" ? department.name_en : department.name;
                     $("input[name='object_id']").val(object_id);
                     $("input[name='system_id']").val(system_id);
                     $("input[name='factory_id']").val(factory_id);
                     $("input[name='workshop_id']").val(workshop_id);
                     $("input[name='department_id']").val(department_id);
+                    $("input[name='type_bc']").val(type_bc);
+
+                    $("input[name='position_name']").val(name);
+                    $("input[name='frequency_name']").val(frequency_name);
                     $("input[name='factory_name']").val(factory_name);
                     $("input[name='workshop_name']").val(workshop_name);
                     $("input[name='system_name']").val(system_name);
                     $("input[name='department_name']").val(department_name);
-                    $("input[name='type_bc']").val(type_bc);
+                    
                 }
             })
         })

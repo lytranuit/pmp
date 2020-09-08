@@ -269,7 +269,7 @@ class Object extends MY_Controller
             $html .= '<li class="dd-item" id="menuItem_' . $row['id'] . '" data-id="' . $row['id'] . '" data-target="' . $row['target_id'] . '">
                             <div class="dd-handle">
                              ' . $sub_html . '
-                                <div>' . $row['target_id'] . " - " . $row['target']['name'] . '</div>
+                                <div>' . $row['target_id'] . " - " . pick_language($row['target'], 'name') . '</div>
                                 <div class="dd-nodrag btn-group ml-auto">
                                     <button class="btn btn-sm btn-outline-light dd-item-delete">
                                         <i class="far fa-trash-alt"></i>
@@ -315,7 +315,7 @@ class Object extends MY_Controller
         if (!empty($posts)) {
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
-                $nestedData['name'] = $post->name;
+                $nestedData['name'] = $post->name . "<i class='d-block'>" . $post->name_en . "</i>";
                 $nestedData['action'] = '<a href="' . base_url() . 'object/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'

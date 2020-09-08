@@ -1664,8 +1664,8 @@ class MY_Model extends CI_Model
         }
 
         $old_value = null;
-        if (!empty($previous_values)) $old_value = json_encode($previous_values);
-        $new_value = json_encode($set); // For delete event it stores where condition
+        if (!empty($previous_values)) $old_value = json_encode($previous_values, JSON_UNESCAPED_UNICODE);
+        $new_value = json_encode($set, JSON_UNESCAPED_UNICODE); // For delete event it stores where condition
         if (is_null($description)) {
             if ($event === 'insert') {
                 $description =   "USER '" . $this->session->userdata('username') . "' added a $this->name";
@@ -1675,7 +1675,7 @@ class MY_Model extends CI_Model
                 $description = "USER '" . $this->session->userdata('username') . "' removed a $this->name";
             }
         }
-        
+
         return $this->_database->insert(
             'user_audit_trails',
             array(

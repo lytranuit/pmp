@@ -151,7 +151,7 @@ class Report extends MY_Controller
                     $nestedData['id'] = $post->id;
                 }
                 $nestedData['object_name'] = isset($post->object->name) ? $post->object->name : "";
-                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
+                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name . "<i class='d-block'>" . $post->workshop->name_en . "</i>" : "";
                 $nestedData['date'] = $post->date;
                 $nestedData['name'] = '<a href="' . $url . '">' . $post->name . '</a>';
                 $nestedData['type'] = $post->type;

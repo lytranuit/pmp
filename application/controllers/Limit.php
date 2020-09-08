@@ -242,7 +242,7 @@ class Limit extends MY_Controller
                     $sub_html .= "-";
                 }
             }
-            $html .= '<option value="' . $row['target_id'] . '" ' . $is_disabled . ' data-type="' . $row['target']->type_data . '">' . $sub_html . " " . $row['target']->name . '</option>';
+            $html .= '<option value="' . $row['target_id'] . '" ' . $is_disabled . ' data-type="' . $row['target']->type_data . '">' . $sub_html . " " . pick_language($row['target'], 'name') . '</option>';
             $html .= $this->html_nestable_target((array) $array, $column, $row['id'], $deep + 1);
             // $html .= '</li>';
         }
@@ -306,14 +306,14 @@ class Limit extends MY_Controller
                     $post->target->name .=  " (" . $target->parent->target->name . ")";
                 }
                 $nestedData['day_effect'] = $post->day_effect;
-                $nestedData['target_name'] = isset($post->target->name) ? $post->target->name : "";
+                $nestedData['target_name'] = isset($post->target->name) ? $post->target->name . "<i class='d-block'>" . $post->target->name_en . "</i>" : "";
 
-                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name : "";
-                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name : "";
+                $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name . "<i class='d-block'>" . $post->workshop->name_en . "</i>" : "";
+                $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name . "<i class='d-block'>" . $post->factory->name_en . "</i>" : "";
                 if ($object_id <= 17) {
-                    $nestedData['area_name'] = isset($post->area->name) ? $post->area->name : "";
+                    $nestedData['area_name'] = isset($post->area->name) ? $post->area->name . "<i class='d-block'>" . $post->area->name_en . "</i>" : "";
                 } else {
-                    $nestedData['area_name'] = isset($post->system->name) ? $post->system->name : "";
+                    $nestedData['area_name'] = isset($post->system->name) ? $post->system->name . "<i class='d-block'>" . $post->system->name_en . "</i>" : "";
                 }
                 if ($post->target->type_data == "float") {
                     $nestedData['standard_limit'] = $post->standard_limit;
