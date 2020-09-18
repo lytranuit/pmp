@@ -1752,7 +1752,7 @@ class Export extends MY_Controller
 
             $styleCell = array('valign' => 'center');
             $fontCell = array('align' => 'center');
-            $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
+            $cellColSpan = array('gridSpan' => 5, 'valign' => 'center');
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
 
@@ -2710,7 +2710,7 @@ class Export extends MY_Controller
 
             // redirect("dashboard", 'refresh');
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
-        } else if ($object_id == 18 || $object_id == 19 || $object_id == 20) {
+        } else if ($object_id == 18 || $object_id == 19 || $object_id == 20) { // NUOC
             $object = $this->object_model->where(array('id' => $object_id))->as_object()->get();
             $workshop_id = $record->workshop_id;
 

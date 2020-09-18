@@ -559,7 +559,7 @@ $config['not_allowed_tables'] = array();
 $config['modules_locations'] = array(APPPATH . 'modules/');
 
 
-$config['base_url'] = "http://pmp.local/";
+$config['base_url'] = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . "/";
 
 $config['project_name'] = "Xu hướng vi sinh môi trường";
 

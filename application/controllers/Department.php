@@ -253,7 +253,6 @@ class Department extends MY_Controller
                 $nestedData['string_id'] = $post->string_id;
                 $nestedData['area_name'] = isset($post->area->name) ? $post->area->name . "<i class='d-block'>" . $post->area->name_en . "</i>" : "";
                 $nestedData['system_name'] = isset($post->system->name) ? $post->system->name . "<i class='d-block'>" . $post->system->name_en . "</i>" : "";
-
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name . "<i class='d-block'>" . $post->workshop->name_en . "</i>" : "";
                 $nestedData['name'] = $post->name . "<i class='d-block'>" . $post->name_en . "</i>";
                 $nestedData['factory_name'] = isset($post->factory->name) ? $post->factory->name . "<i class='d-block'>" . $post->factory->name_en . "</i>" : "";

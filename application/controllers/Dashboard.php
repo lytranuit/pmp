@@ -32,6 +32,9 @@ class Dashboard extends MY_Controller
             "https://code.highcharts.com/modules/exporting.js",
             base_url() . "public/assets/scripts/custom.js?v=" . $version
         );
+        // echo "<pre>";
+        // print_r($_SERVER);
+        // die();
     }
 
 
