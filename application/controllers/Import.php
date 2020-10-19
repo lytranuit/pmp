@@ -4306,6 +4306,131 @@ class Import extends MY_Controller
             }
         }
     }
+    public function job()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/upload/job/change_pass';
+
+        echo "<pre>";
+        echo $dir;
+        $this->load->model("job_model");
+        $this->load->model("job_schedule_model");
+        $insert = array();
+
+
+        $sortedarray1 = $this->listFolderFiles($dir);
+        $sortedarray1 = array_values($sortedarray1);
+        // print_r($sortedarray1);
+        // die();
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $file_name;
+            //Tiến hành xác thực file
+            print_r($file);
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+            // die();
+            //Chỉ đọc dữ liệu
+            // $objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            // print_r($count_sheet);
+            // die();
+            for ($k = 0; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+                $title = $sheet->getTitle();
+                // echo "<br>";
+                // print_r($title . "<br>");
+                // die();
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                $row_stt = 2;
+                for ($i = $row_stt; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i - $row_stt][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i - $row_stt][$j] instanceof PHPExcel_RichText) {
+                            $data[$i - $row_stt][$j] = $data[$i - $row_stt][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - $row_stt][$j] > 0) {
+
+                            if (is_numeric($data[$i - $row_stt][$j])) {
+                                $data[$i - $row_stt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - $row_stt][$j]));
+                            } else if ($data[$i - $row_stt][$j] == '26/09/16') {
+                                $data[$i - $row_stt][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+
+                // echo "<pre>";
+                // print_r($data);
+                // die();
+                $stt_date = 1;
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                    $string_id = $row[1];
+                    $frequency = $row[0];
+                    // $position_string_id2 = str_replace("_", "-", $position_string_id);
+                    $name = $row[2];
+                    $username = $row[3];
+                    $date = $row[4];
+                    $mail = $row[5];
+
+                    $before_send = $row[6];
+                    $hour_send = "06:00:00";
+                    if (!is_Date($date)) {
+                        continue;
+                    }
+                    if ($name == "" || $date == "" || $mail == "" || $string_id == "") {
+                        continue;
+                    }
+                    $time_send = $date . " $hour_send";
+                    // if($time_send)
+                    $data_up = array(
+                        'start_date' => $date,
+                        'before_send' => $before_send,
+                        'mail' => $mail,
+                        'start_date' => $date,
+                        'equipment_id' => $string_id,
+                        'time_send' => $time_send,
+                        'equipment_name' => $name,
+                        'frequency' => $frequency,
+                        'hour_send' => $hour_send,
+                        'username' => $username,
+                        'job_id' => 1,
+                    );
+                    $id = $this->job_schedule_model->insert($data_up);
+                    $this->job_schedule_model->update_next_send($id);
+                    // $phong_id = $find_phong->id;
+                }
+            }
+        }
+    }
     function listFolderFiles($dir)
     {
         $ffs = scandir($dir);

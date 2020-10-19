@@ -3291,4 +3291,91 @@ class Export extends MY_Controller
         $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
     }
     ////////////
+
+    function job()
+    {
+        ini_set("SMTP", "smtp.gmail.com");
+        ini_set("smtp_port", 465);
+        $this->load->model("job_schedule_model");
+        $results = $this->job_schedule_model->get_send();
+        // print_r($results);
+        // die();   
+        if (!empty($results)) {
+            ///SEND MAIL
+            print_r("oko ko ko ko ko k ok ok o k");
+            $config = array(
+                'mailtype' => 'html',
+                'protocol' => "smtp",
+                'smtp_host' => "smtp.gmail.com",
+                'smtp_user' => "lytranuit@gmail.com", // actual values different
+                'smtp_pass' => "ifftdbgwneocusuz",
+                'smtp_crypto' => "ssl",
+                'wordwrap' => TRUE,
+                'smtp_port' => 465,
+                'starttls' => true,
+                'newline' => "\r\n",
+                'crlf' => "\r\n",
+            );
+            $this->load->library("email", $config);
+
+            //            /*
+            //             * Send mail
+            //             */
+            //            $this->email->clear();
+            //            print_r($email_to);
+            //            die();
+
+            $mails = array();
+            foreach ($results as $send) {
+                $id_record = $send->id;
+                $mail = explode(",", $send->mail);
+                $equipment_id = $send->equipment_id;
+                $equipment_name = $send->equipment_name;
+                $change_date = $send->change_date;
+                $next_date = $send->next_date;
+                $username = $send->username;
+                foreach ($mail as $m) {
+                    if (!isset($mails[$m])) {
+                        $mails[$m] = array();
+                    }
+                    array_push($mails[$m], array(
+                        'equipment_id' => $equipment_id,
+                        'equipment_name' => $equipment_name,
+                        'change_date' => $change_date,
+                        'next_date' => $next_date,
+                        'username' => $username
+                    ));
+                }
+
+                $this->job_schedule_model->update_next_send($id_record);
+            }
+            // echo "<pre>";
+            // print_r($mails);
+            // die();
+            foreach ($mails as $mail => $value) {
+                $this->email->clear(TRUE);
+                $this->email->CharSet = "UTF-8";
+                $this->email->from("lytranuit@gmail.com", "Auto Send");
+                $this->email->to($mail); /// $conf['email_contact']
+                $this->email->subject("Thay đổi mật khẩu");
+                $this->email->set_mailtype("html");
+                // $html = "";
+                $this->data['rows'] = $value;
+                $html = $this->blade->view()->make('email/change_pass', $this->data)->render();
+                // $html = "";
+                $this->email->message($html);
+
+                // $this->supplierproduct_model->update(array("is_sent" => 1), $quote->id);
+                if ($this->email->send()) {
+                    //                echo json_encode(array('code' => 400, 'msg' => lang('alert_400')));
+                } else {
+                    // $file_log = './log_' . $quote->id . '.log';
+                    // file_put_contents($file_log, $this->email->print_debugger(), FILE_APPEND);
+                }
+
+                ///UPDATE
+            }
+        }
+        echo 1;
+    }
 }
