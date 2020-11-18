@@ -117,7 +117,9 @@
         $("[name=factory_id]").change();
         $.validator.setDefaults({
             debug: true,
-            success: "valid"
+            success: "valid",
+            ignore: '[readonly=readonly]'
+
         });
         $("#form-dang-tin").validate({
             highlight: function(input) {

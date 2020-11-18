@@ -4,14 +4,16 @@
             <section class="card card-fluid">
                 <h5 class="card-header">
                     <div class="d-inline-block w-100">
-                        <button type="submit" name="dangtin" class="btn btn-sm btn-primary float-right">{{lang("save")}}</button>
+                        <button type="submit" name="dangtin"
+                            class="btn btn-sm btn-primary float-right">{{lang("save")}}</button>
                     </div>
                 </h5>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("employee")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("employee")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-9 col-lg-6 pt-1">
                                     <select class="form-control" name="employee_id" id="employee">
                                         <option></option>
@@ -30,7 +32,8 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("factory")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("factory")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="factory_id">
                                         @foreach ($factory as $row)
@@ -41,7 +44,8 @@
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("department")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("department")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="workshop_id" require>
                                         @foreach ($workshop as $row)
@@ -51,7 +55,8 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("area")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("area")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="area_id" require>
                                         @foreach ($area as $area)
@@ -78,7 +83,8 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <input class="form-control" type='date' name="date" required="" value="{{date('Y-m-d')}}" />
+                                            <input class="form-control" type='date' name="date" required=""
+                                                value="{{date('Y-m-d')}}" />
                                         </td>
                                         <td>
                                             <input class="form-control" type='number' name="value_H" />
@@ -119,7 +125,8 @@
 
         $.validator.setDefaults({
             debug: true,
-            success: "valid"
+            success: "valid",
+            ignore: '[readonly=readonly]'
         });
         $("#form-dang-tin").validate({
             highlight: function(input) {

@@ -5,7 +5,8 @@
             <section class="card card-fluid">
                 <h5 class="card-header">
                     <div class="d-inline-block w-100">
-                        <button type="submit" name="dangtin" class="btn btn-sm btn-primary float-right">{{lang("save")}}</button>
+                        <button type="submit" name="dangtin"
+                            class="btn btn-sm btn-primary float-right">{{lang("save")}}</button>
                     </div>
                 </h5>
                 <div class="card-body">
@@ -13,9 +14,10 @@
                         <div class="col-12">
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("position_code")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("position_code")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="position_id" id="position">
+                                    <select class="form-control" name="position_id" id="position" required>
                                         <option></option>
                                         @foreach ($positions as $row)
                                         <option value="{{$row->id}}">{{$row->string_id}}</option>
@@ -24,29 +26,36 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("position_name")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("position_name")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="position_name" required="" readonly="" />
+                                    <input class="form-control" type='text' name="position_name" required=""
+                                        readonly="" />
                                 </div>
                             </div>
 
 
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("factory")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("factory")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="factory_name" required="" readonly="" />
+                                    <input class="form-control" type='text' name="factory_name" required=""
+                                        readonly="" />
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("department")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("department")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="workshop_name" required="" readonly="" />
+                                    <input class="form-control" type='text' name="workshop_name" required=""
+                                        readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("area")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("area")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <input class="form-control" type='text' name="area_name" required="" readonly="" />
                                 </div>
@@ -60,23 +69,31 @@
                                     @endif
                                     <i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="department_name" required="" readonly="" />
-                                    <input class="form-control" type='hidden' name="department_id" required="" readonly="" />
+                                    <input class="form-control" type='text' name="department_name" required=""
+                                        readonly="" />
+                                    <input class="form-control" type='hidden' name="department_id" required=""
+                                        readonly="" />
                                     <input class="form-control" type='hidden' name="area_id" required="" readonly="" />
-                                    <input class="form-control" type='hidden' name="workshop_id" required="" readonly="" />
-                                    <input class="form-control" type='hidden' name="factory_id" required="" readonly="" />
-                                    <input class="form-control" type='hidden' name="object_id" required="" readonly="" />
+                                    <input class="form-control" type='hidden' name="workshop_id" required=""
+                                        readonly="" />
+                                    <input class="form-control" type='hidden' name="factory_id" required=""
+                                        readonly="" />
+                                    <input class="form-control" type='hidden' name="object_id" required=""
+                                        readonly="" />
                                     <input class="form-control" type='hidden' name="type_bc" required="" readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("frequency")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("frequency")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="frequency_name" required="" readonly="" />
+                                    <input class="form-control" type='text' name="frequency_name" required=""
+                                        readonly="" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("method")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("method")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <select class="form-control" name="target_id" id="target_id">
                                         <?= $html_nestable_target ?>
@@ -84,22 +101,26 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("date")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("date")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='date' name="date" required="" value="{{date('Y-m-d')}}" />
+                                    <input class="form-control" type='date' name="date" required=""
+                                        value="{{date('Y-m-d')}}" />
                                 </div>
                             </div>
 
                             <div class="form-group row" id="html_value">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("value")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("value")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='number' name="value" />
+                                    <input class="form-control" type='number' name="value" required/>
                                 </div>
                             </div>
                             <div class="form-group row d-none" id="html_value_text">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("value")}}:<i class="text-danger">*</i></b>
+                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("value")}}:<i
+                                        class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="value_text" />
+                                    <input class="form-control" type='text' name="value_text" required/>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -175,16 +196,20 @@
             let target_id = $(this).val();
             let type = $("#target_id option[value=" + target_id + "]").data("type");
             $("#html_value,#html_value_text").addClass("d-none");
+            $("[name=value],[name=value_text]").prop("readonly",true);
             if (type == "float" || type == "boolean") {
                 $("#html_value").removeClass("d-none");
+                $("[name=value]").prop("readonly",false);
             } else {
                 $("#html_value_text").removeClass("d-none");
+                $("[name=value_text]").prop("readonly",false);
             }
         })
         $("#target_id").change();
         $.validator.setDefaults({
             debug: true,
-            success: "valid"
+            success: "valid",
+            ignore: '[readonly=readonly]'
         });
         $("#form-dang-tin").validate({
             highlight: function(input) {

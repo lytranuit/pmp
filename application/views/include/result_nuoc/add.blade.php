@@ -15,7 +15,7 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("position_code")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <select class="form-control" name="position_id" id="position">
+                                    <select class="form-control" name="position_id" id="position" required>
                                         <option></option>
                                         @foreach ($positions as $row)
                                         <option value="{{$row->id}}">{{$row->string_id}}</option>
@@ -89,13 +89,13 @@
                             <div class="form-group row" id="html_value">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("value")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='number' name="value" />
+                                    <input class="form-control" type='number' name="value" required/>
                                 </div>
                             </div>
                             <div class="form-group row d-none" id="html_value_text">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("value")}}:<i class="text-danger">*</i></b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input class="form-control" type='text' name="value_text" />
+                                    <input class="form-control" type='text' name="value_text" required />
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -168,16 +168,20 @@
             let target_id = $(this).val();
             let type = $("#target_id option[value=" + target_id + "]").data("type");
             $("#html_value,#html_value_text").addClass("d-none");
+            $("[name=value],[name=value_text]").prop("readonly",true);
             if (type == "float" || type == "boolean") {
                 $("#html_value").removeClass("d-none");
+                $("[name=value]").prop("readonly",false);
             } else {
                 $("#html_value_text").removeClass("d-none");
+                $("[name=value_text]").prop("readonly",false);
             }
         })
         $("#target_id").change();
         $.validator.setDefaults({
             debug: true,
-            success: "valid"
+            success: "valid",
+            ignore: '[readonly=readonly]'
         });
         $("#form-dang-tin").validate({
             highlight: function(input) {
