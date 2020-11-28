@@ -3378,4 +3378,91 @@ class Export extends MY_Controller
         }
         echo 1;
     }
+    function export_request()
+    {
+
+        set_time_limit(-1);
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '2048M');
+
+        $id = $this->input->get("id");
+        $this->load->model("template_model");
+        $this->load->model("request_model");
+        $this->load->model("variable_model");
+        $this->load->model("user_model");
+        $request = $this->request_model->with_template()->with_values()->get($id);
+        $template = $request->template;
+
+        $file = APPPATH . '../' . $template->file;
+
+        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+
+        //echo "<pre>";
+        //print_r($request);
+        //die();
+        $values = $request->values;
+        $list = array_filter($values, function ($item) {
+            return $item->variable_type == 2;
+        });
+
+        //echo "<pre>";
+        //print_r($list);
+        //die();
+        foreach ($list as $l) {
+            $templateProcessor->cloneRow($l->variable_key, $l->value);
+        }
+
+        foreach ($values as $value) {
+            $v = $value->value;
+            $key = $value->variable_key;
+            $key_type = $value->variable_type;
+            $explode_key = explode("#", $key);
+            $key_real_name = count($explode_key) ? $explode_key[0] : "";
+            if ($key_type == 2)
+                continue;
+            if ($key_type == 5) {
+                $variable = $this->variable_model->where("name", $key_real_name)->with_radio_values()->get();
+                $radios = $variable->radio_values;
+                foreach ($radios as $radio) {
+                    if ($radio->value == $v) {
+                        $templateProcessor->setImageValue("radio_" . $radio->value . "_" . $key, array('path' => APPPATH . '../public/img/tick.png', 'width' => 14, 'height' => 14));
+                    } else {
+                        $templateProcessor->setImageValue("radio_" . $radio->value . "_" . $key, array('path' => APPPATH . '../public/img/untick.png', 'width' => 14, 'height' => 14));
+                    }
+                }
+            }
+            if ($key_type == 4) {
+                $date_sign = $value->date;
+                //echo $date_sign;
+                //die();
+                if ($date_sign != "") {
+                    $user = $this->user_model->get($v);
+                    $user_name = $user->last_name;
+
+                    $templateProcessor->setValue($key, $user_name . "</w:t><w:p/><w:t>" . $date_sign);
+                } else {
+                    $templateProcessor->setValue($key, "");
+                }
+            } else {
+                $templateProcessor->setValue($key, $v);
+            }
+        }
+
+
+        $name_file = time() . ".docx";
+        $name_file = urlencode($name_file);
+        if (!file_exists(APPPATH . '../public/export_request')) {
+            mkdir(APPPATH . '../public/export_request', 0777, true);
+        }
+        //echo $temp_file;
+        //die();
+        $file_export = APPPATH . '../public/export/' . $name_file;
+        $templateProcessor->saveAs($file_export);
+
+        // Your browser will name the file "myFile.docx"
+        // regardless of what it's named on the server 
+        header("Content-Disposition: attachment; filename=myFile.docx");
+
+        readfile($file_export);
+    }
 }

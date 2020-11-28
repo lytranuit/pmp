@@ -106,12 +106,14 @@
         <div class="card">
             <div class="card-header">
                 {{lang("trend_chart")}}
+                @if($ion_auth_acl->has_permission("access_report"))
                 <div style="margin-left:auto">
                     <div class="btn-group">
                         <button class="btn btn-primary btn-sm" id="export_report"><i class="fas fa-print"></i></button>
                     </div>
 
                 </div>
+                @endif
             </div>
             <div class="card-body" id="chart_template">
                 <!-- <div class="chart-container" class="d-none">

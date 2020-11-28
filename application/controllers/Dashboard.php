@@ -132,6 +132,7 @@ class Dashboard extends MY_Controller
 
     public function index()
     {
+        redirect("dashboard/view", 'refresh');
         /////// trang ca nhan
         $this->load->model("factory_model");
         $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
@@ -180,6 +181,13 @@ class Dashboard extends MY_Controller
             // die();
         }
         load_daterangepicker($this->data);
+        echo $this->blade->view()->make('page/page', $this->data)->render();
+    }
+
+    public function position_tree()
+    { /////// trang ca nhan
+        load_datatable($this->data);
+        load_orgchart($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 

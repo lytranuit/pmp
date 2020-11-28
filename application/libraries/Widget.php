@@ -12,7 +12,7 @@ class Widget
     {
         $this->CI = &get_instance();
         $this->CI->lang->load(array('home'));
-        // $this->data['ion_auth'] =  $this->CI->ion_auth;
+        //$this->data['ion_auth'] =  $this->CI->ion_auth;
         //        $this->CI->load->model("user_model");
         //        $this->data['is_login'] = $this->CI->user_model->logged_in();
         //        $this->data['userdata'] = $this->CI->session->userdata();
@@ -29,9 +29,35 @@ class Widget
         $this->data['userdata'] = $this->CI->session->userdata();
 
         $this->CI->load->model("object_model");
+        $this->CI->load->model("groupobject_model");
         $objects = $this->CI->object_model->where(array("deleted" => 0))->as_array()->get_all();
+
+        ////OBJECT Có QUYỀN
+        if ($this->CI->ion_auth->is_admin()) {
+            $groups_objects = array_map(function ($item) {
+                return $item['id'];
+            }, $objects);
+        } else {
+            $users_groups = $this->CI->ion_auth->get_users_groups()->result_array();
+            $group_id = array_map(function ($item) {
+                return $item['id'];
+            }, $users_groups);
+
+            $groups = $this->CI->groupobject_model->where('group_id', $group_id)->group_by("object_id")->as_array()->get_all();
+            $groups_objects =  array_map(function ($item) {
+                return $item['object_id'];
+            }, $groups);
+        }
+        //echo "<pre>";
+        //print_r($groups_objects);
+        //die();
         $array = array();
+
         foreach ($objects as $object) {
+            if (in_array($object['id'], $groups_objects))
+                $object['is_allowed'] = 1;
+            else
+                $object['is_allowed'] = 0;
             $array[$object['id']] = $object;
         }
         $this->data['object']  = $array;

@@ -123,7 +123,26 @@ class Factory extends MY_Controller
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
+    public function collection()
+    {
+        $this->load->model("factory_model");
+        $data = $this->factory_model->where(array("deleted" => 0))->order_by("name", "ASC")->as_object()->get_all();
+        echo json_encode($data);
+    }
 
+
+    public function get($params)
+    {
+        $id = isset($params[0]) ? $params[0] : null;
+        if (!is_numeric($id)) {
+            echo json_encode(array());
+            die();
+        }
+
+        $this->load->model("factory_model");
+        $data = $this->factory_model->get($id);
+        echo json_encode($data);
+    }
     public function add()
     { /////// trang ca nhan
         if (isset($_POST['dangtin'])) {
@@ -213,7 +232,7 @@ class Factory extends MY_Controller
             foreach ($posts as $post) {
                 $nestedData['id'] = $post->id;
                 $nestedData['name'] = $post->name . "<i class='d-block'>$post->name_en</i>";
-                $nestedData['action'] = '<a href="' . base_url() . 'factory/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
+                $nestedData['action'] = '<a href="' . base_url() . 'factory/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2 edit_btn" data-id="' . $post->id . '" data-toggle="modal" data-target="#form-modal" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'
                     . '</a>'

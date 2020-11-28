@@ -161,7 +161,8 @@ class Ajax extends MY_Controller
     {
         $is_reload = $this->input->get('is_reload', TRUE);
         $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
-
+        //echo $is_reload;
+        //die();
         if ($is_reload || !$factory = $this->cache->get('factory_cache')) {
             $this->load->model("factory_model");
             $this->load->model("workshop_model");
@@ -170,27 +171,43 @@ class Ajax extends MY_Controller
             $this->load->model("position_model");
             $factory = $this->factory_model->where(array("deleted" => 0))->get_all();
             foreach ($factory as &$row) {
+                $row->title = $row->name;
+                $row->name = $row->name_en;
+                $row->className = 'frontend1';
                 $workshops = $this->workshop_model->where(array("deleted" => 0, 'factory_id' => $row->id))->get_all();
                 foreach ($workshops as &$workshop) {
+                    $workshop->title = $workshop->name;
+                    $workshop->name = $workshop->name_en;
+                    $workshop->className = 'middle-level';
                     $areas = $this->area_model->where(array("deleted" => 0, 'workshop_id' => $workshop->id))->get_all();
                     foreach ($areas as &$area) {
+                        $area->title = $area->name;
+                        $area->name = $area->name_en;
+                        $area->className = 'rd-dept';
                         $rooms = $this->department_model->where(array("deleted" => 0, 'area_id' => $area->id))->get_all();
                         foreach ($rooms as &$room) {
+                            $room->title = $room->string_id;
+                            $room->name = $room->name . "/" . $room->name_en;
+                            $room->className = 'product-dept';
                             $positions = $this->position_model->where(array("deleted" => 0, 'department_id' => $room->id))->get_all();
-
-                            $room->child = $positions;
+                            foreach ($positions as &$position) {
+                                $position->title = $position->string_id;
+                                $position->name = $position->name . "/" . $position->name_en;
+                                $position->className = 'pipeline1';
+                            }
+                            $room->children = $positions;
                         }
-                        $area->child = $rooms;
+                        $area->children = $rooms;
                     }
-                    $workshop->child = $areas;
+                    $workshop->children = $areas;
                 }
-                $row->child = $workshops;
+                $row->children = $workshops;
             }
             // Save into the cache for 5 minutes
             $this->cache->save('factory_cache', $factory, 60);
         }
-        $this->data['factory'] = $factory;
-        echo $this->blade->view()->make('include/dashboard/position_tree', $this->data)->render();
+        //$this->data['factory'] = $factory;
+        echo json_encode($factory);
     }
     ////////////
 }

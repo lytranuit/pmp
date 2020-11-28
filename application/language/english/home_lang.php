@@ -86,7 +86,9 @@ $lang['limit'] = "Limit";
 
 $lang['setting'] = "Settings";
 $lang['audit_trail'] = "Audit Trail";
-$lang['user_manager'] = "User";
+$lang['user_manager'] = "User Manager";
+$lang['users'] = "Users";
+$lang['roles'] = "Roles";
 // Account Creation
 $lang['account_creation_successful']            = 'Account Successfully Created';
 $lang['account_creation_unsuccessful']          = 'Unable to Create Account';

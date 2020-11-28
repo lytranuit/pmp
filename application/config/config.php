@@ -54,11 +54,11 @@ $config['url_suffix'] = '';
   | than english.
   |
  */
-$config['language'] = 'english';
+$config['language'] = 'vietnamese';
 
 $config['language_list'] = array(
-  'vietnamese' => 'vi',
-  'english' => 'en'
+    'vietnamese' => 'vi',
+    'english' => 'en'
 );
 
 /*
@@ -354,8 +354,8 @@ $config['sess_driver'] = 'database';  // select database driver
 $config['sess_save_path'] = 'ci_sessions';  // name of the mysql table
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 0;
-$config['sess_expire_on_close'] = FALSE;
-$config['sess_encrypt_cookie'] = FALSE;
+$config['sess_expire_on_close'] = TRUE;
+$config['sess_encrypt_cookie'] = TRUE;
 $config['sess_use_database'] = TRUE;
 $config['sess_table_name'] = 'ci_sessions';
 $config['sess_match_ip'] = FALSE;

@@ -148,7 +148,7 @@ class Index extends MY_Controller
                 $text =   "USER '" . $this->session->userdata('username') . "' login successfully!";
                 $this->user_model->trail(1, "insert", null, null, null, $text);
 
-                redirect('/report', 'refresh');
+                redirect('/dashboard/view', 'refresh');
             } else {
                 // if the login was un-successful
                 // redirect them back to the login page
@@ -192,7 +192,16 @@ class Index extends MY_Controller
 
         // log the user out
         $logout = $this->ion_auth->logout();
-
+        // unset cookies
+        if (isset($_SERVER['HTTP_COOKIE'])) {
+            $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+            foreach ($cookies as $cookie) {
+                $parts = explode('=', $cookie);
+                $name = trim($parts[0]);
+                setcookie($name, '', time() - 1000);
+                setcookie($name, '', time() - 1000, '/');
+            }
+        }
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }

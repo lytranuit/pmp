@@ -11,7 +11,7 @@ class MY_Controller extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->library(array('widget', 'ion_auth'));
+        $this->load->library(array('widget', 'ion_auth', 'ion_auth_acl', 'form_validation'));
         // $this->load->model("page_model");
         //        $this->load->model("user_model");
         //        echo language_current();
@@ -21,10 +21,10 @@ class MY_Controller extends CI_Controller
         ////
         $this->data['widget'] = $this->widget;
         $this->data['ion_auth'] = $this->ion_auth;
+        $this->data['ion_auth_acl'] = $this->ion_auth_acl;
         $this->data['project_name'] = $this->config->item("project_name");
         $this->data['stylesheet_tag'] = array();
         $this->data['javascript_tag'] = array(
-
             base_url() . "public/assets/jquery.cookies.2.2.0.min.js",
         );
 

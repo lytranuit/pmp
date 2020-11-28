@@ -363,7 +363,7 @@ class Ion_auth {
         if (get_cookie($this->config->item('remember_cookie_name', 'ion_auth'))) {
             delete_cookie($this->config->item('remember_cookie_name', 'ion_auth'));
         }
-
+        
         // Destroy the session
         $this->session->sess_destroy();
 

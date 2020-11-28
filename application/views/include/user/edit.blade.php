@@ -25,18 +25,6 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("create_user_password_label")}}:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input type="password" class="form-control" name="newpassword" minlength="6" required="" aria-required="true">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("create_user_password_confirm_label")}}:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input type="password" class="form-control" name="confirmpassword" minlength="6" required="" aria-required="true">
-                                </div>
-                            </div>
-                            <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("index_active_link")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
                                     <div class="switch-button switch-button-success">

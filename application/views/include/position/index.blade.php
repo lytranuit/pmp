@@ -31,7 +31,6 @@
     </div>
 </div>
 
-<?= $widget->position_tree("position"); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#quanlytin').DataTable({

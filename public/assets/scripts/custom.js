@@ -107,10 +107,15 @@ $(document).ready(function() {
         else
             $(".page-loader-wrapper").hide();
     });
+
+    if (!$.cookies.get('SELECT_ID')) {
+        $(".object_select:not(.disabled)").first().trigger("click");
+    }
     init();
 })
 
 function init() {
+
     var select_id = $.cookies.get('SELECT_ID') || "3";
     var object_name = $.cookies.get('SELECT_NAME') || "Vi sinh nhân viên";
 

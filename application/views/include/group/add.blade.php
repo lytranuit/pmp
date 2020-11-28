@@ -10,18 +10,18 @@
                 </h5>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-12">
                             <div class="form-group row">
-                                <b class="col-12 col-lg-2 col-form-label">Tên:<i class="text-danger">*</i></b>
-                                <div class="col-12 col-lg-4 pt-1">
-                                    <input class="form-control form-control-sm" type='text' name="name" required="" placeholder="Groups" />
+                                <b class="col-12 col-lg-1 col-form-label">Tên:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-lg-2 pt-1">
+                                    <input class="form-control form-control-sm" type='text' name="name" required=""
+                                        placeholder="Groups"/>
                                 </div>
-                                <b class="col-12 col-lg-2 col-form-label">Mô tả:<i class="text-danger">*</i></b>
-                                <div class="col-12">
-                                    <textarea class="edit" name="description"></textarea>
+                                <b class="col-12 col-lg-1 col-form-label">Mô tả:<i class="text-danger">*</i></b>
+                                <div class="col-12 col-lg-8 pt-1">
+                                    <textarea class="form-control" name="description"></textarea>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -30,10 +30,8 @@
     </div>
 </div>
 
-
 <script type='text/javascript'>
     $(document).ready(function() {
-      
         $.validator.setDefaults({
             debug: true,
             success: "valid"

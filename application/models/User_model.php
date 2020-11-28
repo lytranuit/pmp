@@ -3,9 +3,11 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class User_model extends MY_Model {
+class User_model extends MY_Model
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->table = 'users';
         $this->primary_key = 'id';
         $this->has_many_pivot['groups'] = array(
@@ -20,12 +22,11 @@ class User_model extends MY_Model {
             'foreign_key' => 'id',
             'get_relate' => TRUE /* another optional setting, which is explained below */
         );
-        $this->has_many['paids'] = array('foreign_model' => 'DebtPaid_model', 'foreign_table' => 'tbl_debt_paid', 'foreign_key' => 'user_id', 'local_key' => 'id');
-
         parent::__construct();
     }
 
-    function create_object($data) {
+    function create_object($data)
+    {
         $array = array(
             'username', 'address', 'phone', 'active', 'last_name', 'password', 'debt'
         );
@@ -46,7 +47,8 @@ class User_model extends MY_Model {
      * @return bool
      * @author Mathew
      * */
-    public function logged_in() {
+    public function logged_in()
+    {
         return (bool) $this->session->userdata('identity');
     }
 
@@ -56,14 +58,15 @@ class User_model extends MY_Model {
      * @return bool
      * @author Mathew
      * */
-    public function login($identity, $password) {
+    public function login($identity, $password)
+    {
         if (empty($identity) || empty($password)) {
             return FALSE;
         }
         $query = $this->db->select('username,id,password,active,customer_id,role')
-                ->where('username', $identity)
-                ->limit(1)
-                ->get("user");
+            ->where('username', $identity)
+            ->limit(1)
+            ->get("user");
         if ($query->num_rows() === 1) {
             $user = $query->row();
             if (md5($password) == $user->password) {
@@ -83,7 +86,8 @@ class User_model extends MY_Model {
      * @return bool
      * @author jrmadsen67
      * */
-    public function set_session($user) {
+    public function set_session($user)
+    {
 
 
         $session_data = array(
@@ -93,29 +97,31 @@ class User_model extends MY_Model {
             'customer_id' => $user->customer_id,
             'user_id' => $user->id, //everyone likes to overwrite id so we'll use user_id
         );
-//        print_r($permission);
-//        die();
+        //        print_r($permission);
+        //        die();
         $this->session->set_userdata($session_data);
         return TRUE;
     }
 
-    public function set_permission($role) {
+    public function set_permission($role)
+    {
         $query = $this->db->from("role_permission")
-                        ->join("permission", "role_permission.id_permission = permission.id")
-                        ->where('id_role', $role)->get();
+            ->join("permission", "role_permission.id_permission = permission.id")
+            ->where('id_role', $role)->get();
         $permission = $query->result_array();
-        $permission = array_map(function($item) {
+        $permission = array_map(function ($item) {
             return $item['function'];
         }, $permission);
         $this->session->set_userdata('permission', $permission);
         return TRUE;
     }
 
-    public function role_permission($id_permission) {
+    public function role_permission($id_permission)
+    {
         $query = $this->db->from("role_permission")
-                        ->where('id_permission', $id_permission)->group_by("id_role")->get();
+            ->where('id_permission', $id_permission)->group_by("id_role")->get();
         $permission = $query->result_array();
-        $permission = array_map(function($item) {
+        $permission = array_map(function ($item) {
             return $item['id_role'];
         }, $permission);
         return $permission;
@@ -127,7 +133,8 @@ class User_model extends MY_Model {
      * @return void
      * @author Mathew
      * */
-    public function logout() {
+    public function logout()
+    {
         $identity = $this->config->item('identity', 'ion_auth');
 
         if (substr(CI_VERSION, 0, 1) == '2') {
@@ -149,5 +156,4 @@ class User_model extends MY_Model {
         }
         return TRUE;
     }
-
 }

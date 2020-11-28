@@ -112,7 +112,9 @@ $lang['limit'] = "Giới hạn";
 
 $lang['setting'] = "Cài đặt";
 $lang['audit_trail'] = "Audit Trail";
-$lang['user_manager'] = "Quản lý người dùng";
+$lang['user_manager'] = "Quản trị người dùng";
+$lang['users'] = "Người dùng";
+$lang['roles'] = "Nhóm phân quyền";
 // Index
 $lang['index_heading'] = 'Tài khoản';
 $lang['index_subheading'] = 'Danh sách tài khoản.';

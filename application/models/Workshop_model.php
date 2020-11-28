@@ -18,7 +18,7 @@ class Workshop_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'name', 'name_en', 'deleted', 'factory_id'
+            'name', 'name_en', 'deleted', 'factory_id','string_id'
         );
         $obj = array();
         foreach ($array as $key) {

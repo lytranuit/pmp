@@ -115,6 +115,7 @@ class User extends MY_Controller
         if (isset($_POST['dangtin'])) {
             $this->load->model("user_model");
             $this->load->model("usergroup_model");
+            $data_prev = $this->user_model->where('id', $id)->as_array()->get();
             $data = $_POST;
             $data_up = $this->user_model->create_object($data);
             $this->user_model->update($data_up, $id);
@@ -143,7 +144,6 @@ class User extends MY_Controller
             }
 
             /// Log audit trail
-            $data_prev = $this->user_model->where('id', $id)->as_array()->get();
             $text =   "USER '" . $this->session->userdata('username') . "' edited user '" . $data['username'] . "'";
             $this->user_model->trail($id, "update", null, $data_up, $data_prev, $text);
 
@@ -179,7 +179,46 @@ class User extends MY_Controller
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
+    public function permission($params)
+    {
+        $user_id  =  isset($params[0]) ? $params[0] : 0;
 
+        if (!$user_id) {
+            $this->session->set_flashdata('message', "No user ID passed");
+            redirect("user", 'refresh');
+        }
+
+        if ($this->input->post() && $this->input->post('cancel'))
+            redirect("/user", 'refresh');
+
+
+        if ($this->input->post() && $this->input->post('save')) {
+            //print_r($this->input->post());
+            //die();
+            foreach ($this->input->post() as $k => $v) {
+                if (substr($k, 0, 5) == 'perm_') {
+                    $permission_id  =   str_replace("perm_", "", $k);
+                    //print_r($permission_id);
+
+                    if ($v == "X")
+                        $this->ion_auth_acl->remove_permission_from_user($user_id, $permission_id);
+                    else
+                        $this->ion_auth_acl->add_permission_to_user($user_id, $permission_id, $v);
+                    //die();
+                }
+            }
+
+            redirect("/user", 'refresh');
+        }
+
+        $user_groups    =   $this->ion_auth_acl->get_user_groups($user_id);
+
+        $this->data['user_id']                =   $user_id;
+        $this->data['permissions']            =   $this->ion_auth_acl->permissions('full', 'perm_key');
+        $this->data['group_permissions']      =   $this->ion_auth_acl->get_group_permissions($user_groups);
+        $this->data['users_permissions']      =   $this->ion_auth_acl->build_acl($user_id);
+        echo $this->blade->view()->make('page/page', $this->data)->render();
+    }
     public function table()
     {
         $this->load->model("user_model");

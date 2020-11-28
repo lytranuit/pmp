@@ -17,7 +17,7 @@ class Factory_model extends MY_Model
     function create_object($data)
     {
         $array = array(
-            'name', 'name_en', 'deleted',
+            'name', 'name_en', 'deleted', 'string_id'
         );
         $obj = array();
         foreach ($array as $key) {

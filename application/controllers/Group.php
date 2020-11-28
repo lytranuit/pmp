@@ -73,6 +73,9 @@ class Group extends MY_Controller
             $data_up = $this->group_model->create_object($data);
             $id = $this->group_model->insert($data_up);
 
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' added a new group";
+            $this->group_model->trail($id, "insert", null, $data_up, null, $text);
             redirect('group', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             echo $this->blade->view()->make('page/page', $this->data)->render();
@@ -86,7 +89,16 @@ class Group extends MY_Controller
             $this->load->model("group_model");
             $data = $_POST;
             $data_up = $this->group_model->create_object($data);
+
+            /// Log audit trail
+            $data_prev = $this->group_model->where('id', $id)->as_array()->get();
+            $text =   "USER '" . $this->session->userdata('username') . "' edited group '" . $data['name'] . "'";
+            $this->group_model->trail($id, "update", null, $data_up, $data_prev, $text);
+
+
             $this->group_model->update($data_up, $id);
+
+
             redirect('group', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
             $this->load->model("group_model");
@@ -102,10 +114,86 @@ class Group extends MY_Controller
         $this->load->model("group_model");
         $id = $params[0];
         $this->group_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' removed a group ";
+        $this->user_model->trail($id, "delete", null, null, null, $text);
+
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
+    public function permission()
+    {
+        if ($this->input->post() && $this->input->post('cancel'))
+            redirect('/group', 'refresh');
 
+        $group_id  =   $this->uri->segment(3);
+
+        if (!$group_id) {
+            $this->session->set_flashdata('message', "No group ID passed");
+            redirect("/group", 'refresh');
+        }
+
+        if ($this->input->post() && $this->input->post('save')) {
+            $data = $this->input->post();
+            foreach ($data as $k => $v) {
+                if (substr($k, 0, 5) == 'perm_') {
+                    $permission_id  =   str_replace("perm_", "", $k);
+
+                    if ($v == "X")
+                        $this->ion_auth_acl->remove_permission_from_group($group_id, $permission_id);
+                    else
+                        $this->ion_auth_acl->add_permission_to_group($group_id, $permission_id, $v);
+                }
+            }
+            ///OBJECT
+            $this->load->model("groupobject_model");
+            $this->load->model("group_model");
+            $array = $this->groupobject_model->where('group_id', $group_id)->as_array()->get_all();
+            $group_old = array_map(function ($item) {
+                return $item['group_id'];
+            }, $array);
+            $group_new = isset($data['objects']) ? $data['objects'] : array();
+            $array_delete = array_diff($group_old, $group_new);
+            $array_add = array_diff($group_new, $group_old);
+            //$data_update = array('add_object' => $array_add, 'remove_object' => $array_delete);
+            foreach ($array_add as $row) {
+                $array = array(
+                    'group_id' => $group_id,
+                    'object_id' => $row
+                );
+                $this->groupobject_model->insert($array);
+            }
+
+            foreach ($array_delete as $row) {
+                $array = array(
+                    'group_id' => $group_id,
+                    'object_id' => $row
+                );
+                $this->groupobject_model->where($array)->delete();
+            }
+
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' edit permissions group ";
+            $this->group_model->trail($group_id, "delete", null, $data_update, array(), $text);
+
+            ///END
+            redirect('/group', 'refresh');
+        }
+
+
+
+        $this->load->model("group_model");
+        $this->load->model("object_model");
+        $tin = $this->group_model->where(array('id' => $group_id))->with_objects()->as_object()->get();
+        $tin->objects = array_keys((array) $tin->objects);
+        $this->data['objects']  = $this->object_model->where(array("deleted" => 0))->as_array()->get_all();
+        $this->data['permissions']            =   $this->ion_auth_acl->permissions('full', 'perm_key');
+        $this->data['group_permissions']      =   $this->ion_auth_acl->get_group_permissions($group_id);
+        $this->data['tin'] = $tin;
+        load_chossen($this->data);
+        echo $this->blade->view()->make('page/page', $this->data)->render();
+    }
     public function table()
     {
         $this->load->model("group_model");
@@ -142,8 +230,17 @@ class Group extends MY_Controller
                 $nestedData['action'] = '<a href="' . base_url() . 'group/edit/' . $post->id . '" class="btn btn-warning btn-sm mr-2" title="edit">'
                     . '<i class="fas fa-pencil-alt">'
                     . '</i>'
+                    . '</a>'
+                    . '<a href="' . base_url() . 'group/permission/' . $post->id . '" class="btn btn-primary btn-xs mr-2" title="permission">'
+                    . '<i class="fas fa-key">'
+                    . '</i>'
                     . '</a>';
-
+                if ($post->id != 1) {
+                    $nestedData['action'] .=  '<a href="' . base_url() . 'group/remove/' . $post->id . '" class="btn btn-danger btn-xs" data-type="confirm" title="remove">'
+                        . '<i class="far fa-trash-alt">'
+                        . '</i>'
+                        . '</a>';
+                }
                 $data[] = $nestedData;
             }
         }

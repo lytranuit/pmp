@@ -39,6 +39,17 @@ if (!function_exists('load_daterangepicker')) {
     }
 }
 
+if (!function_exists('load_orgchart')) {
+
+    function load_orgchart(&$data)
+    {
+        array_push($data['stylesheet_tag'], base_url() . "public/lib/orgchart/css/jquery.orgchart.css");
+
+        array_push($data['javascript_tag'], base_url() . "public/lib/orgchart/js/jquery.orgchart.js");
+    }
+}
+
+
 
 
 if (!function_exists('load_editor')) {

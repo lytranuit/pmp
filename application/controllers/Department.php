@@ -156,7 +156,7 @@ class Department extends MY_Controller
             $data_up = $this->department_model->create_object($data);
             $id = $this->department_model->insert($data_up);
             /// Log audit trail
-            $this->area_model->trail($id, "insert", null, $data_up, null, null);
+            $this->department_model->trail($id, "insert", null, $data_up, null, null);
             redirect('department', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
 

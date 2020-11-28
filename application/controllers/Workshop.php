@@ -122,6 +122,7 @@ class Workshop extends MY_Controller
     public function index()
     { /////// trang ca nhan
         load_datatable($this->data);
+        load_orgchart($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
 

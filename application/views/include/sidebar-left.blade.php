@@ -39,7 +39,8 @@
         <div><img src="{{base_url()}}public/img/logo.png" width="150" /></div>
         <div class="header__pane ml-auto">
             <div>
-                <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
+                <button type="button" class="hamburger close-sidebar-btn hamburger--elastic"
+                    data-class="closed-sidebar">
                     <span class="hamburger-box">
                         <span class="hamburger-inner"></span>
                     </span>
@@ -75,13 +76,17 @@
                         {{lang("chart")}}
                     </a>
                 </li>
+                @if($ion_auth_acl->has_permission("access_report"))
                 <li>
                     <a href="{{base_url()}}report/" class="">
                         <i class="metismenu-icon fas fa-file-word"></i>
                         {{lang("report")}}
                     </a>
                 </li>
+                @endif
                 <li class="app-sidebar__heading">{{lang("input")}}</li>
+
+                @if($ion_auth_acl->has_permission("access_data"))
                 @if($object_id == "3")
                 <li>
                     <a href="{{base_url()}}resulte/" class="">
@@ -97,29 +102,52 @@
                     </a>
                 </li>
                 @endif
+                @endif
+
+                @if($ion_auth_acl->has_permission("access_limit"))
                 <li>
                     <a href="{{base_url()}}limit/" class="">
                         <i class="metismenu-icon fas fa-bell"></i>
                         {{lang("limit")}}
                     </a>
                 </li>
+                @endif
 
                 <li class="app-sidebar__heading">{{lang("setting")}}</li>
+
+                @if($ion_auth_acl->has_permission("access_audit_trail"))
                 <li>
                     <a href="{{base_url()}}history/" class="">
                         <i class="metismenu-icon far fa-clipboard"></i>
                         {{lang("audit_trail")}}
                     </a>
                 </li>
-                @if($ion_auth->is_admin())
+
+                @endif
+                @if($ion_auth_acl->has_permission("access_user_manager"))
                 <li>
                     <a href="{{base_url()}}user/">
                         <i class="metismenu-icon fas fa-users"></i>
                         {{lang("user_manager")}}
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                     </a>
+                    <ul>
+                        <li>
+                            <a href="{{base_url()}}user/">
+                                <i class="metismenu-icon"></i>
+                                {{lang("users")}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{base_url()}}group/">
+                                <i class="metismenu-icon"></i>
+                                {{lang("roles")}}
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 @endif
-                @if($ion_auth->in_group(array("admin","manager")))
+                @if($ion_auth_acl->has_permission("access_field"))
                 <li>
                     <a href="#">
                         <i class="metismenu-icon fas fa-columns"></i>
@@ -146,7 +174,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{base_url()}}factory/">
+                            <a href="{{base_url()}}dashboard/position_tree">
                                 <i class="metismenu-icon"></i>
                                 {{lang("positon_tree")}}
                             </a>

@@ -9,7 +9,8 @@
                 <a class="btn btn-success btn-sm" href="{{base_url()}}factory/add">{{lang("add")}}</a>
             </h5>
             <div class="card-body">
-                <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+                <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0"
+                    width="100%">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -26,7 +27,6 @@
     </div>
 </div>
 
-<?= $widget->position_tree("factory"); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#quanlytin').DataTable({

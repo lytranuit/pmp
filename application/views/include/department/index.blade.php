@@ -6,10 +6,12 @@
     <div class="col-12">
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
-                <a class="btn btn-success btn-sm" href="{{base_url()}}department/add">{{lang("add")}}</a>
+                <a class="btn btn-success btn-sm" href="{{base_url()}}department/add" data-target="#form-modal"
+                    data-toggle="modal">{{lang("add")}}</a>
             </h5>
             <div class="card-body">
-                <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+                <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0"
+                    width="100%">
                     <thead>
                         <tr>
                             <th>{{lang("code")}}</th>
@@ -29,7 +31,6 @@
     </div>
 </div>
 
-<?= $widget->position_tree("department"); ?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#quanlytin').DataTable({

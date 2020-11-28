@@ -10,7 +10,7 @@ class MY_Admin extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->library(array('widget', 'ion_auth'));
+        $this->load->library(array('widget', 'ion_auth','ion_auth_acl','form_validation'));
         // $this->load->model("page_model");
         //        $this->load->model("user_model");
         //        echo language_current();
