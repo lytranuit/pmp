@@ -195,9 +195,12 @@ class Result_model extends MY_Model
         $data = $this->chartdata($params);
         $data_limit = $this->chartdata_limit($params);
         $target = $this->target_model->get($params['target_id']);
-        // echo "<pre>";
-        // print_r($data_limit);
-        // die();
+        //if ($params['target_id'] == 4) {
+
+        //    echo "<pre>";
+        //    print_r($data);
+        //    die();
+        //}
         $max = 1;
         $labels = array();
         // $labels[] = array()
@@ -225,7 +228,9 @@ class Result_model extends MY_Model
                 }
                 $list_limit[] = $limit[0];
             }
-            $labels[] = $date;
+            if (!in_array($date, $labels)) {
+                $labels[] = $date;
+            }
             $position = $row->position_string_id;
             $value = $row->value;
             ///CHECK MỐC 
@@ -239,7 +244,7 @@ class Result_model extends MY_Model
                     'data' => array(),
                 );
             }
-            $datatmp[$key][$position] = $value;
+            $datatmp[$date][$position] = $value;
         }
 
         $alert_limit = array(
@@ -291,16 +296,16 @@ class Result_model extends MY_Model
             array_unshift($datasets, $action_limit, $alert_limit);
         }
 
-        // echo "<pre>";
-        // print_r($list_limit);
-        // die();
+        //echo "<pre>";
+        //print_r($datatmp);
+        //die();
         $limit_prev = null;
         foreach ($labels as $key => &$date_real) {
             $date = date("d/m/y", strtotime($date_real));
 
             foreach ($datasets as &$position) {
                 $position_string_id = $position['name'];
-                $value = isset($datatmp[$key][$position_string_id]) ? (float) $datatmp[$key][$position_string_id] : null;
+                $value = isset($datatmp[$date_real][$position_string_id]) ? (float) $datatmp[$date_real][$position_string_id] : null;
                 if ($position_string_id == "Action") {
                     $limit = $position['data_limit'];
                     $value = isset($limit['action_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['action_limit'] : null;
