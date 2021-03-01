@@ -673,7 +673,10 @@ class Export extends MY_Controller
             // // print_r($params);
             // print_r($area_list);
             // die();
-            $file = APPPATH . '../public/upload/template/template_phong.docx';
+            $file = APPPATH . '../public/upload/template/template_phong_nam.docx';
+            if ($type != "Year") {
+                $file = APPPATH . '../public/upload/template/template_phong.docx';
+            }
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
@@ -1137,7 +1140,7 @@ class Export extends MY_Controller
 
             // redirect("dashboard", 'refresh');
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
-        } else if ($object_id == 10) {
+        } else if ($object_id == 10) { //vi sinh thiet bi
             $object = $this->object_model->where(array('id' => $object_id))->as_object()->get();
             $workshop_id = $record->workshop_id;
 
@@ -1175,7 +1178,10 @@ class Export extends MY_Controller
             // echo "<pre>";
             // print_r($area_list);
             // die();
-            $file = APPPATH . '../public/upload/template/template_thietbi.docx';
+            $file = APPPATH . '../public/upload/template/template_thietbi_nam.docx';
+            if ($type != "Year") {
+                $file = APPPATH . '../public/upload/template/template_thietbi.docx';
+            }
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
@@ -1716,7 +1722,13 @@ class Export extends MY_Controller
             // // print_r($params);
             // print_r($area_list);
             // die();
-            $file = APPPATH . '../public/upload/template/template_tieuphan.docx';
+            $file = APPPATH . '../public/upload/template/template_tieuphan_nam.docx';
+            if ($type != "Year") {
+                $file = APPPATH . '../public/upload/template/template_tieuphan.docx';
+            }
+            //echo '<pre>';
+            //print_r($type);
+            //die();
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
@@ -2817,13 +2829,15 @@ class Export extends MY_Controller
                 'TwoYear' => "Các điểm lấy mẫu hàng quý",
                 'Year' => "Các điểm lấy mẫu hàng tháng",
                 'HalfYear' => "Các điểm lấy mẫu 2 tuần",
-                'Month' => "Các điểm lấy mẫu hàng ngày"
+                'Month' => "Các điểm lấy mẫu hàng ngày",
+                "Quarter" => "Các điểm lấy mẫu hàng quý"
             );
             $list_type_en = array(
                 'TwoYear' => "Quarter sampling points",
                 'Year' => "Monthly sampling points",
                 'HalfYear' => "Two Weekly sampling points",
-                'Month' => "Daily sampling points"
+                'Month' => "Daily sampling points",
+                "Quarter" => "Quarterly sampling points"
             );
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
