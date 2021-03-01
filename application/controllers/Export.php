@@ -1636,7 +1636,7 @@ class Export extends MY_Controller
 
             // redirect("dashboard", 'refresh');
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
-        } else if ($object_id == 15 || $object_id == 14) {
+        } else if ($object_id == 15 || $object_id == 14) { // Tieu phan
             $object = $this->object_model->where(array('id' => $object_id))->as_object()->get();
             $workshop_id = $record->workshop_id;
 
@@ -2789,7 +2789,10 @@ class Export extends MY_Controller
             // die();
             //Get main section
 
-            $file = APPPATH . '../public/upload/template/template_nuoc.docx';
+            $file = APPPATH . '../public/upload/template/template_nuoc_nam.docx';
+            if ($type != "Year") {
+                $file = APPPATH . '../public/upload/template/template_nuoc.docx';
+            }
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
             $list_type = array(
                 'TwoYear' => "Các điểm lấy mẫu hàng quý",
