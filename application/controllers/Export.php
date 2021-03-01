@@ -805,24 +805,28 @@ class Export extends MY_Controller
                 return $item->position_id;
             }, $position_list);
             $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            $diagram_list = array_map(function ($item) {
-                return $item->diagram;
-            }, $diagram_list);
-            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
-            foreach ($diagram_list as $key => $row) {
-                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
-                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
-                if (isset($row->images)) {
-                    $row->images = array_values((array) $row->images);
-                    if (count($row->images)) {
-                        $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
-                        foreach ($row->images as $key_image => $image) {
-                            $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+            if (!empty($diagram_list)) {
+                $diagram_list = array_map(function ($item) {
+                    return $item->diagram;
+                }, $diagram_list);
+                $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+                foreach ($diagram_list as $key => $row) {
+                    $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                    $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                    if (isset($row->images)) {
+                        $row->images = array_values((array) $row->images);
+                        if (count($row->images)) {
+                            $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
+                            foreach ($row->images as $key_image => $image) {
+                                $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                            }
+                        } else {
+                            $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                         }
-                    } else {
-                        $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                     }
                 }
+            } else {
+                $templateProcessor->deleteBlock('diagram_block');
             }
             // $target_list;
             ///TABLE LIMIT
@@ -1302,24 +1306,29 @@ class Export extends MY_Controller
                 return $item->position_id;
             }, $position_list);
             $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            $diagram_list = array_map(function ($item) {
-                return $item->diagram;
-            }, $diagram_list);
-            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
-            foreach ($diagram_list as $key => $row) {
-                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
-                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
-                if (isset($row->images)) {
-                    $row->images = array_values((array) $row->images);
-                    if (count($row->images)) {
-                        $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
-                        foreach ($row->images as $key_image => $image) {
-                            $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+            if (!empty($diagram_list)) {
+
+                $diagram_list = array_map(function ($item) {
+                    return $item->diagram;
+                }, $diagram_list);
+                $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+                foreach ($diagram_list as $key => $row) {
+                    $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                    $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                    if (isset($row->images)) {
+                        $row->images = array_values((array) $row->images);
+                        if (count($row->images)) {
+                            $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
+                            foreach ($row->images as $key_image => $image) {
+                                $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                            }
+                        } else {
+                            $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                         }
-                    } else {
-                        $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                     }
                 }
+            } else {
+                $templateProcessor->deleteBlock('diagram_block');
             }
             // $target_list;
             ///TABLE LIMIT
@@ -1831,24 +1840,29 @@ class Export extends MY_Controller
                 return $item->position_id;
             }, $position_list);
             $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            $diagram_list = array_map(function ($item) {
-                return $item->diagram;
-            }, $diagram_list);
-            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
-            foreach ($diagram_list as $key => $row) {
-                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
-                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
-                if (isset($row->images)) {
-                    $row->images = array_values((array) $row->images);
-                    if (count($row->images)) {
-                        $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
-                        foreach ($row->images as $key_image => $image) {
-                            $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+            if (!empty($diagram_list)) {
+
+                $diagram_list = array_map(function ($item) {
+                    return $item->diagram;
+                }, $diagram_list);
+                $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+                foreach ($diagram_list as $key => $row) {
+                    $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                    $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                    if (isset($row->images)) {
+                        $row->images = array_values((array) $row->images);
+                        if (count($row->images)) {
+                            $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
+                            foreach ($row->images as $key_image => $image) {
+                                $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                            }
+                        } else {
+                            $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                         }
-                    } else {
-                        $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                     }
                 }
+            } else {
+                $templateProcessor->deleteBlock('diagram_block');
             }
             // $target_list;
             ///TABLE LIMIT
@@ -2333,24 +2347,29 @@ class Export extends MY_Controller
                 return $item->position_id;
             }, $position_list);
             $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            $diagram_list = array_map(function ($item) {
-                return $item->diagram;
-            }, $diagram_list);
-            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
-            foreach ($diagram_list as $key => $row) {
-                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
-                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
-                if (isset($row->images)) {
-                    $row->images = array_values((array) $row->images);
-                    if (count($row->images)) {
-                        $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
-                        foreach ($row->images as $key_image => $image) {
-                            $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+            if (!empty($diagram_list)) {
+
+                $diagram_list = array_map(function ($item) {
+                    return $item->diagram;
+                }, $diagram_list);
+                $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+                foreach ($diagram_list as $key => $row) {
+                    $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                    $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                    if (isset($row->images)) {
+                        $row->images = array_values((array) $row->images);
+                        if (count($row->images)) {
+                            $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
+                            foreach ($row->images as $key_image => $image) {
+                                $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                            }
+                        } else {
+                            $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                         }
-                    } else {
-                        $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                     }
                 }
+            } else {
+                $templateProcessor->deleteBlock('diagram_block');
             }
             // $target_list;
             ///TABLE LIMIT
@@ -2916,24 +2935,28 @@ class Export extends MY_Controller
                 return $item->position_id;
             }, $position_list);
             $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            $diagram_list = array_map(function ($item) {
-                return $item->diagram;
-            }, $diagram_list);
-            $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
-            foreach ($diagram_list as $key => $row) {
-                $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
-                $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
-                if (isset($row->images)) {
-                    $row->images = array_values((array) $row->images);
-                    if (count($row->images)) {
-                        $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
-                        foreach ($row->images as $key_image => $image) {
-                            $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+            if (!empty($diagram_list)) {
+                $diagram_list = array_map(function ($item) {
+                    return $item->diagram;
+                }, $diagram_list);
+                $templateProcessor->cloneBlock("diagram_block", count($diagram_list), true, true);
+                foreach ($diagram_list as $key => $row) {
+                    $templateProcessor->setValue("diagram_name#" .  ($key + 1), $row->name);
+                    $templateProcessor->setValue("diagram_name_en#" . ($key + 1), $row->name_en);
+                    if (isset($row->images)) {
+                        $row->images = array_values((array) $row->images);
+                        if (count($row->images)) {
+                            $templateProcessor->cloneBlock("image_block#" .  ($key + 1), count($row->images), true, true);
+                            foreach ($row->images as $key_image => $image) {
+                                $templateProcessor->setImageValue("diagram_image#"  . ($key + 1) . "#" . ($key_image + 1), array('path' => APPPATH . '../' . $image->src, 'width' => 600, 'height' => 500, 'ratio' => true));
+                            }
+                        } else {
+                            $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                         }
-                    } else {
-                        $templateProcessor->deleteBlock("image_block#" .  ($key + 1));
                     }
                 }
+            } else {
+                $templateProcessor->deleteBlock('diagram_block');
             }
             // $target_list;
             ///TABLE LIMIT
