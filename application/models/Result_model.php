@@ -581,8 +581,8 @@ class Result_model extends MY_Model
             $where .= " AND a.object_id = " . $params['object_id'];
         }
         $where .= " AND date between '" . $params['date_from'] . "' and '" . $params['date_to'] . "'";
-        $sql = "SELECT date,b.string_id $subsql FROM
-                    pmp_result as a JOIN pmp_position as b ON a.position_id = b.id
+        $sql = "SELECT date $subsql FROM
+                    pmp_result as a 
                 $where  
                 GROUP BY date,stt_in_day ORDER BY DATE ASC ";
 
