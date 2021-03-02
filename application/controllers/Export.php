@@ -130,6 +130,9 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('vMerge' => 'continue', 'valign' => 'center');
             $cellVCentered = array('valign' => 'center');
+
+            $normal = array('size' => 10);
+            $italic =  array('italic' => true, 'size' => 10);
             ////TABLE VITRI
 
             $table = new Table(array(
@@ -138,17 +141,17 @@ class Export extends MY_Controller
             ));
             $table->addRow(null, array('tblHeader' => true));
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Vị trí lấy mẫu', array(), $fontCell);
-            $textrun->addText('Sampling locations', array('italic' => true), $fontCell);
+            $textrun->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $textrun->addText('Sampling locations', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Tên nhân viên', array(), $fontCell);
-            $textrun->addText('Name of personnel', array('italic' => true), $fontCell);
+            $textrun->addText('Tên nhân viên', $normal, $fontCell);
+            $textrun->addText('Name of personnel', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Mã số nhân viên', array(), $fontCell);
-            $textrun->addText('ID No.', array('italic' => true), $fontCell);
+            $textrun->addText('Mã số nhân viên', $normal, $fontCell);
+            $textrun->addText('ID No.', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Tần suất', array(), $fontCell);
-            $textrun->addText('Frequency', array('italic' => true), $fontCell);
+            $textrun->addText('Tần suất', $normal, $fontCell);
+            $textrun->addText('Frequency', $italic, $fontCell);
 
             foreach ($area_all as $row2) {
                 ///DATA
@@ -160,25 +163,25 @@ class Export extends MY_Controller
                 $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'valign' => 'center'));
                 $textrun1 = $cell1->addTextRun(array('alignment' => 'left',));
                 $textrun1->addText("Đầu / ");
-                $textrun1->addText('Head', array('italic' => true));
+                $textrun1->addText('Head', $italic);
                 $textrun1->addTextBreak();
                 $textrun1->addText("Mũi / ");
-                $textrun1->addText('Nose', array('italic' => true));
+                $textrun1->addText('Nose', $italic);
                 $textrun1->addTextBreak();
                 $textrun1->addText("Ngực / ");
-                $textrun1->addText('Chest', array('italic' => true));
+                $textrun1->addText('Chest', $italic);
                 $textrun1->addTextBreak();
                 $textrun1->addText("Cẳng tay trái / ");
-                $textrun1->addText('Left forearm', array('italic' => true));
+                $textrun1->addText('Left forearm', $italic);
                 $textrun1->addTextBreak();
                 $textrun1->addText("Cẳng tay phải / ");
-                $textrun1->addText('Right forearm', array('italic' => true));
+                $textrun1->addText('Right forearm', $italic);
                 $textrun1->addTextBreak();
                 $textrun1->addText("Dấu găng tay trái / ");
-                $textrun1->addText('Left glove print 5 fingers', array('italic' => true));
+                $textrun1->addText('Left glove print 5 fingers', $italic);
                 $textrun1->addTextBreak();
                 $textrun1->addText("Dấu găng tay phải / ");
-                $textrun1->addText('Right glove print 5 fingers', array('italic' => true));
+                $textrun1->addText('Right glove print 5 fingers', $italic);
                 $textrun1->addTextBreak();
                 $nhanvien = $row2->nhanvien;
                 // echo "<pre>";
@@ -192,7 +195,7 @@ class Export extends MY_Controller
                 $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                 $textrun1->addText("Nhân viên phải được lấy mẫu sau khi hoàn tất hoạt động trong ngày và trước khi nhân viên ra khỏi khu vực vô trùng.");
                 $textrun1->addTextBreak();
-                $textrun1->addText('Samples shall be collected after completion of operations for that day, before personnel go out of the aseptic areas.', array('italic' => true));
+                $textrun1->addText('Samples shall be collected after completion of operations for that day, before personnel go out of the aseptic areas.', $italic);
                 for ($i = 1; $i <= count($nhanvien) - 1; $i++) {
                     $table->addRow();
                     $table->addCell(null, $cellRowContinue);
@@ -208,29 +211,29 @@ class Export extends MY_Controller
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
             $table->addRow();
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Vị trí lấy mẫu', array(), $fontCell);
-            $textrun->addText('Sampling locations', array('italic' => true), $fontCell);
+            $textrun->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $textrun->addText('Sampling locations', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Đầu', array(), $fontCell);
-            $textrun->addText('Head', array('italic' => true), $fontCell);
+            $textrun->addText('Đầu', $normal, $fontCell);
+            $textrun->addText('Head', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Mũi', array(), $fontCell);
-            $textrun->addText('Nose', array('italic' => true), $fontCell);
+            $textrun->addText('Mũi', $normal, $fontCell);
+            $textrun->addText('Nose', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Ngực', array(), $fontCell);
-            $textrun->addText('Chest', array('italic' => true), $fontCell);
+            $textrun->addText('Ngực', $normal, $fontCell);
+            $textrun->addText('Chest', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Cẳng tay trái', array(), $fontCell);
-            $textrun->addText('Left forearm', array('italic' => true), $fontCell);
+            $textrun->addText('Cẳng tay trái', $normal, $fontCell);
+            $textrun->addText('Left forearm', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Cẳng tay phải', array(), $fontCell);
-            $textrun->addText('Right forearm', array('italic' => true), $fontCell);
+            $textrun->addText('Cẳng tay phải', $normal, $fontCell);
+            $textrun->addText('Right forearm', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Dấu găng tay trái', array(), $fontCell);
-            $textrun->addText('Left glove print 5 fingers', array('italic' => true), $fontCell);
+            $textrun->addText('Dấu găng tay trái', $normal, $fontCell);
+            $textrun->addText('Left glove print 5 fingers', $italic, $fontCell);
             $textrun = $table->addCell(null, $styleCell);
-            $textrun->addText('Dấu găng tay phải', array(), $fontCell);
-            $textrun->addText('Right glove print 5 fingers', array('italic' => true), $fontCell);
+            $textrun->addText('Dấu găng tay phải', $normal, $fontCell);
+            $textrun->addText('Right glove print 5 fingers', $italic, $fontCell);
 
             foreach ($area_all as $row2) {
                 $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' => 6))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
@@ -243,25 +246,25 @@ class Export extends MY_Controller
                 $textrun1->addText($row2->name, array('bold' => true));
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
-                $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', $normal, $fontCell);
+                $textrun->addText('Acceptance criteria', $italic, $fontCell);
                 $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
                 $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
-                $textrun->addText($value, array(), $fontCell);
+                $textrun->addText($value, $normal, $fontCell);
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
-                $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn cảnh báo', $normal, $fontCell);
+                $textrun->addText('Alert Limit', $italic, $fontCell);
                 $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
                 $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
-                $textrun->addText($value, array(), $fontCell);
+                $textrun->addText($value, $normal, $fontCell);
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn hành động', array(), $fontCell);
-                $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn hành động', $normal, $fontCell);
+                $textrun->addText('Action Limit', $italic, $fontCell);
                 $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
                 $value = isset($limit->action_limit) ? $limit->action_limit : "";
-                $textrun->addText($value, array(), $fontCell);
+                $textrun->addText($value, $normal, $fontCell);
             }
 
             $templateProcessor->setComplexBlock('table_limit', $table);
@@ -309,7 +312,7 @@ class Export extends MY_Controller
                     $cell1 = $table->addCell(null, $styleCell);
                     $cell1->addText("Ngày", array('size' => 10), $fontCell);
                     $cell1->addText("Date", array('size' => 10, 'italic' => true), $fontCell);
-                    $cell1->addText("(dd/mm/yy)", array(), $fontCell);
+                    $cell1->addText("(dd/mm/yy)", $normal, $fontCell);
 
                     $textrun = $table->addCell(null, $styleCell);
                     $textrun->addText('Đầu', array('size' => 10), $fontCell);
@@ -336,8 +339,8 @@ class Export extends MY_Controller
                     $textrun->addText('Left glove print 5 fingers', array('size' => 10, 'italic' => true), $fontCell);
 
                     $textrun = $table->addCell(null, $styleCell);
-                    $textrun->addText('Dấu găng tay phải', array(), $fontCell);
-                    $textrun->addText('Right glove print 5 fingers', array('italic' => true), $fontCell);
+                    $textrun->addText('Dấu găng tay phải', $normal, $fontCell);
+                    $textrun->addText('Right glove print 5 fingers', $italic, $fontCell);
                     // echo "<pre>";
                     // print_r($data);
                     // die();
@@ -722,32 +725,35 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+
+            $normal = array('size' => 10);
+            $italic =  array('italic' => true, 'size' => 10);
             ////BLOCK POSITION
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
             $table->addRow(null, array('tblHeader' => true));
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số', array(), $fontCell);
-            $cell1->addText('ID No.', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số', $normal, $fontCell);
+            $cell1->addText('ID No.', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Phương pháp lấy mẫu', array(), $fontCell);
-            $cell1->addText('Sampling method', array('italic' => true), $fontCell);
+            $cell1->addText('Phương pháp lấy mẫu', $normal, $fontCell);
+            $cell1->addText('Sampling method', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Vị trí lấy mẫu', array(), $fontCell);
-            $cell1->addText('Sampling location', array('italic' => true), $fontCell);
+            $cell1->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $cell1->addText('Sampling location', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tên phòng', array(), $fontCell);
-            $cell1->addText('Room name', array('italic' => true), $fontCell);
+            $cell1->addText('Tên phòng', $normal, $fontCell);
+            $cell1->addText('Room name', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số phòng', array(), $fontCell);
-            $cell1->addText('ID No. of room', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số phòng', $normal, $fontCell);
+            $cell1->addText('ID No. of room', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tần suất', array(), $fontCell);
-            $cell1->addText('Frequency', array('italic' => true), $fontCell);
+            $cell1->addText('Tần suất', $normal, $fontCell);
+            $cell1->addText('Frequency', $italic, $fontCell);
 
             foreach ($area_list as $row) {
                 $table->addRow();
@@ -768,35 +774,35 @@ class Export extends MY_Controller
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($position->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($target->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($target->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($target->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($target->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($department->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($department->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($department->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->frequency_name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), $italic, $fontCell);
                 }
             }
 
@@ -804,11 +810,12 @@ class Export extends MY_Controller
 
             ////BLOCK DIAGRAM
             $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
-            $position_list = array_map(function ($item) {
-                return $item->position_id;
-            }, $position_list);
-            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            if (!empty($diagram_list)) {
+            if (!empty($position_list)) {
+                $position_list = array_map(function ($item) {
+                    return $item->position_id;
+                }, $position_list);
+                $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
+
                 $diagram_list = array_map(function ($item) {
                     return $item->diagram;
                 }, $diagram_list);
@@ -837,15 +844,15 @@ class Export extends MY_Controller
             $table->addRow(null, array('tblHeader' => true));
 
             $cell1 = $table->addCell(null, $cellRowSpan);
-            $textrun = $table->addCell(null, array('gridSpan' => 3, 'size' => 12, 'valign' => 'center'));
-            $textrun->addText('Phương pháp lấy mẫu /', array(), $fontCell);
-            $textrun->addText('Sampling method (CFU/plate)', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(null, array('gridSpan' => 3, 'size' => 10, 'valign' => 'center'));
+            $textrun->addText('Phương pháp lấy mẫu /', $normal, $fontCell);
+            $textrun->addText('Sampling method (CFU/plate)', $italic, $fontCell);
             $table->addRow();
             $table->addCell(null, $cellRowContinue);
             for ($i = 0; $i < count($target_list); $i++) {
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText(htmlspecialchars($target_list[$i]->name), array(), $fontCell);
-                $textrun->addText(htmlspecialchars($target_list[$i]->name_en), array('italic' => true), $fontCell);
+                $textrun->addText(htmlspecialchars($target_list[$i]->name), $normal, $fontCell);
+                $textrun->addText(htmlspecialchars($target_list[$i]->name_en), $italic, $fontCell);
             }
             foreach ($area_list as $row2) {
                 $table->addRow();
@@ -856,8 +863,8 @@ class Export extends MY_Controller
 
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
-                $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', $normal, $fontCell);
+                $textrun->addText('Acceptance criteria', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
                     $target_list[$key]->limit = $limit;
@@ -866,27 +873,27 @@ class Export extends MY_Controller
                     //     ///DATA
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
-                $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn cảnh báo', $normal, $fontCell);
+                $textrun->addText('Alert Limit', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $target->limit;
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn hành động', array(), $fontCell);
-                $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn hành động', $normal, $fontCell);
+                $textrun->addText('Action Limit', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $target->limit;
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->action_limit) ? $limit->action_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
             }
 
@@ -894,8 +901,12 @@ class Export extends MY_Controller
 
             /////RESULT 
             $templateProcessor->cloneBlock("result_target_block", count($target_list), true, true);
+            $head = "5.1.";
+            if ($type != "Year") {
+                $head = "2.";
+            }
             foreach ($target_list as $key => $target) {
-                $templateProcessor->setValue("target_heading#" . ($key + 1), "5.1." . ($key + 1));
+                $templateProcessor->setValue("target_heading#" . ($key + 1), $head . ($key + 1));
                 $templateProcessor->setValue("target_name#" . ($key + 1), $target->name);
                 $templateProcessor->setValue("target_name_en#" . ($key + 1), $target->name_en);
                 $area_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
@@ -909,7 +920,7 @@ class Export extends MY_Controller
                     $area = $area_results[$key1]->area;
                     $department_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
                     $length_department = count($department_results);
-                    $templateProcessor->setValue("area_heading#" . ($key + 1) . "#" . ($key1 + 1), "5.1." . ($key + 1) . "." . ($key1 + 1));
+                    $templateProcessor->setValue("area_heading#" . ($key + 1) . "#" . ($key1 + 1), $head . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("area_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name));
                     $templateProcessor->setValue("area_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name_en));
 
@@ -1091,8 +1102,12 @@ class Export extends MY_Controller
             ////BIỂU ĐỒ
 
             $templateProcessor->cloneBlock("target_block", count($target_list), true, true);
+            $head = "5.2.";
+            if ($type != "Year") {
+                $head = "3.";
+            }
             foreach ($target_list as $key => $target) {
-                $templateProcessor->setValue("target_heading#" . ($key + 1), "5.2." . ($key + 1));
+                $templateProcessor->setValue("target_heading#" . ($key + 1),  $head . ($key + 1));
                 $templateProcessor->setValue("target_name#" . ($key + 1), $target->name);
                 $templateProcessor->setValue("target_name_en#" . ($key + 1), $target->name_en);
                 $department_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->with_area()->with_department()->group_by("department_id")->get_all();
@@ -1112,7 +1127,7 @@ class Export extends MY_Controller
 
                     $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
 
-                    $heading = "5.2." . ($key + 1) . "." . ($key1 + 1) . ". $department->name ($department->string_id), $area->name / $department->name_en ($department->string_id), $area->name_en";
+                    $heading =  $head . ($key + 1) . "." . ($key1 + 1) . ". $department->name ($department->string_id), $area->name / $department->name_en ($department->string_id), $area->name_en";
                     $templateProcessor->setValue("chart_heading#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($heading));
                     $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name));
                     $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name_en));
@@ -1226,32 +1241,35 @@ class Export extends MY_Controller
             $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
             $cellRowContinue = array('vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
+
+            $normal = array('size' => 10);
+            $italic =  array('italic' => true, 'size' => 10);
             ////BLOCK POSITION
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
             $table->addRow(null, array('tblHeader' => true));
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số', array(), $fontCell);
-            $cell1->addText('ID No.', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số', $normal, $fontCell);
+            $cell1->addText('ID No.', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Phương pháp lấy mẫu', array(), $fontCell);
-            $cell1->addText('Sampling method', array('italic' => true), $fontCell);
+            $cell1->addText('Phương pháp lấy mẫu', $normal, $fontCell);
+            $cell1->addText('Sampling method', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Vị trí lấy mẫu', array(), $fontCell);
-            $cell1->addText('Sampling location', array('italic' => true), $fontCell);
+            $cell1->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $cell1->addText('Sampling location', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tên phòng', array(), $fontCell);
-            $cell1->addText('Room name', array('italic' => true), $fontCell);
+            $cell1->addText('Tên phòng', $normal, $fontCell);
+            $cell1->addText('Room name', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số phòng', array(), $fontCell);
-            $cell1->addText('ID No. of room', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số phòng', $normal, $fontCell);
+            $cell1->addText('ID No. of room', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tần suất', array(), $fontCell);
-            $cell1->addText('Frequency', array('italic' => true), $fontCell);
+            $cell1->addText('Tần suất', $normal, $fontCell);
+            $cell1->addText('Frequency', $italic, $fontCell);
 
             foreach ($area_list as $row) {
                 $table->addRow();
@@ -1272,35 +1290,35 @@ class Export extends MY_Controller
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($position->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($target->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($target->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($target->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($target->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($department->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($department->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($department->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->frequency_name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), $italic, $fontCell);
                 }
             }
 
@@ -1308,11 +1326,11 @@ class Export extends MY_Controller
 
             ////BLOCK DIAGRAM
             $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
-            $position_list = array_map(function ($item) {
-                return $item->position_id;
-            }, $position_list);
-            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            if (!empty($diagram_list)) {
+            if (!empty($position_list)) {
+                $position_list = array_map(function ($item) {
+                    return $item->position_id;
+                }, $position_list);
+                $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
 
                 $diagram_list = array_map(function ($item) {
                     return $item->diagram;
@@ -1342,15 +1360,15 @@ class Export extends MY_Controller
             $table->addRow(null, array('tblHeader' => true));
 
             $cell1 = $table->addCell(null, $cellRowSpan);
-            $textrun = $table->addCell(null, array('gridSpan' => 3, 'size' => 12, 'valign' => 'center'));
-            $textrun->addText('Phương pháp lấy mẫu /', array(), $fontCell);
-            $textrun->addText('Sampling method (CFU/plate)', array('italic' => true), $fontCell);
+            $textrun = $table->addCell(null, array('gridSpan' => 3, 'size' => 10, 'valign' => 'center'));
+            $textrun->addText('Phương pháp lấy mẫu /', $normal, $fontCell);
+            $textrun->addText('Sampling method (CFU/plate)', $italic, $fontCell);
             $table->addRow();
             $table->addCell(null, $cellRowContinue);
             for ($i = 0; $i < count($target_list); $i++) {
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText(htmlspecialchars($target_list[$i]->name), array(), $fontCell);
-                $textrun->addText(htmlspecialchars($target_list[$i]->name_en), array('italic' => true), $fontCell);
+                $textrun->addText(htmlspecialchars($target_list[$i]->name), $normal, $fontCell);
+                $textrun->addText(htmlspecialchars($target_list[$i]->name_en), $italic, $fontCell);
             }
             foreach ($area_list as $row2) {
                 $table->addRow();
@@ -1361,8 +1379,8 @@ class Export extends MY_Controller
 
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
-                $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', $normal, $fontCell);
+                $textrun->addText('Acceptance criteria', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
                     $target_list[$key]->limit = $limit;
@@ -1371,27 +1389,27 @@ class Export extends MY_Controller
                     //     ///DATA
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
-                $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn cảnh báo', $normal, $fontCell);
+                $textrun->addText('Alert Limit', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $target->limit;
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn hành động', array(), $fontCell);
-                $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn hành động', $normal, $fontCell);
+                $textrun->addText('Action Limit', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $target->limit;
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->action_limit) ? $limit->action_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
             }
 
@@ -1399,8 +1417,12 @@ class Export extends MY_Controller
 
             /////RESULT 
             $templateProcessor->cloneBlock("result_target_block", count($target_list), true, true);
+            $head = "5.1.";
+            if ($type != "Year") {
+                $head = "2.";
+            }
             foreach ($target_list as $key => $target) {
-                $templateProcessor->setValue("target_heading#" . ($key + 1), "5.1." . ($key + 1));
+                $templateProcessor->setValue("target_heading#" . ($key + 1), $head . ($key + 1));
                 $templateProcessor->setValue("target_name#" . ($key + 1), $target->name);
                 $templateProcessor->setValue("target_name_en#" . ($key + 1), $target->name_en);
                 $area_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->with_area()->group_by("area_id")->get_all();
@@ -1414,7 +1436,7 @@ class Export extends MY_Controller
                     $area = $area_results[$key1]->area;
                     $department_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->where(array('area_id' => $area->id))->with_department()->group_by("department_id")->get_all();
                     $length_department = count($department_results);
-                    $templateProcessor->setValue("area_heading#" . ($key + 1) . "#" . ($key1 + 1), "5.1." . ($key + 1) . "." . ($key1 + 1));
+                    $templateProcessor->setValue("area_heading#" . ($key + 1) . "#" . ($key1 + 1), $head . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("area_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name));
                     $templateProcessor->setValue("area_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name_en));
 
@@ -1590,7 +1612,7 @@ class Export extends MY_Controller
                     // $cell1 = $table->addCell(2000, $cellRowSpan);
                     // $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
                     // $textrun1->addText(htmlspecialchars("Vị trí lấy mẫu:"));
-                    // $textrun1->addText(htmlspecialchars('Sampling location:'), array('italic' => true));
+                    // $textrun1->addText(htmlspecialchars('Sampling location:'), $italic);
                     // for ($key2 = 0; $key2 < count($position_list); $key2++) {
                     //     $position = $position_list[$key2];
                     //     $cell1 = $table->addCell(2000, $cellHCentered);
@@ -1603,8 +1625,12 @@ class Export extends MY_Controller
             ////BIỂU ĐỒ
 
             $templateProcessor->cloneBlock("target_block", count($target_list), true, true);
+            $head = "5.2.";
+            if ($type != "Year") {
+                $head = "3.";
+            }
             foreach ($target_list as $key => $target) {
-                $templateProcessor->setValue("target_heading#" . ($key + 1), "5.2." . ($key + 1));
+                $templateProcessor->setValue("target_heading#" . ($key + 1),  $head . ($key + 1));
                 $templateProcessor->setValue("target_name#" . ($key + 1), $target->name);
                 $templateProcessor->setValue("target_name_en#" . ($key + 1), $target->name_en);
                 $department_results = $this->result_model->set_value_export($params)->where(array('target_id' => $target->id))->with_area()->with_department()->group_by("department_id")->get_all();
@@ -1623,7 +1649,7 @@ class Export extends MY_Controller
 
                     $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
 
-                    $heading = "5.2." . ($key + 1) . "." . ($key1 + 1) . ". $department->name ($department->string_id), $area->name / $department->name_en ($department->string_id), $area->name_en";
+                    $heading =  $head . ($key + 1) . "." . ($key1 + 1) . ". $department->name ($department->string_id), $area->name / $department->name_en ($department->string_id), $area->name_en";
                     $templateProcessor->setValue("chart_heading#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($heading));
                     $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name));
                     $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name_en));
@@ -1724,8 +1750,9 @@ class Export extends MY_Controller
             // die();
             $file = APPPATH . '../public/upload/template/template_tieuphan_nam.docx';
             if ($type != "Year") {
-                $file = APPPATH . '../public/upload/template/template_tieuphan.docx';
+                $file = APPPATH . '../public/upload/template/template_tieuphan_1.docx';
             }
+
             //echo '<pre>';
             //print_r($type);
             //die();
@@ -1772,40 +1799,41 @@ class Export extends MY_Controller
             $cellHCenteredLEFT = array('alignment' => 'left');
 
             $styleCell = array('valign' => 'center');
-            $fontCell = array('align' => 'center');
+            $fontCell = array('align' => 'center', 'size' => 10);
             $cellColSpan = array('gridSpan' => 5, 'valign' => 'center');
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
-
+            $normal = array('size' => 10);
+            $italic =  array('italic' => true, 'size' => 10);
             ////BLOCK POSITION
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
             $table->addRow(null, array('tblHeader' => true));
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số', array(), $fontCell);
-            $cell1->addText('ID No.', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số', $normal, $fontCell);
+            $cell1->addText('ID No.', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Vị trí lấy mẫu', array(), $fontCell);
-            $cell1->addText('Sampling location', array('italic' => true), $fontCell);
+            $cell1->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $cell1->addText('Sampling location', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tên Phòng', array(), $fontCell);
-            $cell1->addText('Room Name', array('italic' => true), $fontCell);
+            $cell1->addText('Tên Phòng', $normal, $fontCell);
+            $cell1->addText('Room Name', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số phòng', array(), $fontCell);
-            $cell1->addText('ID No. of room', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số phòng', $normal, $fontCell);
+            $cell1->addText('ID No. of room', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tần suất', array(), $fontCell);
-            $cell1->addText('Frequency', array('italic' => true), $fontCell);
+            $cell1->addText('Tần suất', $normal, $fontCell);
+            $cell1->addText('Frequency', $italic, $fontCell);
 
             foreach ($area_list as $row) {
                 $table->addRow();
                 $cell1 = $table->addCell(null, array('gridSpan' => 5, 'valign' => 'center'));
                 $textrun1 = $cell1->addTextRun($cellHCentered);
-                $textrun1->addText($row->name . "/", array('bold' => true));
-                $textrun1->addText($row->name_en, array('bold' => true, 'italic' => true), $fontCell);
+                $textrun1->addText($row->name . "/", array('bold' => true, 'size' => 10));
+                $textrun1->addText($row->name_en, array('bold' => true, 'italic' => true, 'size' => 10), $fontCell);
 
                 $position_list = $this->result_model->set_value_export($params)->where(array("area_id" => $row->id))->with_position()->with_department()->group_by("position_id")->get_all();
                 // echo "<pre>";
@@ -1818,29 +1846,29 @@ class Export extends MY_Controller
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($position->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($department->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($department->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($department->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->frequency_name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), $italic, $fontCell);
                 }
             }
 
@@ -1848,11 +1876,11 @@ class Export extends MY_Controller
 
             ////BLOCK DIAGRAM
             $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
-            $position_list = array_map(function ($item) {
-                return $item->position_id;
-            }, $position_list);
-            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            if (!empty($diagram_list)) {
+            if (!empty($position_list)) {
+                $position_list = array_map(function ($item) {
+                    return $item->position_id;
+                }, $position_list);
+                $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
 
                 $diagram_list = array_map(function ($item) {
                     return $item->diagram;
@@ -1883,16 +1911,16 @@ class Export extends MY_Controller
             $table->addRow();
             $table->addCell(null, $cellRowContinue);
             for ($i = 0; $i < count($target_parent); $i++) {
-                $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 12, 'valign' => 'center'));
-                $textrun->addText($target_parent[$i]->name, array(), $fontCell);
-                $textrun->addText($target_parent[$i]->name_en, array('italic' => true), $fontCell);
+                $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 10, 'valign' => 'center'));
+                $textrun->addText($target_parent[$i]->name, $normal, $fontCell);
+                $textrun->addText($target_parent[$i]->name_en, $italic, $fontCell);
             }
             $table->addRow();
             $table->addCell(null, $cellRowContinue);
             for ($i = 0; $i < count($target_list); $i++) {
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText($target_list[$i]->name, array(), $fontCell);
-                $textrun->addText($target_list[$i]->name_en, array('italic' => true), $fontCell);
+                $textrun->addText($target_list[$i]->name, $normal, $fontCell);
+                $textrun->addText($target_list[$i]->name_en, $italic, $fontCell);
             }
             foreach ($area_list as $row2) {
                 $table->addRow();
@@ -1902,8 +1930,8 @@ class Export extends MY_Controller
 
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
-                $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', $normal, $fontCell);
+                $textrun->addText('Acceptance criteria', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
                     $target_list[$key]->limit = $limit;
@@ -1912,27 +1940,27 @@ class Export extends MY_Controller
                     //     ///DATA
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
-                $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn cảnh báo', $normal, $fontCell);
+                $textrun->addText('Alert Limit', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $target->limit;
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn hành động', array(), $fontCell);
-                $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn hành động', $normal, $fontCell);
+                $textrun->addText('Action Limit', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $target->limit;
                     $textrun = $table->addCell(null, $fontCell);
                     $value = isset($limit->action_limit) ? $limit->action_limit : "";
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                 }
             }
 
@@ -1950,7 +1978,11 @@ class Export extends MY_Controller
                 $area = $area_results[$key]->area;
                 $department_results = $this->result_model->set_value_export($params)->where(array('area_id' => $area->id))->with_department()->with_area()->group_by("department_id")->get_all();
                 $length_department = count($department_results);
-                $templateProcessor->setValue("one_heading#" . ($key + 1), "5." . ($key + 1));
+                $head = "5.1";
+                if ($type != "Year") {
+                    $head = "2.";
+                }
+                $templateProcessor->setValue("one_heading#" . ($key + 1), $head . ($key + 1));
                 $templateProcessor->setValue("one_name_heading#" . ($key + 1), htmlspecialchars($area->name));
                 $templateProcessor->setValue("one_name_en_heading#" . ($key + 1), htmlspecialchars($area->name_en));
 
@@ -1968,7 +2000,7 @@ class Export extends MY_Controller
                     $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->string_id));
 
                     ////DRAW RESULT
-                    $templateProcessor->setValue("two_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
+                    $templateProcessor->setValue("two_heading#" . ($key + 1) . "#" . ($key1 + 1), $head . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("two_name_heading#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name));
                     $templateProcessor->setValue("two_name_en_heading#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name_en));
 
@@ -1980,28 +2012,35 @@ class Export extends MY_Controller
                     for ($key2 = 0; $key2 < $length_position; $key2++) {
                         $position = $position_results[$key2]->position;
                         $params['position_id'] = $position->id;
+                        $string_id = $position->string_id;
                         $templateProcessor->setValue("position_string_id#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($key2 + 1), $position->string_id);
                         ///TABLE
                         $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
                         $table->addRow(null, array('tblHeader' => true));
+                        $cell1 = $table->addCell(null, $cellRowContinue);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText(htmlspecialchars("Mã số điểm lấy mẫu /"), array('size' => 10));
+                        $textrun1->addTextBreak();
+                        $textrun1->addText(htmlspecialchars("ID of sampling points"), array('size' => 10, 'italic' => true));
 
                         $cell1 = $table->addCell(null, $cellRowContinue);
-                        $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText(htmlspecialchars("Ngày /"), array('size' => 10));
                         $textrun1->addText(htmlspecialchars("Date"), array('size' => 10, 'italic' => true));
                         $textrun1->addTextBreak();
                         $textrun1->addText(htmlspecialchars('(dd/mm/yy)'), array('size' => 10));
                         for ($i = 0; $i < count($target_parent); $i++) {
-                            $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 12, 'valign' => 'center'));
-                            $textrun->addText($target_parent[$i]->name, array(), $fontCell);
-                            $textrun->addText($target_parent[$i]->name_en, array('italic' => true), $fontCell);
+                            $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 10, 'valign' => 'center'));
+                            $textrun->addText($target_parent[$i]->name, $normal, $fontCell);
+                            $textrun->addText($target_parent[$i]->name_en, $italic, $fontCell);
                         }
                         $table->addRow(null, array('tblHeader' => true));
                         $table->addCell(null, $cellRowContinue);
+                        $table->addCell(null, $cellRowContinue);
                         for ($i = 0; $i < count($target_list); $i++) {
                             $textrun = $table->addCell(null, $styleCell);
-                            $textrun->addText($target_list[$i]->name, array(), $fontCell);
-                            $textrun->addText($target_list[$i]->name_en, array('italic' => true), $fontCell);
+                            $textrun->addText($target_list[$i]->name, $normal, $fontCell);
+                            $textrun->addText($target_list[$i]->name_en, $italic, $fontCell);
                         }
 
 
@@ -2014,9 +2053,15 @@ class Export extends MY_Controller
                         foreach ($data as $keystt => $stt) {
                             $table->addRow();
                             $date = date("d/m/y", strtotime($stt['date']));
+
+                            $cell1 = $table->addCell(null, $cellRowSpan);
+                            $textrun1 = $cell1->addTextRun($cellHCentered);
+                            $textrun1->addText(htmlspecialchars($string_id), array('size' => 10));
+
                             $cell1 = $table->addCell(null, $cellRowSpan);
                             $textrun1 = $cell1->addTextRun($cellHCentered);
                             $textrun1->addText(htmlspecialchars($date), array('size' => 10));
+
                             foreach ($target_list as $target) {
                                 $target_id = $target->id;
                                 $value = $stt[$target_id];
@@ -2031,6 +2076,9 @@ class Export extends MY_Controller
                         }
                         ///MIN MAX
                         $table->addRow();
+                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+
                         $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText("Max", array('size' => 10, 'bold' => true));
@@ -2048,6 +2096,9 @@ class Export extends MY_Controller
                         $table->addRow();
                         $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCentered);
+
+                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText("Min", array('size' => 10, 'bold' => true));
                         foreach ($target_list as $target) {
                             $target_id = $target->id;
@@ -2061,13 +2112,19 @@ class Export extends MY_Controller
                             }
                         }
 
-                        $table->addRow(null);
-                        $cell1 = $table->addCell(null, array('gridSpan' => count($target_list) + 1, 'valign' => 'center'));
-                        $textrun1 = $cell1->addTextRun($cellHCentered);
-                        $textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
-                        $textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10, 'bold' => true, 'italic' => true));
+                        //$table->addRow(null);
+                        //$cell1 = $table->addCell(null, array('gridSpan' => count($target_list) + 1, 'valign' => 'center'));
+                        //$textrun1 = $cell1->addTextRun($cellHCentered);
+                        //$textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
+                        //$textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10, 'bold' => true, 'italic' => true));
 
                         $table->addRow();
+                        $cell1 = $table->addCell(null, $cellRowContinue);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
+                        $textrun1->addTextBreak();
+                        $textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10,  'bold' => true, 'italic' => true));
+
                         $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText("Max", array('size' => 10, 'bold' => true));
@@ -2083,6 +2140,8 @@ class Export extends MY_Controller
                             }
                         }
                         $table->addRow();
+                        $table->addCell(null, $cellRowContinue);
+
                         $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText("Min", array('size' => 10, 'bold' => true));
@@ -2284,28 +2343,30 @@ class Export extends MY_Controller
             $cellVCentered = array('valign' => 'center');
 
 
+            $normal = array('size' => 10);
+            $italic =  array('italic' => true, 'size' => 10);
             ////BLOCK POSITION
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
             $table->addRow(null, array('tblHeader' => true));
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số', array(), $fontCell);
-            $cell1->addText('ID No.', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số', $normal, $fontCell);
+            $cell1->addText('ID No.', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Vị trí lấy mẫu', array(), $fontCell);
-            $cell1->addText('Sampling location', array('italic' => true), $fontCell);
+            $cell1->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $cell1->addText('Sampling location', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tên Phòng', array(), $fontCell);
-            $cell1->addText('Room Name', array('italic' => true), $fontCell);
+            $cell1->addText('Tên Phòng', $normal, $fontCell);
+            $cell1->addText('Room Name', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số phòng', array(), $fontCell);
-            $cell1->addText('ID No. of room', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số phòng', $normal, $fontCell);
+            $cell1->addText('ID No. of room', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tần suất', array(), $fontCell);
-            $cell1->addText('Frequency', array('italic' => true), $fontCell);
+            $cell1->addText('Tần suất', $normal, $fontCell);
+            $cell1->addText('Frequency', $italic, $fontCell);
 
             foreach ($area_list as $row) {
                 $table->addRow();
@@ -2325,29 +2386,29 @@ class Export extends MY_Controller
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($position->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($department->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($department->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($department->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->frequency_name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), $italic, $fontCell);
                 }
             }
 
@@ -2355,11 +2416,11 @@ class Export extends MY_Controller
 
             ////BLOCK DIAGRAM
             $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
-            $position_list = array_map(function ($item) {
-                return $item->position_id;
-            }, $position_list);
-            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            if (!empty($diagram_list)) {
+            if (!empty($position_list)) {
+                $position_list = array_map(function ($item) {
+                    return $item->position_id;
+                }, $position_list);
+                $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
 
                 $diagram_list = array_map(function ($item) {
                     return $item->diagram;
@@ -2412,8 +2473,8 @@ class Export extends MY_Controller
 
                     $table->addRow();
                     $textrun = $table->addCell(null, $styleCell);
-                    $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
-                    $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                    $textrun->addText('Tiêu chuẩn chấp nhận', $normal, $fontCell);
+                    $textrun->addText('Acceptance criteria', $italic, $fontCell);
                     foreach ($child as $key => $target) {
                         $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
                         $child[$key]->limit = $limit;
@@ -2426,18 +2487,18 @@ class Export extends MY_Controller
                         } else {
                             $value = isset($limit->standard_limit_text) ? $limit->standard_limit_text : "";
                         }
-                        $textrun->addText($value, array(), $fontCell);
+                        $textrun->addText($value, $normal, $fontCell);
                         if ($target->type_data != "float") {
                             $value_en = isset($limit->standard_limit_text_en) ? $limit->standard_limit_text_en : "";
                             if ($value_en != "" && $value != $value_en) {
-                                $textrun->addText($value_en, array('italic' => true), $fontCell);
+                                $textrun->addText($value_en, $italic, $fontCell);
                             }
                         }
                     }
                     $table->addRow();
                     $textrun = $table->addCell(null, $styleCell);
-                    $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
-                    $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                    $textrun->addText('Giới hạn cảnh báo', $normal, $fontCell);
+                    $textrun->addText('Alert Limit', $italic, $fontCell);
                     foreach ($child as $key => $target) {
                         $limit = $target->limit;
                         $textrun = $table->addCell(null, $fontCell);
@@ -2446,18 +2507,18 @@ class Export extends MY_Controller
                         } else {
                             $value = isset($limit->alert_limit_text) ? $limit->alert_limit_text : "";
                         }
-                        $textrun->addText($value, array(), $fontCell);
+                        $textrun->addText($value, $normal, $fontCell);
                         if ($target->type_data != "float") {
                             $value_en = isset($limit->alert_limit_text_en) ? $limit->alert_limit_text_en : "";
                             if ($value_en != "" && $value != $value_en) {
-                                $textrun->addText($value_en, array('italic' => true), $fontCell);
+                                $textrun->addText($value_en, $italic, $fontCell);
                             }
                         }
                     }
                     $table->addRow();
                     $textrun = $table->addCell(null, $styleCell);
-                    $textrun->addText('Giới hạn hành động', array(), $fontCell);
-                    $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                    $textrun->addText('Giới hạn hành động', $normal, $fontCell);
+                    $textrun->addText('Action Limit', $italic, $fontCell);
                     foreach ($child as $key => $target) {
                         $limit = $target->limit;
                         $textrun = $table->addCell(null, $fontCell);
@@ -2466,11 +2527,11 @@ class Export extends MY_Controller
                         } else {
                             $value = isset($limit->action_limit_text) ? $limit->action_limit_text : "";
                         }
-                        $textrun->addText($value, array(), $fontCell);
+                        $textrun->addText($value, $normal, $fontCell);
                         if ($target->type_data != "float") {
                             $value_en = isset($limit->action_limit_text_en) ? $limit->action_limit_text_en : "";
                             if ($value_en != "" && $value != $value_en) {
-                                $textrun->addText($value_en, array('italic' => true), $fontCell);
+                                $textrun->addText($value_en, $italic, $fontCell);
                             }
                         }
                     }
@@ -2492,7 +2553,11 @@ class Export extends MY_Controller
                 $area = $area_results[$key]->area;
                 $department_results = $this->result_model->set_value_export($params)->where(array('area_id' => $area->id))->with_department()->with_area()->group_by("department_id")->get_all();
                 $length_department = count($department_results);
-                $templateProcessor->setValue("one_heading#" . ($key + 1), "5." . ($key + 1));
+                $head = "5.1";
+                if ($type != "Year") {
+                    $head = "2.";
+                }
+                $templateProcessor->setValue("one_heading#" . ($key + 1), $head . ($key + 1));
                 $templateProcessor->setValue("one_name_heading#" . ($key + 1), htmlspecialchars($area->name));
                 $templateProcessor->setValue("one_name_en_heading#" . ($key + 1), htmlspecialchars($area->name_en));
 
@@ -2510,7 +2575,7 @@ class Export extends MY_Controller
                     $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->string_id));
 
                     ////DRAW RESULT
-                    $templateProcessor->setValue("two_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
+                    $templateProcessor->setValue("two_heading#" . ($key + 1) . "#" . ($key1 + 1), $head . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("two_name_heading#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name));
                     $templateProcessor->setValue("two_name_en_heading#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name_en));
 
@@ -2571,9 +2636,9 @@ class Export extends MY_Controller
                             $textrun1->addTextBreak();
                             $textrun1->addText(htmlspecialchars('(dd/mm/yy)'), array('size' => 10));
                             // for ($i = 0; $i < count($target_parent); $i++) {
-                            //     $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 12, 'valign' => 'center'));
-                            //     $textrun->addText($target_parent[$i]->name, array(), $fontCell);
-                            //     $textrun->addText($target_parent[$i]->name_en, array('italic' => true), $fontCell);
+                            //     $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 10, 'valign' => 'center'));
+                            //     $textrun->addText($target_parent[$i]->name, $normal, $fontCell);
+                            //     $textrun->addText($target_parent[$i]->name_en, $italic, $fontCell);
                             // }
                             // $table->addRow(null, array('tblHeader' => true));
                             // $table->addCell(null, $cellRowContinue);
@@ -2769,6 +2834,7 @@ class Export extends MY_Controller
             // print_r($diagram_list);
             // die();
             $target_results = $this->result_model->set_value_export($params)->with_target()->group_by("target_id")->get_all();
+
             $target_parent = $target_list = array();
             foreach ($target_results as $temp) {
                 $target = $temp->target;
@@ -2886,32 +2952,34 @@ class Export extends MY_Controller
             $cellRowContinue = array('valign' => 'center', 'vMerge' => 'continue');
             $cellVCentered = array('valign' => 'center');
 
+            $normal = array('size' => 10);
+            $italic =  array('italic' => true, 'size' => 10);
             ////BLOCK POSITION
             $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 10000, 'unit' => TblWidth::TWIP, 'valign' => 'center'));
             $table->addRow(null, array('tblHeader' => true));
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số', array(), $fontCell);
-            $cell1->addText('ID No.', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số', $normal, $fontCell);
+            $cell1->addText('ID No.', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Vị trí lấy mẫu', array(), $fontCell);
-            $cell1->addText('Sampling location', array('italic' => true), $fontCell);
+            $cell1->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $cell1->addText('Sampling location', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Mã số phòng/Khu vực', array(), $fontCell);
-            $cell1->addText('ID No. of room/area', array('italic' => true), $fontCell);
+            $cell1->addText('Mã số phòng/Khu vực', $normal, $fontCell);
+            $cell1->addText('ID No. of room/area', $italic, $fontCell);
 
             $cell1 = $table->addCell(null, array('valign' => 'center', 'bgColor' => "#c5c6c7"));
-            $cell1->addText('Tần suất', array(), $fontCell);
-            $cell1->addText('Frequency', array('italic' => true), $fontCell);
+            $cell1->addText('Tần suất', $normal, $fontCell);
+            $cell1->addText('Frequency', $italic, $fontCell);
 
             foreach ($system_list as $row) {
                 $table->addRow();
                 $cell1 = $table->addCell(null, array('gridSpan' => 4, 'valign' => 'center'));
                 $textrun1 = $cell1->addTextRun($cellHCentered);
-                $textrun1->addText($row->name, array('bold' => true));
+                $textrun1->addText($row->name, array('bold' => true, 'size' => 10));
                 $textrun1->addTextBreak();
-                $textrun1->addText($row->name_en, array('bold' => true, 'italic' => true), $fontCell);
+                $textrun1->addText($row->name_en, array('bold' => true, 'size' => 10, 'italic' => true), $fontCell);
 
                 $position_list = $this->result_model->set_value_export($params)->where(array("system_id" => $row->id))->with_position()->with_department()->group_by("position_id")->get_all();
                 // echo "<pre>";
@@ -2924,23 +2992,23 @@ class Export extends MY_Controller
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($position->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->name_en), $italic, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars($department->string_id), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($department->string_id), $normal, $fontCell);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
-                    $textrun1->addText(htmlspecialchars($position->frequency_name), array(), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name), $normal, $fontCell);
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), array('italic' => true), $fontCell);
+                    $textrun1->addText(htmlspecialchars($position->frequency_name_en), $italic, $fontCell);
                 }
             }
 
@@ -2948,11 +3016,12 @@ class Export extends MY_Controller
 
             ////BLOCK DIAGRAM
             $position_list = $this->result_model->set_value_export($params)->group_by("position_id")->get_all();
-            $position_list = array_map(function ($item) {
-                return $item->position_id;
-            }, $position_list);
-            $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
-            if (!empty($diagram_list)) {
+            if (!empty($position_list)) {
+                $position_list = array_map(function ($item) {
+                    return $item->position_id;
+                }, $position_list);
+                $diagram_list = $this->diagram_position_model->where("position_id", "IN", $position_list)->with_diagram(array("with" => array("relation" => "images")))->group_by("diagram_id")->get_all();
+
                 $diagram_list = array_map(function ($item) {
                     return $item->diagram;
                 }, $diagram_list);
@@ -2997,13 +3066,13 @@ class Export extends MY_Controller
                 $table->addCell(null, $cellRowContinue);
                 for ($i = 0; $i < count($target_list); $i++) {
                     $textrun = $table->addCell(null, $styleCell);
-                    $textrun->addText($target_list[$i]->name, array(), $fontCell);
-                    $textrun->addText($target_list[$i]->name_en, array('italic' => true), $fontCell);
+                    $textrun->addText($target_list[$i]->name, $normal, $fontCell);
+                    $textrun->addText($target_list[$i]->name_en, $italic, $fontCell);
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Tiêu chuẩn chấp nhận', array(), $fontCell);
-                $textrun->addText('Acceptance criteria', array('italic' => true), $fontCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', $normal, $fontCell);
+                $textrun->addText('Acceptance criteria', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $this->limit_model->where(array("system_id" => $row2->id, 'target_id' =>  $target->id))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
                     $target_list[$key]->limit = $limit;
@@ -3016,18 +3085,18 @@ class Export extends MY_Controller
                     } else {
                         $value = isset($limit->standard_limit_text) ? $limit->standard_limit_text : "";
                     }
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                     if ($target->type_data != "float") {
                         $value_en = isset($limit->standard_limit_text_en) ? $limit->standard_limit_text_en : "";
                         if ($value_en != "" && $value != $value_en) {
-                            $textrun->addText($value_en, array('italic' => true), $fontCell);
+                            $textrun->addText($value_en, $italic, $fontCell);
                         }
                     }
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn cảnh báo', array(), $fontCell);
-                $textrun->addText('Alert Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn cảnh báo', $normal, $fontCell);
+                $textrun->addText('Alert Limit', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $target->limit;
                     $textrun = $table->addCell(null, $fontCell);
@@ -3036,18 +3105,18 @@ class Export extends MY_Controller
                     } else {
                         $value = isset($limit->alert_limit_text) ? $limit->alert_limit_text : "";
                     }
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                     if ($target->type_data != "float") {
                         $value_en = isset($limit->alert_limit_text_en) ? $limit->alert_limit_text_en : "";
                         if ($value_en != "" && $value != $value_en) {
-                            $textrun->addText($value_en, array('italic' => true), $fontCell);
+                            $textrun->addText($value_en, $italic, $fontCell);
                         }
                     }
                 }
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
-                $textrun->addText('Giới hạn hành động', array(), $fontCell);
-                $textrun->addText('Action Limit', array('italic' => true), $fontCell);
+                $textrun->addText('Giới hạn hành động', $normal, $fontCell);
+                $textrun->addText('Action Limit', $italic, $fontCell);
                 foreach ($target_list as $key => $target) {
                     $limit = $target->limit;
                     $textrun = $table->addCell(null, $fontCell);
@@ -3056,11 +3125,11 @@ class Export extends MY_Controller
                     } else {
                         $value = isset($limit->action_limit_text) ? $limit->action_limit_text : "";
                     }
-                    $textrun->addText($value, array(), $fontCell);
+                    $textrun->addText($value, $normal, $fontCell);
                     if ($target->type_data != "float") {
                         $value_en = isset($limit->action_limit_text_en) ? $limit->action_limit_text_en : "";
                         if ($value_en != "" && $value != $value_en) {
-                            $textrun->addText($value_en, array('italic' => true), $fontCell);
+                            $textrun->addText($value_en, $italic, $fontCell);
                         }
                     }
                 }
@@ -3081,8 +3150,12 @@ class Export extends MY_Controller
             for ($key1 = 0; $key1 < $length_system; $key1++) {
                 $system = $system_list[$key1];
                 $target_list = $system_list[$key1]->target_list;
+                $head = "5.1";
+                if ($type != "Year") {
+                    $head = "2.";
+                }
                 ////DRAW RESULT
-                $templateProcessor->setValue("two_heading#"  . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
+                $templateProcessor->setValue("two_heading#"  . ($key1 + 1), $head . ($key + 1) . "." . ($key1 + 1));
                 $templateProcessor->setValue("two_name_heading#"  . ($key1 + 1), htmlspecialchars($system->name));
                 $templateProcessor->setValue("two_name_en_heading#"  . ($key1 + 1), htmlspecialchars($system->name_en));
 
@@ -3098,6 +3171,7 @@ class Export extends MY_Controller
                 for ($key2 = 0; $key2 < $length_position; $key2++) {
                     $position = $position_results[$key2]->position;
                     $params['position_id'] = $position->id;
+                    $string_id = $position->string_id;
                     $templateProcessor->setValue("position_string_id#"  . ($key1 + 1) . "#" . ($key2 + 1), $position->string_id);
 
                     ///TABLE
@@ -3105,15 +3179,21 @@ class Export extends MY_Controller
                     $table->addRow(null, array('tblHeader' => true));
 
                     $cell1 = $table->addCell(null, $cellRowContinue);
-                    $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars("Mã số điểm lấy mẫu /"), array('size' => 10));
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars("ID of sampling points"), array('size' => 10, 'italic' => true));
+
+                    $cell1 = $table->addCell(null, $cellRowContinue);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
                     $textrun1->addText(htmlspecialchars("Ngày /"), array('size' => 10));
                     $textrun1->addText(htmlspecialchars("Date"), array('size' => 10, 'italic' => true));
                     $textrun1->addTextBreak();
                     $textrun1->addText(htmlspecialchars('(dd/mm/yy)'), array('size' => 10));
                     // for ($i = 0; $i < count($target_parent); $i++) {
-                    //     $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 12, 'valign' => 'center'));
-                    //     $textrun->addText($target_parent[$i]->name, array(), $fontCell);
-                    //     $textrun->addText($target_parent[$i]->name_en, array('italic' => true), $fontCell);
+                    //     $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 10, 'valign' => 'center'));
+                    //     $textrun->addText($target_parent[$i]->name, $normal, $fontCell);
+                    //     $textrun->addText($target_parent[$i]->name_en, $italic, $fontCell);
                     // }
                     // $table->addRow(null, array('tblHeader' => true));
                     // $table->addCell(null, $cellRowContinue);
@@ -3133,6 +3213,11 @@ class Export extends MY_Controller
                     foreach ($data as $keystt => $stt) {
                         $table->addRow();
                         $date = date("d/m/y", strtotime($stt['date']));
+
+                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $textrun1 = $cell1->addTextRun($cellHCentered);
+                        $textrun1->addText(htmlspecialchars($string_id), array('size' => 10));
+
                         $cell1 = $table->addCell(null, $cellRowSpan);
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText(htmlspecialchars($date), array('size' => 10));
@@ -3166,6 +3251,9 @@ class Export extends MY_Controller
                     }
                     ///MIN MAX
                     $table->addRow();
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
+
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
                     $textrun1->addText("Max", array('size' => 10, 'bold' => true));
@@ -3182,6 +3270,8 @@ class Export extends MY_Controller
                     }
                     $table->addRow();
                     $cell1 = $table->addCell(null, $cellRowSpan);
+
+                    $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
                     $textrun1->addText("Min", array('size' => 10, 'bold' => true));
                     foreach ($target_list as $target) {
@@ -3196,13 +3286,20 @@ class Export extends MY_Controller
                         }
                     }
 
-                    $table->addRow(null);
-                    $cell1 = $table->addCell(null, array('gridSpan' => count($target_list) + 1, 'valign' => 'center'));
-                    $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
-                    $textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10, 'bold' => true, 'italic' => true));
+                    //$table->addRow(null);
+                    //$cell1 = $table->addCell(null, array('gridSpan' => count($target_list) + 1, 'valign' => 'center'));
+                    //$textrun1 = $cell1->addTextRun($cellHCentered);
+                    //$textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
+                    //$textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10, 'bold' => true, 'italic' => true));
 
                     $table->addRow();
+
+                    $cell1 = $table->addCell(null, $cellRowContinue);
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
+                    $textrun1->addTextBreak();
+                    $textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10,  'bold' => true, 'italic' => true));
+
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
                     $textrun1->addText("Max", array('size' => 10, 'bold' => true));
@@ -3218,6 +3315,8 @@ class Export extends MY_Controller
                         }
                     }
                     $table->addRow();
+                    $cell1 = $table->addCell(null, $cellRowContinue);
+
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
                     $textrun1->addText("Min", array('size' => 10, 'bold' => true));

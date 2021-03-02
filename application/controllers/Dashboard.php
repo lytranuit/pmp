@@ -217,7 +217,7 @@ class Dashboard extends MY_Controller
         );
         $id = $this->report_model->insert($data_up);
         /// Log audit trail
-        $text =   "USER '" . $this->session->userdata('username') . "' print 1 report";
+        $text =   "USER '" . $this->session->userdata('username') . "' export 1 report";
         $this->report_model->trail($id, "insert", null, $data_up, null, $text);
         $params = array(
             'type' => $type,
