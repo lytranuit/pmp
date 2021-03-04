@@ -2007,7 +2007,7 @@ class Export extends MY_Controller
                 $table->addRow();
                 $cell1 = $table->addCell(null, array('gridSpan' => 5, 'valign' => 'center'));
                 $textrun1 = $cell1->addTextRun($cellHCentered);
-                $textrun1->addText($row->name . "/", array('bold' => true, 'size' => 10));
+                $textrun1->addText($row->name . " / ", array('bold' => true, 'size' => 10));
                 $textrun1->addText($row->name_en, array('bold' => true, 'italic' => true, 'size' => 10), $fontCell);
 
                 $position_list = $this->result_model->set_value_export($params)->where(array("area_id" => $row->id))->with_position()->with_department()->group_by("position_id")->get_all();
@@ -2101,7 +2101,8 @@ class Export extends MY_Controller
                 $table->addRow();
                 $cell1 = $table->addCell(null, $cellColSpan);
                 $textrun1 = $cell1->addTextRun($cellHCentered);
-                $textrun1->addText($row2->name, array('bold' => true));
+                $textrun1->addText($row->name . " / ", array('bold' => true, 'size' => 10));
+                $textrun1->addText($row->name_en, array('bold' => true, 'italic' => true, 'size' => 10), $fontCell);
 
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
@@ -2142,15 +2143,11 @@ class Export extends MY_Controller
             $templateProcessor->setComplexBlock('table_limit', $table);
 
             /////RESULT 
-            $area_results = $this->result_model->set_value_export($params)->with_area()->group_by("area_id")->get_all();
-            usort($area_results, function ($a, $b) {
-                return strcmp($a->area->name, $b->area->name);
-            });
-            $department_list = array();
-            $length_area = count($area_results);
+
+            $length_area = count($area_list);
             $templateProcessor->cloneBlock("result_one_block", $length_area, true, true);
             for ($key = 0; $key < $length_area; $key++) {
-                $area = $area_results[$key]->area;
+                $area = $area_list[$key];
                 $department_results = $this->result_model->set_value_export($params)->where(array('area_id' => $area->id))->with_department()->with_area()->group_by("department_id")->get_all();
                 $length_department = count($department_results);
                 $head = "5.1";
