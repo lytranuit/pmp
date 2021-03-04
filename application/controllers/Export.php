@@ -34,7 +34,7 @@ class Export extends MY_Controller
         $object_id = $record->object_id;
         //        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 1;
         //        $object_name = isset($_COOKIE['SELECT_NAME']) ? $_COOKIE['SELECT_NAME'] : "";
-        if ($object_id == 3) {
+        if ($record->type != "Year" && $object_id == 3) {
 
             $this->load->model("employee_model");
             $this->load->model("employeeresult_model");
@@ -168,7 +168,9 @@ class Export extends MY_Controller
                 $table->addRow();
                 $cell1 = $table->addCell(null, $cellColSpan);
                 $textrun1 = $cell1->addTextRun($cellHCentered);
-                $textrun1->addText($row2->name, array('bold' => true));
+                $textrun1->addText($row2->name . " / ", array('bold' => true, 'size' => 10));
+                $textrun1->addText($row2->name_en, array('bold' => true, 'italic' => true, 'size' => 10), $fontCell);
+
                 $table->addRow();
                 $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'valign' => 'center'));
                 $textrun1 = $cell1->addTextRun(array('alignment' => 'left',));
@@ -253,7 +255,641 @@ class Export extends MY_Controller
                 $table->addRow();
                 $cell1 = $table->addCell(null, array('gridSpan' => 8, 'valign' => 'center'));
                 $textrun1 = $cell1->addTextRun($cellHCentered);
-                $textrun1->addText($row2->name, array('bold' => true));
+                $textrun1->addText($row2->name . " / ", array('bold' => true, 'size' => 10));
+                $textrun1->addText($row2->name_en, array('bold' => true, 'italic' => true, 'size' => 10), $fontCell);
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Tiêu chuẩn chấp nhận', $normal, $fontCell);
+                $textrun->addText('Acceptance criteria', $italic, $fontCell);
+                $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
+                $value = isset($limit->standard_limit) ? $limit->standard_limit : "";
+                $textrun->addText($value, $normal, $fontCell);
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Giới hạn cảnh báo', $normal, $fontCell);
+                $textrun->addText('Alert Limit', $italic, $fontCell);
+                $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
+                $value = isset($limit->alert_limit) ? $limit->alert_limit : "";
+                $textrun->addText($value, $normal, $fontCell);
+                $table->addRow();
+                $textrun = $table->addCell(null, $styleCell);
+                $textrun->addText('Giới hạn hành động', $normal, $fontCell);
+                $textrun->addText('Action Limit', $italic, $fontCell);
+                $textrun = $table->addCell(null, array('gridSpan' => 7, 'valign' => 'center'));
+                $value = isset($limit->action_limit) ? $limit->action_limit : "";
+                $textrun->addText($value, $normal, $fontCell);
+            }
+
+            $templateProcessor->setComplexBlock('table_limit', $table);
+
+            $templateProcessor->cloneBlock("area_block", count($area_all), true, true);
+            foreach ($area_all as $key => $area) {
+                $templateProcessor->setValue("area_heading#" . ($key + 1), "5." . ($key + 1));
+                $templateProcessor->setValue("area_name#" . ($key + 1), $area->name);
+                $templateProcessor->setValue("area_name_en#" . ($key + 1), $area->name_en);
+                $nhanvien = $area->nhanvien;
+                $length_employee = count($nhanvien);
+                $templateProcessor->cloneBlock("department_block#" . ($key + 1), $length_employee, true, true);
+                // echo "<pre>";
+                // print_r($length_employee);
+                // die();
+
+                for ($key1 = 0; $key1 < $length_employee; $key1++) {
+                    $employee = $nhanvien[$key1];
+                    $id =  $employee->string_id;
+                    $target_id = 6;
+                    $name_chart = $object_id . "_" . $target_id . "_" . $area->id . "_" . $employee->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+
+                    ///CHART
+                    $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+
+                    $templateProcessor->setValue("department_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
+                    $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
+                    $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
+                    $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), $id);
+
+                    $data = $this->employeeresult_model->set_value_export($params)->where(array('area_id' => $area->id, 'employee_id' => $employee->id))->as_array()->get_all();
+                    $data_min_max = $this->employeeresult_model->get_data_minmax($employee->id, $area->id, $params['date_from'], $params['date_to']);
+                    $data_min_max_prev = $this->employeeresult_model->get_data_minmax($employee->id, $area->id, $params['date_from_prev'], $params['date_to_prev']);
+
+                    // echo "<pre>";
+                    // print_r($data_min_max);
+                    // die();
+                    ///TABLE RESULT
+                    $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+                    $table->addRow(null, array('tblHeader' => true));
+
+                    //$table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
+                    //$cell1 = $table->addCell(null, $styleCell);
+                    //$cell1->addText("Stt", array('size' => 10), $fontCell);
+                    //$cell1->addText("No.", array('size' => 10, 'italic' => true), $fontCell);
+
+                    $cell1 = $table->addCell(3000, array('gridSpan' => 2, 'valign' => 'center'));
+                    $cell1->addText("Ngày", array('size' => 10), $fontCell);
+                    $cell1->addText("Date", array('size' => 10, 'italic' => true), $fontCell);
+                    $cell1->addText("(dd/mm/yy)", $normal, $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Đầu', array('size' => 10), $fontCell);
+                    $textrun->addText('Head', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Mũi', array('size' => 10), $fontCell);
+                    $textrun->addText('Nose', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Ngực', array('size' => 10), $fontCell);
+                    $textrun->addText('Chest', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Cẳng tay trái', array('size' => 10), $fontCell);
+                    $textrun->addText('Left forearm', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Cẳng tay phải', array('size' => 10), $fontCell);
+                    $textrun->addText('Right forearm', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Dấu găng tay trái', array('size' => 10), $fontCell);
+                    $textrun->addText('Left glove print 5 fingers', array('size' => 10, 'italic' => true), $fontCell);
+
+                    $textrun = $table->addCell(null, $styleCell);
+                    $textrun->addText('Dấu găng tay phải', $normal, $fontCell);
+                    $textrun->addText('Right glove print 5 fingers', $italic, $fontCell);
+                    // echo "<pre>";
+                    // print_r($data);
+                    // die();
+                    foreach ($data as $keystt => $stt) {
+                        $table->addRow(null);
+
+                        //$table->addCell(null, array('gridSpan' => 2, 'valign' => 'center'));
+                        //$cell1 = $table->addCell(null, $styleCell);
+                        //$cell1->addText(($keystt + 1), array('size' => 10), $fontCell);
+
+                        $cell1 = $table->addCell(3000, array('gridSpan' => 2, 'valign' => 'center'));
+                        $cell1->addText(date("d/m/y", strtotime($stt['date'])), array('size' => 10), $fontCell);
+
+
+                        if ($stt["value_H"] == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_H"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_N"] == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_N"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_C"] == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_C"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_LF"] == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_LF"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_RF"] == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_RF"], array('size' => 10), $fontCell);
+                        }
+
+                        if ($stt["value_LG"] == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_LG"], array('size' => 10), $fontCell);
+                        }
+                        if ($stt["value_RG"] == "") {
+                            $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                        } else {
+                            $cell1 = $table->addCell(null, $styleCell);
+                            $cell1->addText($stt["value_RG"], array('size' => 10), $fontCell);
+                        }
+                    }
+                    //MAX
+                    $table->addRow(null);
+
+                    $table->addCell(2000, $cellRowContinue);
+
+                    $cell1 = $table->addCell(null, array('valign' => 'center'));
+                    $cell1->addText("Max", array('size' => 10, 'bold' => true), $fontCell);
+
+                    if ($data_min_max["max_H"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_H"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["max_N"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_N"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["max_C"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_C"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["max_LF"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_LF"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["max_RF"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_RF"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["max_LG"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_LG"], array('size' => 10), $fontCell);
+                    }
+                    if ($data_min_max["max_RG"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["max_RG"], array('size' => 10), $fontCell);
+                    }
+                    //MIN
+                    $table->addRow(null);
+
+                    $table->addCell(2000, $cellRowContinue);
+
+                    $cell1 = $table->addCell(null, array('valign' => 'center'));
+                    $cell1->addText("Min", array('size' => 10, 'bold' => true), $fontCell);
+
+                    if ($data_min_max["min_H"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_H"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["min_N"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_N"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["min_C"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_C"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["min_LF"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_LF"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["min_RF"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_RF"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max["min_LG"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_LG"], array('size' => 10), $fontCell);
+                    }
+                    if ($data_min_max["min_RG"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max["min_RG"], array('size' => 10), $fontCell);
+                    }
+                    ////PREV
+                    //$table->addRow(null);
+                    //$cell1 = $table->addCell(null, array('gridSpan' => 9, 'valign' => 'center'));
+                    //$textrun1 = $cell1->addTextRun($cellHCentered);
+                    //$textrun1->addText("Kết quả của năm trước / ", array('size' => 10, 'bold' => true), $fontCell);
+                    //$textrun1->addText('Results of previous year', array('size' => 10, 'bold' => true, 'italic' => true), $fontCell);
+
+                    //MAX
+                    $table->addRow(null);
+
+                    $cell1 = $table->addCell(2000, array('vMerge' => 'restart', 'valign' => 'center'));
+                    $textrun1 = $cell1->addTextRun($cellHCentered);
+                    $textrun1->addText("Kết quả của $type_vn trước", array('size' => 10, 'bold' => true), $fontCell);
+                    $textrun1->addTextBreak();
+                    $textrun1->addText("Results of previous $type_en", array('size' => 10, 'bold' => true, 'italic' => true), $fontCell);
+
+                    $cell1 = $table->addCell(null, array('valign' => 'center'));
+                    $cell1->addText("Max", array('size' => 10, 'bold' => true), $fontCell);
+
+                    if ($data_min_max_prev["max_H"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_H"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["max_N"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_N"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["max_C"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_C"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["max_LF"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_LF"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["max_RF"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_RF"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["max_LG"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_LG"], array('size' => 10), $fontCell);
+                    }
+                    if ($data_min_max_prev["max_RG"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["max_RG"], array('size' => 10), $fontCell);
+                    }
+                    //MIN
+                    $table->addRow(null);
+
+                    $table->addCell(2000, $cellRowContinue);
+
+                    $cell1 = $table->addCell(null, array('valign' => 'center'));
+                    $cell1->addText("Min", array('size' => 10, 'bold' => true), $fontCell);
+
+                    if ($data_min_max_prev["min_H"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_H"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["min_N"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_N"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["min_C"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_C"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["min_LF"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_LF"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["min_RF"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_RF"], array('size' => 10), $fontCell);
+                    }
+
+                    if ($data_min_max_prev["min_LG"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_LG"], array('size' => 10), $fontCell);
+                    }
+                    if ($data_min_max_prev["min_RG"] == "") {
+                        $cell1 = $table->addCell(null, array('bgColor' => "#c5c6c7"));
+                    } else {
+                        $cell1 = $table->addCell(null, $styleCell);
+                        $cell1->addText($data_min_max_prev["min_RG"], array('size' => 10), $fontCell);
+                    }
+                    $templateProcessor->setComplexBlock("table_result#" . ($key + 1) . "#" . ($key1 + 1), $table);
+                }
+            }
+
+
+            $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . "_" . time() . ".docx";
+            $name_file = urlencode($name_file);
+            $templateProcessor->saveAs(APPPATH . '../public/export/' . $name_file);
+
+            // $templateProcessor->cloneRow("result_block#1", 3);
+            $data_up = array(
+                'name' => $name_file,
+                'status' => 3
+            );
+            $this->report_model->update($data_up, $id_record);
+
+            // redirect("dashboard", 'refresh');
+            // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
+        } elseif ($object_id == 3) {
+
+            $this->load->model("employee_model");
+            $this->load->model("employeeresult_model");
+            $object = $this->object_model->where(array('id' => $object_id))->as_object()->get();
+            $workshop_id = $record->workshop_id;
+
+            $workshop = $this->workshop_model->where(array('id' => $workshop_id))->with_factory()->as_object()->get();
+            $workshop_name = $workshop->name;
+            $workshop_name_en = $workshop->name_en;
+            $factory_name = isset($workshop->factory->name) ? $workshop->factory->name : "";
+            $factory_name_en = isset($workshop->factory->name_en) ? $workshop->factory->name_en : "";
+            $type = $record->type;
+            $selector = $record->selector;
+            $daterange = $record->selector;
+            $params = array(
+                'type' => $type,
+                'selector' => $selector,
+                'daterange' => $daterange,
+            );
+
+            $params = input_params($params);
+            $params['workshop_id'] = $workshop_id;
+            $params['object_id'] = $object_id;
+            ///////DATA
+            $area_list = $this->employeeresult_model->set_value_export($params)->with_area()->group_by("area_id")->get_all();
+            $area_all = array_map(function ($item) use ($params) {
+                $nhanvien = $this->employeeresult_model->set_value_export($params)->where(array('area_id' => $item->area_id))->with_employee()->group_by("employee_id")->get_all();
+                $nhanvien =  array_map(function ($item) {
+                    return $item->employee;
+                }, $nhanvien);
+                $item->area->nhanvien = $nhanvien;
+                return $item->area;
+            }, $area_list);
+            usort($area_all, function ($a, $b) {
+                return strcmp($a->name, $b->name);
+            });
+
+            // $area_all = $this->employeeresult_model->area_export($params);
+            // $nhanvien_all = $this->employeeresult_model->set_value_export($params)->with_employee()->group_by("employee_id")->get_all();
+            // $nhanvien_all = array_map(function ($item) {
+            //     return $item->employee;
+            // }, $nhanvien_all);
+            // foreach ($area_all as &$row) {
+            //     $new_array = array_values(array_filter($nhanvien_all, function ($obj) use ($row) {
+            //         return $obj->area_id == $row->id;
+            //     }));
+            //     $row->nhanvien = $new_array;
+            // }
+            // echo "<pre>";
+            // print_r($area_all);
+            // die();
+            $file = APPPATH . '../public/upload/template/template_nhan_vien.docx';
+            $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+            $type_bc = "Hàng năm";
+            $type_bc_en = "Yearly";
+            if ($type == "Year") {
+                $type_bc = "Hàng năm";
+                $type_bc_en = "Yearly";
+                $type_vn = "năm";
+                $type_en = "year";
+            } elseif ($type == "Month") {
+                $type_bc = "Hàng tháng";
+                $type_bc_en = "Monthly";
+                $type_vn = "tháng";
+                $type_en = "month";
+            } elseif ($type == "HalfYear") {
+                $type_bc = "Nữa năm";
+                $type_bc_en = "Half Year";
+                $type_vn = "nữa năm";
+                $type_en = "half year";
+            } elseif ($type == "Quarter") {
+                $type_bc = "Hàng Quý";
+                $type_bc_en = "Quarterly";
+                $type_vn = "quý";
+                $type_en = "quý";
+            } elseif ($type == "TwoYear") {
+                $type_bc = "mỗi hai năm";
+                $type_bc_en = "every two year";
+                $type_vn = "hai năm";
+                $type_en = "two year";
+            }
+            $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
+            $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
+            $templateProcessor->setValue('date_to', date("d/m/y", strtotime($params['date_to'])));
+            $templateProcessor->setValue('date_to_prev', date("d/m/y", strtotime($params['date_to_prev'])));
+            $templateProcessor->setValue('type_bc', $type_bc);
+            $templateProcessor->setValue('type_bc_en', $type_bc_en);
+            $templateProcessor->setValue('workshop_name', $workshop_name);
+            $templateProcessor->setValue('workshop_name_en', $workshop_name_en);
+            $templateProcessor->setValue('type_bc_cap', mb_strtoupper($type_bc, 'UTF-8'));
+            $templateProcessor->setValue('type_bc_cap_en', mb_strtoupper($type_bc_en, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap', mb_strtoupper($workshop_name, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_cap_en', mb_strtoupper($workshop_name_en, 'UTF-8'));
+
+
+            ////STYLE
+            $cellRowSpan = array('valign' => 'center');
+            $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+            $cellHCenteredLEFT = array('alignment' => 'left');
+
+            $styleCell = array('valign' => 'center');
+            $fontCell = array('align' => 'center');
+            $cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
+            $cellRowContinue = array('vMerge' => 'continue', 'valign' => 'center');
+            $cellVCentered = array('valign' => 'center');
+
+            $normal = array('size' => 10);
+            $italic =  array('italic' => true, 'size' => 10);
+            ////TABLE VITRI
+
+            $table = new Table(array(
+                'borderSize' => 3, 'cellMargin'  => 80, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center',
+                'layout'      => "autofit"
+            ));
+            $table->addRow(null, array('tblHeader' => true));
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $textrun->addText('Sampling locations', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Tên nhân viên', $normal, $fontCell);
+            $textrun->addText('Name of personnel', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Mã số nhân viên', $normal, $fontCell);
+            $textrun->addText('ID No.', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Tần suất', $normal, $fontCell);
+            $textrun->addText('Frequency', $italic, $fontCell);
+
+            foreach ($area_all as $row2) {
+                ///DATA
+                $table->addRow();
+                $cell1 = $table->addCell(null, $cellColSpan);
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row2->name . " / ", array('bold' => true, 'size' => 10));
+                $textrun1->addText($row2->name_en, array('bold' => true, 'italic' => true, 'size' => 10), $fontCell);
+
+                $table->addRow();
+                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'valign' => 'center'));
+                $textrun1 = $cell1->addTextRun(array('alignment' => 'left',));
+                $textrun1->addText("Đầu / ");
+                $textrun1->addText('Head', $italic);
+                $textrun1->addTextBreak();
+                $textrun1->addText("Mũi / ");
+                $textrun1->addText('Nose', $italic);
+                $textrun1->addTextBreak();
+                $textrun1->addText("Ngực / ");
+                $textrun1->addText('Chest', $italic);
+                $textrun1->addTextBreak();
+                $textrun1->addText("Cẳng tay trái / ");
+                $textrun1->addText('Left forearm', $italic);
+                $textrun1->addTextBreak();
+                $textrun1->addText("Cẳng tay phải / ");
+                $textrun1->addText('Right forearm', $italic);
+                $textrun1->addTextBreak();
+                $textrun1->addText("Dấu găng tay trái / ");
+                $textrun1->addText('Left glove print 5 fingers', $italic);
+                $textrun1->addTextBreak();
+                $textrun1->addText("Dấu găng tay phải / ");
+                $textrun1->addText('Right glove print 5 fingers', $italic);
+                $textrun1->addTextBreak();
+                $nhanvien = $row2->nhanvien;
+                // echo "<pre>";
+                // print_r($nhanvien);
+                // die();
+                if (count($nhanvien)) {
+                    $table->addCell(2000, $cellVCentered)->addText($nhanvien[0]->name, null, $cellHCentered);
+                    $table->addCell(1000, $cellVCentered)->addText($nhanvien[0]->string_id, null, $cellHCentered);
+                }
+                $cell1 = $table->addCell(null, array('vMerge' => 'restart', 'valign' => 'center'));
+                $textrun1 = $cell1->addTextRun($cellHCenteredLEFT);
+                $textrun1->addText("Nhân viên phải được lấy mẫu sau khi hoàn tất hoạt động trong ngày và trước khi nhân viên ra khỏi khu vực vô trùng.");
+                $textrun1->addTextBreak();
+                $textrun1->addText('Samples shall be collected after completion of operations for that day, before personnel go out of the aseptic areas.', $italic);
+                for ($i = 1; $i <= count($nhanvien) - 1; $i++) {
+                    $table->addRow();
+                    $table->addCell(null, $cellRowContinue);
+                    $table->addCell(2000, $cellVCentered)->addText($nhanvien[$i]->name, null, $cellHCentered);
+                    $table->addCell(1000, $cellVCentered)->addText($nhanvien[$i]->string_id, null, $cellHCentered);
+                    $table->addCell(null, $cellRowContinue);
+                }
+            }
+
+            $templateProcessor->setComplexBlock('table_vitri', $table);
+            ////END TABLE VI TRI
+            ///TABLE LIMIT
+            $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
+            $table->addRow();
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Vị trí lấy mẫu', $normal, $fontCell);
+            $textrun->addText('Sampling locations', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Đầu', $normal, $fontCell);
+            $textrun->addText('Head', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Mũi', $normal, $fontCell);
+            $textrun->addText('Nose', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Ngực', $normal, $fontCell);
+            $textrun->addText('Chest', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Cẳng tay trái', $normal, $fontCell);
+            $textrun->addText('Left forearm', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Cẳng tay phải', $normal, $fontCell);
+            $textrun->addText('Right forearm', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Dấu găng tay trái', $normal, $fontCell);
+            $textrun->addText('Left glove print 5 fingers', $italic, $fontCell);
+            $textrun = $table->addCell(null, $styleCell);
+            $textrun->addText('Dấu găng tay phải', $normal, $fontCell);
+            $textrun->addText('Right glove print 5 fingers', $italic, $fontCell);
+
+            foreach ($area_all as $row2) {
+                $limit = $this->limit_model->where(array("area_id" => $row2->id, 'target_id' => 6))->where("day_effect", "<=", $params['date_from'])->order_by("day_effect", "DESC")->limit(1)->as_object()->get();
+                // print_r($limit);
+                // die();  
+                //     ///DATA
+                $table->addRow();
+                $cell1 = $table->addCell(null, array('gridSpan' => 8, 'valign' => 'center'));
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row2->name . " / ", array('bold' => true, 'size' => 10));
+                $textrun1->addText($row2->name_en, array('bold' => true, 'italic' => true, 'size' => 10), $fontCell);
                 $table->addRow();
                 $textrun = $table->addCell(null, $styleCell);
                 $textrun->addText('Tiêu chuẩn chấp nhận', $normal, $fontCell);
@@ -1740,12 +2376,14 @@ class Export extends MY_Controller
                     for ($i = 0; $i < count($tmp_parent); $i++) {
                         $parent = $tmp_parent[$i];
                         $child = $parent->child;
+                        $templateProcessor->setValue("three_heading#" . ($key1 + 1) . "#" . ($i + 1), $head . ($key1 + 1) . "." . ($i + 1));
                         $templateProcessor->setValue("parent_name#" .  ($key1 + 1) . "#" . ($i + 1), $parent->name);
                         $templateProcessor->setValue("parent_name_en#" . ($key1 + 1) . "#" . ($i + 1), $parent->name_en);
 
                         $templateProcessor->cloneBlock("target_block#" . ($key1 + 1) . "#" . ($i + 1), count($child), true, true);
                         for ($j = 0; $j < count($child); $j++) {
                             $target = $child[$j];
+                            $templateProcessor->setValue("four_heading#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $head . ($key1 + 1) . "." . ($i + 1) . "." . ($j + 1));
                             $templateProcessor->setValue("target_name#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $target->name);
                             $templateProcessor->setValue("target_name_en#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $target->name_en);
 
