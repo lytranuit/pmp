@@ -144,7 +144,13 @@ class Report extends MY_Controller
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
-                $url = base_url() . "public/export/" . urlencode($post->name);
+                $list_url = explode(",", $post->name);
+                $list_url = array_map(function ($item) {
+                    $url = base_url() . "public/export/" . urlencode($item);
+                    return '<a href="' . $url . '">' . $item . '</a>';
+                }, $list_url);
+
+                $nestedData['name'] = implode(",", $list_url);
                 if ($this->ion_auth->is_admin()) {
                     $nestedData['id'] = '<a href="' . base_url() . "export/export/$post->id" . '" target="_blank">' . $post->id . '</a>';
                 } else {
@@ -153,7 +159,6 @@ class Report extends MY_Controller
                 $nestedData['object_name'] = isset($post->object->name) ? $post->object->name : "";
                 $nestedData['workshop_name'] = isset($post->workshop->name) ? $post->workshop->name . "<i class='d-block'>" . $post->workshop->name_en . "</i>" : "";
                 $nestedData['date'] = $post->date;
-                $nestedData['name'] = '<a href="' . $url . '">' . $post->name . '</a>';
                 $nestedData['type'] = $post->type;
                 $nestedData['selector'] = $post->selector;
                 $status =  '<div class="spinner-border" style="width: 1rem;height: 1rem;"></div> Loading...';
