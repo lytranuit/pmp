@@ -147,10 +147,10 @@ class Report extends MY_Controller
                 $list_url = explode(",", $post->name);
                 $list_url = array_map(function ($item) {
                     $url = base_url() . "public/export/" . urlencode($item);
-                    return '<a href="' . $url . '">' . $item . '</a>';
+                    return '<a href="' . $url . '">' . $item . '</a><br>';
                 }, $list_url);
 
-                $nestedData['name'] = implode(",", $list_url);
+                $nestedData['name'] = implode(" ", $list_url);
                 if ($this->ion_auth->is_admin()) {
                     $nestedData['id'] = '<a href="' . base_url() . "export/export/$post->id" . '" target="_blank">' . $post->id . '</a>';
                 } else {
