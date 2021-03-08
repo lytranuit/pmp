@@ -4636,4 +4636,213 @@ class Import extends MY_Controller
         print_r($analytics);
         $this->employeeresult_model->insert($insert);
     }
+
+    public function data_tieuphan()
+    {
+        set_time_limit(-1);
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+        $dir = APPPATH . '../public/data/tieuphan/';
+
+        echo "<pre>";
+        echo $dir;
+
+        $this->load->model("result_model");
+        $this->load->model("position_model");
+        $this->load->model("target_model");
+        // $area = $this->area_model->where(array('id' => 76))->as_array()->get();
+
+        //echo '<pre>';
+        //print_r($area);
+        //die();
+        $insert = array();
+        $sortedarray1 = array_values(array_diff(scandir($dir), array('..', '.')));
+        //echo "<pre>";
+        //print_r($sortedarray1);
+        //die();
+        foreach ($sortedarray1 as $file_name) {
+            //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
+            $file = $dir . $file_name;
+
+            //Tiến hành xác thực file
+            $objFile = PHPExcel_IOFactory::identify($file);
+            $objData = PHPExcel_IOFactory::createReader($objFile);
+
+            //Chỉ đọc dữ liệu
+            //$objData->setReadDataOnly(true);
+            // Load dữ liệu sang dạng đối tượng
+            $objPHPExcel = $objData->load($file);
+
+            //Lấy ra số trang sử dụng phương thức getSheetCount();
+            // Lấy Ra tên trang sử dụng getSheetNames();
+            //Chọn trang cần truy xuất
+            $count_sheet = $objPHPExcel->getSheetCount();
+            for ($k = 1; $k < $count_sheet; $k++) {
+                $sheet_name = "sheet_" . $k  . "_" . $file_name;
+                $sheet = $objPHPExcel->setActiveSheetIndex($k);
+
+                //Lấy ra số dòng cuối cùng
+                $Totalrow = $sheet->getHighestRow();
+                //Lấy ra tên cột cuối cùng
+                $LastColumn = $sheet->getHighestColumn();
+                //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+                $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+                //Tạo mảng chứa dữ liệu
+                $data = [];
+
+                //Tiến hành lặp qua từng ô dữ liệu
+                //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+                $fisrt = 9;
+                for ($i = $fisrt; $i <= $Totalrow; $i++) {
+                    //----Lặp cột
+                    for ($j = 0; $j < $TotalCol; $j++) {
+                        // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                        $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                        $data[$i -  $fisrt][$j] = $cell->getValue();
+                        ///CHUYEN RICH TEXT
+                        if ($data[$i -  $fisrt][$j] instanceof PHPExcel_RichText) {
+                            $data[$i -  $fisrt][$j] = $data[$i -  $fisrt][$j]->getPlainText();
+                        }
+                        ////CHUYEN DATE 
+                        if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i -  $fisrt][$j] > 0) {
+
+                            if (is_numeric($data[$i -  $fisrt][$j])) {
+                                $data[$i -  $fisrt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i -  $fisrt][$j]));
+                            } else if ($data[$i -  $fisrt][$j] == '26/09/16') {
+                                $data[$i -  $fisrt][$j] = '2016-09-26';
+                            }
+                        }
+                    }
+                }
+                // echo "<pre>";
+                // print_r($data);
+                // die();
+                //$nhanvien_string_id = $sheet->getCellByColumnAndRow(5, 6)->getValue();
+                //$area_string = $sheet->getCellByColumnAndRow(2, 7)->getValue();
+                // echo $nhanvien_string_id . "<br>" . $area_string;
+
+                //if (!isset($temp_area[$area_string])) {
+                //    continue;
+                //}
+                //$area = $temp_area[$area_string];
+                //$nhan_vien = $this->employee_model->where(array('string_id' => $nhanvien_string_id))->as_object()->get();
+
+                //// echo "<pre>";
+                //// print_r($nhan_vien);
+                //if (empty($nhan_vien)) {
+                //    continue;
+                //}
+
+                // $position_H = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_H"))->as_object()->get();
+                // $position_N = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_N"))->as_object()->get();
+                // $position_C = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_C"))->as_object()->get();
+                // $position_LF = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_LF"))->as_object()->get();
+                // $position_RF = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_RF"))->as_object()->get();
+                // $position_LG = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_LG"))->as_object()->get();
+                // $position_RG = $this->position_model->where(array('string_id' => "NV_" . $nhanvien_string_id . "_" . $area_string . "_RG"))->as_object()->get();
+
+                // die();
+                ///LIST POSTION
+                //$list_position = array_shift($data);
+                ///XOA 1 ROW
+                //array_shift($data);
+
+                // echo "<pre>";
+                //        print_r($positions);
+                // print_r($data);
+                // die();
+                // print_r($temp_phong);
+                // die();
+                $analytics = array(
+                    'miss_row' => array(),
+                    'success' => 0
+                );
+                $targets = array(
+                    (object) array(
+                        'id' => 17,
+                        'name' => 'Trạng thái tĩnh',
+                        'name_en' => "At rest condition",
+                        'col' => 4,
+                        'type_data' => "float",
+                    ),
+                    (object) array(
+                        'id' => 16,
+                        'name' => 'Trạng thái động',
+                        'name_en' => "At operation  condition",
+                        'has_data' => 1,
+                        'col' => 5,
+                        'type_data' => "float",
+                    ), (object) array(
+                        'id' => 15,
+                        'name' => 'Trạng thái tĩnh',
+                        'name_en' => "At rest condition",
+                        'has_data' => 1,
+                        'col' => 6,
+                        'type_data' => "float",
+                    ),
+                    (object) array(
+                        'id' => 14,
+                        'name' => 'Trạng thái động',
+                        'name_en' => "At operation  condition",
+                        'has_data' => 1,
+                        'col' => 7,
+                        'type_data' => "float",
+                    ),
+                );
+                for ($i = 0; $i < count($data); $i++) {
+                    $row = $data[$i];
+                    $p_string_id = $row[2];
+                    // $nhanvien_name = $row[1];
+                    if ($p_string_id == "") {
+                        continue;
+                    }
+                    $position = $this->position_model->where(array('string_id' => $p_string_id))->as_object()->get();
+                    //print_r($nh)
+                    if (empty($position)) {
+                        $analytics['miss_row'][] = $p_string_id;
+                    }
+
+                    $date = $row[3];
+                    foreach ($targets as $target) {
+                        if (strlen($row[$target->col]) > 0) {
+                            $value = $row[$target->col];
+                        } else {
+                            continue;
+                            $analytics['new_nhanvien'][] = $row;
+                        }
+                        if (is_null($value) || !is_Date($date) || !is_numeric($value)) {
+                            continue;
+                            $analytics['new_nhanvien'][] = $row;
+                        }
+                        $date = date("Y-m-d", strtotime($date));
+                        $max_stt = $this->result_model->max_stt_have_target_in_day($position->id, $date, $target->id);
+                        // $data['stt_in_day'] = $max_stt;
+                        $data_up = array(
+                            'value' => $value,
+                            'position_id' => $position->id,
+                            'area_id' => $position->area_id,
+                            'department_id' => $position->department_id,
+                            'target_id' => $target->id,
+                            'factory_id' => $position->factory_id,
+                            'workshop_id' => $position->workshop_id,
+                            'date' => $date,
+                            'create_at' => date("Y-m-d"),
+                            'from_file' => $sheet_name,
+                            'object_id' => $position->object_id,
+                            'type_bc' => $position->type_bc,
+                            'stt_in_day' => $max_stt
+                            //                        'w,orkshop_id' => $area['workshop_id'],
+                            //                        'factory_id' => $area['factory_id']
+                        );
+                        $analytics['success']++;
+                        $this->result_model->insert($data_up);
+                    }
+                }
+            }
+        }
+        print_r($analytics);
+    }
 }
