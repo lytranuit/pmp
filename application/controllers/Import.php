@@ -4678,7 +4678,7 @@ class Import extends MY_Controller
             // Lấy Ra tên trang sử dụng getSheetNames();
             //Chọn trang cần truy xuất
             $count_sheet = $objPHPExcel->getSheetCount();
-            for ($k = 1; $k < $count_sheet; $k++) {
+            for ($k = 0; $k < $count_sheet; $k++) {
                 $sheet_name = "sheet_" . $k  . "_" . $file_name;
                 $sheet = $objPHPExcel->setActiveSheetIndex($k);
 
