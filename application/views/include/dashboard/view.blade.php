@@ -276,7 +276,8 @@
             });
 
             $("#the_selector").change(function() {
-                $(".type_data.active").trigger("click");
+
+                load_data();
             })
             $(".area_id").change(async function() {
                 $(".page-loader-wrapper").show();
