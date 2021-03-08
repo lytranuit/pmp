@@ -17,10 +17,10 @@ $lang['nuoc'] = "Water";
 
 $lang['field'] = "Field";
 $lang['object'] = "Object";
-$lang['method'] = "Method";
+$lang['method'] = "Criteria";
 $lang['diagram'] = "Diagram";
 $lang['positon_tree'] = "Position tree";
-$lang['system_water'] = "System Water";
+$lang['system_water'] = "Type of Water";
 $lang['factory'] = "Factory";
 $lang['department'] = "Department";
 $lang['area'] = "Area";

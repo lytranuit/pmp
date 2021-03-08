@@ -89,6 +89,8 @@ class Export extends MY_Controller
 
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
+            $type_vn = "năm";
+            $type_en = "year";
             if ($type == "Year") {
                 $type_bc = "Hàng năm";
                 $type_bc_en = "Yearly";
@@ -719,8 +721,11 @@ class Export extends MY_Controller
             // die();
             $file = APPPATH . '../public/upload/template/template_nhan_vien_nam.docx';
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
+            $type_vn = "năm";
+            $type_en = "year";
             if ($type == "Year") {
                 $type_bc = "Hàng năm";
                 $type_bc_en = "Yearly";
@@ -1354,6 +1359,8 @@ class Export extends MY_Controller
             }
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
+            $type_vn = "năm";
+            $type_en = "year";
             if ($type == "Year") {
                 $type_bc = "Hàng năm";
                 $type_bc_en = "Yearly";
@@ -1887,6 +1894,8 @@ class Export extends MY_Controller
             }
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
+            $type_vn = "năm";
+            $type_en = "year";
             if ($type == "Year") {
                 $type_bc = "Hàng năm";
                 $type_bc_en = "Yearly";
@@ -2419,6 +2428,8 @@ class Export extends MY_Controller
             }
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
+            $type_vn = "năm";
+            $type_en = "year";
             if ($type == "Year") {
                 $type_bc = "Hàng năm";
                 $type_bc_en = "Yearly";
@@ -3087,6 +3098,8 @@ class Export extends MY_Controller
             }
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
+            $type_vn = "năm";
+            $type_en = "year";
             if ($type == "Year") {
                 $type_bc = "Hàng năm";
                 $type_bc_en = "Yearly";
@@ -4239,9 +4252,6 @@ class Export extends MY_Controller
             //Get main section
 
             $file = APPPATH . '../public/upload/template/template_nuoc_nam.docx';
-            if ($type != "Year") {
-                $file = APPPATH . '../public/upload/template/template_nuoc.docx';
-            }
             $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
             $list_type = array(
                 'TwoYear' => "Các điểm lấy mẫu hàng quý",
@@ -4259,21 +4269,33 @@ class Export extends MY_Controller
             );
             $type_bc = "Hàng năm";
             $type_bc_en = "Yearly";
+            $type_vn = "năm";
+            $type_en = "year";
             if ($type == "Year") {
                 $type_bc = "Hàng năm";
                 $type_bc_en = "Yearly";
+                $type_vn = "năm";
+                $type_en = "year";
             } elseif ($type == "Month") {
                 $type_bc = "Hàng tháng";
                 $type_bc_en = "Monthly";
+                $type_vn = "tháng";
+                $type_en = "month";
             } elseif ($type == "HalfYear") {
                 $type_bc = "Nữa năm";
                 $type_bc_en = "Half Year";
+                $type_vn = "nữa năm";
+                $type_en = "half year";
             } elseif ($type == "Quarter") {
                 $type_bc = "Hàng Quý";
                 $type_bc_en = "Quarterly";
+                $type_vn = "quý";
+                $type_en = "quý";
             } elseif ($type == "TwoYear") {
                 $type_bc = "mỗi hai năm";
                 $type_bc_en = "every two year";
+                $type_vn = "hai năm";
+                $type_en = "two year";
             }
             $templateProcessor->setValue('date_from', date("d/m/y", strtotime($params['date_from'])));
             $templateProcessor->setValue('date_from_prev', date("d/m/y", strtotime($params['date_from_prev'])));
@@ -4402,18 +4424,26 @@ class Export extends MY_Controller
             $templateProcessor->cloneBlock("limit_block", count($system_list), true, true);
             for ($j = 0; $j < count($system_list); $j++) {
                 $row2 = $system_list[$j];
-                $templateProcessor->setValue("limit_parent_name#" .  ($j + 1), $system_list[$j]->name);
-                $templateProcessor->setValue("limit_parent_name_en#" . ($j + 1), $system_list[$j]->name_en);
 
                 $table = new Table(array(
                     'borderSize' => 3, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct',
                     'cellMargin'  => 80, 'valign' => 'center'
                 ));
+
+
                 $target_list = $this->result_model->set_value_export($params)->where("system_id", $system_list[$j]->id)->with_target()->group_by("target_id")->get_all();
                 $target_list = array_map(function ($item) {
                     return $item->target;
                 }, $target_list);
                 $system_list[$j]->target_list = $target_list;
+
+                $table->addRow();
+                $cell1 = $table->addCell(null, array('gridSpan' => count($target_list) + 1, 'valign' => 'center'));
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText($row2->name, array('bold' => true, 'size' => 10));
+                $textrun1->addTextBreak();
+                $textrun1->addText($row2->name_en, array('bold' => true, 'size' => 10, 'italic' => true), $fontCell);
+
                 $table->addRow();
                 $table->addCell(null, $cellRowContinue);
                 for ($i = 0; $i < count($target_list); $i++) {
@@ -4498,18 +4528,15 @@ class Export extends MY_Controller
             // });
             $department_list = array();
             $length_system = count($system_list);
-            $templateProcessor->cloneBlock("result_two_block", $length_system, true, true);
+            $templateProcessor->cloneBlock("result_water_block", $length_system, true, true);
             for ($key1 = 0; $key1 < $length_system; $key1++) {
                 $system = $system_list[$key1];
                 $target_list = $system_list[$key1]->target_list;
-                $head = "5.1";
-                if ($type != "Year") {
-                    $head = "2.";
-                }
+                $head = "5.";
                 ////DRAW RESULT
-                $templateProcessor->setValue("two_heading#"  . ($key1 + 1), $head . ($key + 1) . "." . ($key1 + 1));
-                $templateProcessor->setValue("two_name_heading#"  . ($key1 + 1), htmlspecialchars($system->name));
-                $templateProcessor->setValue("two_name_en_heading#"  . ($key1 + 1), htmlspecialchars($system->name_en));
+                $templateProcessor->setValue("water_heading#"  . ($key1 + 1), $head . ($key1 + 1));
+                $templateProcessor->setValue("water_name_heading#"  . ($key1 + 1), htmlspecialchars($system->name));
+                $templateProcessor->setValue("water_name_en_heading#"  . ($key1 + 1), htmlspecialchars($system->name_en));
 
                 $position_results = $this->result_model->set_value_export($params)->where(array('system_id' => $system->id))->with_position()->group_by("position_id")->get_all();
                 $length_position = count($position_results);
@@ -4524,24 +4551,18 @@ class Export extends MY_Controller
                     $position = $position_results[$key2]->position;
                     $params['position_id'] = $position->id;
                     $string_id = $position->string_id;
+                    $templateProcessor->setValue("position_heading#"  . ($key1 + 1) . "#" . ($key2 + 1), $head . ($key1 + 1) . "." . ($key2 + 1));
                     $templateProcessor->setValue("position_string_id#"  . ($key1 + 1) . "#" . ($key2 + 1), $position->string_id);
 
                     ///TABLE
                     $table = new Table(array('borderSize' => 3, 'cellMargin'  => 80, 'width' => 100 * 50, 'size' => 10, 'unit' => 'pct', 'valign' => 'center'));
                     $table->addRow(null, array('tblHeader' => true));
 
-                    $cell1 = $table->addCell(null, $cellRowContinue);
-                    $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars("Mã số điểm lấy mẫu /"), array('size' => 10));
-                    $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars("ID of sampling points"), array('size' => 10, 'italic' => true));
+                    $cell1 = $table->addCell(3000, array('gridSpan' => 2, 'valign' => 'center'));
+                    $cell1->addText("Ngày", array('size' => 10), $fontCell);
+                    $cell1->addText("Date", array('size' => 10, 'italic' => true), $fontCell);
+                    $cell1->addText("(dd/mm/yy)", $normal, $fontCell);
 
-                    $cell1 = $table->addCell(null, $cellRowContinue);
-                    $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars("Ngày /"), array('size' => 10));
-                    $textrun1->addText(htmlspecialchars("Date"), array('size' => 10, 'italic' => true));
-                    $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars('(dd/mm/yy)'), array('size' => 10));
                     // for ($i = 0; $i < count($target_parent); $i++) {
                     //     $textrun = $table->addCell(null, array('gridSpan' => $target_parent[$i]->count_child, 'size' => 10, 'valign' => 'center'));
                     //     $textrun->addText($target_parent[$i]->name, $normal, $fontCell);
@@ -4566,11 +4587,11 @@ class Export extends MY_Controller
                         $table->addRow();
                         $date = date("d/m/y", strtotime($stt['date']));
 
-                        $cell1 = $table->addCell(null, $cellRowSpan);
-                        $textrun1 = $cell1->addTextRun($cellHCentered);
-                        $textrun1->addText(htmlspecialchars($string_id), array('size' => 10));
+                        //$cell1 = $table->addCell(null, $cellRowSpan);
+                        //$textrun1 = $cell1->addTextRun($cellHCentered);
+                        //$textrun1->addText(htmlspecialchars($string_id), array('size' => 10));
 
-                        $cell1 = $table->addCell(null, $cellRowSpan);
+                        $cell1 = $table->addCell(3000, array('gridSpan' => 2, 'valign' => 'center'));
                         $textrun1 = $cell1->addTextRun($cellHCentered);
                         $textrun1->addText(htmlspecialchars($date), array('size' => 10));
                         foreach ($target_list as $target) {
@@ -4604,7 +4625,7 @@ class Export extends MY_Controller
                     ///MIN MAX
                     $table->addRow();
 
-                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $cell1 = $table->addCell(null, $cellRowContinue);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -4621,7 +4642,7 @@ class Export extends MY_Controller
                         }
                     }
                     $table->addRow();
-                    $cell1 = $table->addCell(null, $cellRowSpan);
+                    $cell1 = $table->addCell(null, $cellRowContinue);
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -4646,11 +4667,11 @@ class Export extends MY_Controller
 
                     $table->addRow();
 
-                    $cell1 = $table->addCell(null, $cellRowContinue);
+                    $cell1 = $table->addCell(2000, array('valign' => 'center', 'vMerge' => 'restart'));
                     $textrun1 = $cell1->addTextRun($cellHCentered);
-                    $textrun1->addText(htmlspecialchars("Kết quả trước đó / "), array('size' => 10, 'bold' => true));
+                    $textrun1->addText(htmlspecialchars("Kết quả $type_vn trước / "), array('size' => 10, 'bold' => true));
                     $textrun1->addTextBreak();
-                    $textrun1->addText(htmlspecialchars("Results of previous"), array('size' => 10,  'bold' => true, 'italic' => true));
+                    $textrun1->addText(htmlspecialchars("Results of previous $type_en"), array('size' => 10,  'bold' => true, 'italic' => true));
 
                     $cell1 = $table->addCell(null, $cellRowSpan);
                     $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -4686,15 +4707,29 @@ class Export extends MY_Controller
 
                     $templateProcessor->setComplexBlock("result_table#"  . ($key1 + 1) . "#" . ($key2 + 1), $table);
                 }
+            }
 
-                // /////DRAW TREND
+            // /////DRAW TREND
+            $head = "6.";
+            $templateProcessor->cloneBlock("result_water_chart_block", $length_system, true, true);
+            for ($key1 = 0; $key1 < $length_system; $key1++) {
+
+                $system = $system_list[$key1];
+                $target_list = $system_list[$key1]->target_list;
+
+                $templateProcessor->setValue("water_heading#"  . ($key1 + 1), $head . ($key1 + 1));
+                $templateProcessor->setValue("water_name_heading#"  . ($key1 + 1), htmlspecialchars($system->name));
+                $templateProcessor->setValue("water_name_en_heading#"  . ($key1 + 1), htmlspecialchars($system->name_en));
+
                 $target_float = array_values(array_filter($target_list, function ($item) {
                     return $item->type_data == "float";
                 }));
-                $templateProcessor->cloneBlock("target_block#"  . ($key1 + 1), count($target_float), true, true);
+
+                $templateProcessor->cloneBlock("target_block#" . ($key1 + 1), count($target_float), true, true);
                 for ($i = 0; $i < count($target_float); $i++) {
                     $target = $target_float[$i];
-                    $templateProcessor->setValue("target_name#"  . ($key1 + 1) . "#" . ($i + 1), strtolower($target->name));
+                    $templateProcessor->setValue("target_heading#"  . ($key1 + 1) . "#" . ($i + 1), $head . ($key1 + 1) . "." . ($i + 1));
+                    $templateProcessor->setValue("target_name#"  . ($key1 + 1) . "#" . ($i + 1), $target->name);
                     $templateProcessor->setValue("target_name_en#"  . ($key1 + 1) . "#" . ($i + 1), $target->name_en);
 
                     $fre_list = $this->result_model->set_value_export($params)->where("system_id", $system->id)->where("target_id", $target->id)->group_by("type_bc")->get_all();
@@ -4714,7 +4749,6 @@ class Export extends MY_Controller
                     }
                 }
             }
-
             // die();
             $name_file = "Bao_cao_" . $object_id . "_" . $workshop_id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . "_" . time() . ".docx";
             $name_file = urlencode($name_file);

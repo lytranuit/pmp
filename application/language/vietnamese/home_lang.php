@@ -42,10 +42,10 @@ $lang['nuoc'] = "Nước";
 
 $lang['field'] = "Trường dữ liệu";
 $lang['object'] = "Đối tượng";
-$lang['method'] = "Phương thức lấy mẫu";
+$lang['method'] = "Chỉ tiêu";
 $lang['diagram'] = "Sơ đồ hình ảnh";
 $lang['positon_tree'] = "Sơ đồ vị trí";
-$lang['system_water'] = "Hệ thống nước";
+$lang['system_water'] = "Loại nước";
 $lang['factory'] = "Nhà máy";
 $lang['department'] = "Bộ phận";
 $lang['area'] = "Khu vực";
