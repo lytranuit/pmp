@@ -5,13 +5,34 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 class Import extends MY_Controller
 {
-
     function __construct()
     {
         parent::__construct();
-        $is_admin = $this->ion_auth->is_admin();
-        if (!$is_admin) {
-            show_404();
+        $this->data['is_admin'] = $this->ion_auth->is_admin();
+        $this->data['userdata'] = $this->session->userdata();
+        $this->data['template'] = "admin";
+        $this->data['title'] = "Admin";
+        $version = $this->config->item("version");
+        $this->data['stylesheet_tag'] = array(
+            base_url() . "public/assets/css/main.css?v=" . $version,
+            base_url() . "public/assets/css/custom.css?v=" . $version,
+            base_url() . "public/admin/vendor/fonts/fontawesome/css/fontawesome-all.css"
+        );
+        $this->data['javascript_tag'] = array(
+            base_url() . 'public/assets/scripts/jquery.min.js',
+            base_url() . "public/assets/scripts/main.js?v=" . $version,
+            base_url() . "public/lib/jquery-validation/jquery.validate.js",
+            base_url() . "public/admin/vendor/inputmask/js/jquery.inputmask.bundle.js",
+            base_url() . "public/admin/libs/js/moment.js",
+            base_url() . "public/assets/scripts/jquery.cookies.2.2.0.min.js",
+            base_url() . "public/assets/scripts/custom.js?v=" . $version
+        );
+
+
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $object_array = array(10, 11);
+        if (!in_array((int) $object_id, $object_array)) {
+            $this->redirect_result($object_id);
         }
     }
 
@@ -20,7 +41,155 @@ class Import extends MY_Controller
         if (!method_exists($this, $method)) {
             show_404();
         }
-        $this->$method($params);
+
+        if (!$this->ion_auth->in_group($this->group)) {
+            //redirect them to the login page
+            redirect("index/login", "refresh");
+        } elseif ($this->has_right($method, $params)) {
+            $this->$method($params);
+        } else {
+            show_404();
+        }
+    }
+
+    private function has_right($method, $params = array())
+    {
+        return true;
+    }
+
+    public function index()
+    { /////// trang ca nhan
+        load_datatable($this->data);
+        load_daterangepicker($this->data);
+        echo $this->blade->view()->make('page/page', $this->data)->render();
+    }
+
+    public function add()
+    { /////// trang ca nhan
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        if (isset($_POST['dangtin'])) {
+            $data = $_POST;
+            $this->load->model("import_model");
+
+            $data['user_id'] = $this->session->userdata('user_id');
+            $data['date'] = date("Y-m-d H:i:s");
+            $data['object_id'] = $object_id;
+
+            ///FILE
+            ini_set('post_max_size', '64M');
+            ini_set('upload_max_filesize', '64M');
+            $this->load->helper('file');
+            $date = date("Y-m-d");
+            $upload_path_url = "public/uploads/$date/";
+            $dir = FCPATH . "public/uploads/$date/";
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $config['upload_path'] = $dir;
+            $config['allowed_types'] = 'xlsx';
+            $config['max_size'] = '10000';
+            $this->load->library('upload', $config);
+            $files = $_FILES;
+            $ext = pathinfo($files['file']['name'], PATHINFO_EXTENSION);
+            $_FILES['file']['name'] = time() . "." . $ext;
+            $real_name = $files['file']['name'];
+            if (!$this->upload->do_upload('file')) {
+                $errors = $this->upload->display_errors();
+                print_r($errors);
+            }
+            $data['file_name'] =  $real_name;
+            $data['file'] =  $upload_path_url . $_FILES['file']['name'];
+            //$data_upload = $this->upload->data();
+
+            ////END FILE
+
+            $data_up = $this->import_model->create_object($data);
+            $id = $this->import_model->insert($data_up);
+
+            /// Log audit trail
+            $text =   "USER '" . $this->session->userdata('username') . "' added a new record($id) to the table 'pmp_import'";
+            $this->import_model->trail($id, "insert", null, $data_up, null, $text);
+            // die();
+            redirect('import', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
+        } else {
+
+            echo $this->blade->view()->make('page/page', $this->data)->render();
+        }
+    }
+    public function remove($params)
+    { /////// trang ca nhan
+        $this->load->model("import_model");
+        $id = $params[0];
+        $status = $this->import_model->update(array("deleted" => 1), $id);
+
+        /// Log audit trail
+        $text =   "USER '" . $this->session->userdata('username') . "' removed record($id) to the table 'pmp_import'";
+        $this->import_model->trail($status, "delete", null, null, $id, $text);
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+        exit;
+    }
+
+    public function table()
+    {
+        $object_id = isset($_COOKIE['SELECT_ID']) ? $_COOKIE['SELECT_ID'] : 3;
+        $this->load->model("import_model");
+        $this->load->model("limit_model");
+        $limit = $this->input->post('length');
+        $start = $this->input->post('start');
+        $page = ($start / $limit) + 1;
+
+
+        if (empty($this->input->post('search')['value'])) {
+            //            $max_page = ceil($totalFiltered / $limit);
+            $where = $this->import_model->where(array("deleted" => 0, 'object_id' => $object_id));
+            $totalFiltered = $where->count_rows();
+            $where = $this->import_model->where(array("deleted" => 0, 'object_id' => $object_id));
+        } else {
+            $search = $this->input->post('search')['value'];
+            $sWhere = "deleted = 0 and object_id = " . $this->db->escape($object_id) . " and note like '%" .  $this->db->escape($search) . "%'";
+            $where = $this->import_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+            $totalFiltered = $where->count_rows();
+            $where = $this->import_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
+        }
+
+        $posts = $where->order_by("id", "DESC")->with_user()->paginate($limit, NULL, $page);
+        //        echo "<pre>";
+        //        print_r($posts);
+        //        die();
+        $data = array();
+        if (!empty($posts)) {
+            foreach ($posts as $post) {
+
+                $nestedData['id'] = $post->id;
+                $nestedData['user_name'] = isset($post->user->last_name) ? $post->user->last_name : "";
+                $nestedData['date'] = $post->date;
+                $nestedData['note'] = $post->note;
+                $nestedData['file'] = "<a href=" . base_url()  . $post->file . ">" . $post->file_name . '</a><br>';
+                if ($post->status == 1) {
+                    $nestedData['action'] =
+                        '<a href="' . base_url() . 'import/import/' . $post->id . '" class="btn btn-primary btn-sm mr-1" data-type="confirm" title="import">'
+                        . '<i class="fas fa-file-import"></i>'
+                        . '</i>'
+                        . '</a>';
+                }
+                $nestedData['action'] .=
+                    '<a href="' . base_url() . 'import/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                    . '<i class="far fa-trash-alt">'
+                    . '</i>'
+                    . '</a>';
+
+                $data[] = $nestedData;
+            }
+        }
+
+        $json_data = array(
+            "draw" => intval($this->input->post('draw')),
+            "recordsTotal" => intval($totalFiltered),
+            "recordsFiltered" => intval($totalFiltered),
+            "data" => $data
+        );
+
+        echo json_encode($json_data);
     }
 
     public function vitri()
@@ -4461,27 +4630,42 @@ class Import extends MY_Controller
         require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
         //Đường dẫn file
         //        $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
-        $dir = APPPATH . '../public/data/nhanvien/';
+        $dir = APPPATH . '../public/data/nhanvien';
 
         echo "<pre>";
         echo $dir;
         $this->load->model("employeeresult_model");
         $this->load->model("employee_model");
         $this->load->model("area_model");
-        $area = $this->area_model->where(array('id' => 76))->as_array()->get();
 
         //echo '<pre>';
         //print_r($area);
-        //die();
+        die();
         $insert = array();
-        $sortedarray1 = array_values(array_diff(scandir($dir), array('..', '.')));
+
+        $sortedarray1 = $this->listFolderFiles($dir);
+        $sortedarray1 = array_values($sortedarray1);
+
         //echo "<pre>";
         //print_r($sortedarray1);
         //die();
+        $analytics = array(
+            'new_nhanvien' => array(),
+            'miss_row' => array(),
+            'success' => 0
+        );
         foreach ($sortedarray1 as $file_name) {
             //            $file = APPPATH . '../public/upload/data_visinh/1.xlsx';
-            $file = $dir . $file_name;
-
+            $file = $file_name;
+            $name_file = explode("/", $file);
+            $name_file = end($name_file);
+            $area_id = explode("_", $name_file);
+            $area_id = $area_id[0];
+            //echo '<pre>';
+            //print_r($area_id);
+            //die();
+            //$area_id =
+            $area = $this->area_model->where(array('id' => $area_id))->as_array()->get();
             //Tiến hành xác thực file
             $objFile = PHPExcel_IOFactory::identify($file);
             $objData = PHPExcel_IOFactory::createReader($objFile);
@@ -4518,7 +4702,7 @@ class Import extends MY_Controller
                         // Tiến hành lấy giá trị của từng ô đổ vào mảng
                         $cell = $sheet->getCellByColumnAndRow($j, $i);
 
-                        $data[$i -  $fisrt][$j] = $cell->getValue();
+                        $data[$i -  $fisrt][$j] = $cell->getCalculatedValue();
                         ///CHUYEN RICH TEXT
                         if ($data[$i -  $fisrt][$j] instanceof PHPExcel_RichText) {
                             $data[$i -  $fisrt][$j] = $data[$i -  $fisrt][$j]->getPlainText();
@@ -4534,9 +4718,9 @@ class Import extends MY_Controller
                         }
                     }
                 }
-                echo "<pre>";
-                print_r($data);
-                die();
+                //echo "<pre>";
+                //print_r($data);
+                //die();
                 //$nhanvien_string_id = $sheet->getCellByColumnAndRow(5, 6)->getValue();
                 //$area_string = $sheet->getCellByColumnAndRow(2, 7)->getValue();
                 // echo $nhanvien_string_id . "<br>" . $area_string;
@@ -4573,11 +4757,6 @@ class Import extends MY_Controller
                 // die();
                 // print_r($temp_phong);
                 // die();
-                $analytics = array(
-                    'new_nhanvien' => array(),
-                    'miss_row' => array(),
-                    'success' => 0
-                );
                 for ($i = 0; $i < count($data); $i++) {
                     $row = $data[$i];
                     $nhanvien_string_id = $row[0];

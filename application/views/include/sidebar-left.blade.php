@@ -103,7 +103,12 @@
                 </li>
                 @endif
                 @endif
-
+                <li>
+                    <a href="{{base_url()}}import/" class="">
+                        <i class="metismenu-icon far fa-file-excel"></i>
+                        {{lang("file")}}
+                    </a>
+                </li>
                 @if($ion_auth_acl->has_permission("access_limit"))
                 <li>
                     <a href="{{base_url()}}limit/" class="">
