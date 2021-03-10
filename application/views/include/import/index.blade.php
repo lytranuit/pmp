@@ -6,6 +6,7 @@
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
                 <a class="btn btn-success btn-sm" href="{{base_url()}}import/add">{{lang("add")}}</a>
+                
                 <div style="margin-left:auto;">
                     <a href="{{base_url()}}import/import_all" id="import_all" class="btn btn-primary"
                         data-type="confirm" title="{{lang("import_all")}}"><i

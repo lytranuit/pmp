@@ -281,3 +281,4 @@ $lang['choose_language'] = "Chọn ngôn ngữ";
 
 $lang['logs'] = "Logs";
 $lang['import_all'] = "Nhập vào tất cả";
+$lang['download_template'] = "Tải xuống biểu mẫu";

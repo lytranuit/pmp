@@ -119,7 +119,9 @@ class Import extends MY_Controller
             }
             redirect('import', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
         } else {
-
+            load_chossen($this->data);
+            $this->load->model("factory_model");
+            $this->data['factory'] = $this->factory_model->where(array('deleted' => 0))->as_object()->get_all();
             echo $this->blade->view()->make('page/page', $this->data)->render();
         }
     }
@@ -217,6 +219,9 @@ class Import extends MY_Controller
         // print_r($id_record);
         // die();
         $this->load->model("import_model");
+        $this->load->model("area_model");
+        $this->load->model("employee_model");
+        $this->load->model("employeeresult_model");
         $this->load->model("workshop_model");
         $this->load->model("position_model");
         $this->load->model("result_model");
@@ -713,6 +718,7 @@ class Import extends MY_Controller
     {
         $this->load->model("import_model");
         $this->load->model("result_model");
+        $this->load->model("employeeresult_model");
         $record = $this->import_model->where(array("id" => $id_record, 'deleted' => 0, 'status' => 2))->get();
         if (empty($record)) {
             redirect('import', 'refresh');
@@ -720,6 +726,7 @@ class Import extends MY_Controller
         // print_r($record);
         $object_id = $record->object_id;
         if ($object_id == 3) {
+            $this->employeeresult_model->where("from_file", "like", $record->file)->delete();
         } elseif ($object_id == 10 || $object_id == 11) {
             $this->result_model->where("from_file", "like", $record->file)->delete();
         }
