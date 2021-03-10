@@ -124,7 +124,16 @@ class Report extends MY_Controller
         load_datatable($this->data);
         echo $this->blade->view()->make('page/page', $this->data)->render();
     }
-
+    public function remove($params)
+    { /////// trang ca nhan
+        $this->load->model("report_model");
+        $id = $params[0];
+        $this->report_model->update(array("deleted" => 1), $id);
+        /// Log audit trail
+        $this->report_model->trail($id, "delete", null, null, null, null);
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+        exit;
+    }
     public function table()
     {
 
@@ -169,11 +178,11 @@ class Report extends MY_Controller
                 }
                 $nestedData['status'] = $status;
                 $nestedData['user_name'] = isset($post->user->last_name) ? $post->user->last_name : "";
-                //                $nestedData['action'] = '<a href="' . base_url() . 'result/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
-                //                        . '<i class="far fa-trash-alt">'
-                //                        . '</i>'
-                //                        . '</a>';
-                $nestedData['action'] = '';
+                $nestedData['action'] = '<a href="' . base_url() . 'report/remove/' . $post->id . '" class="btn btn-danger btn-sm" data-type="confirm" title="remove">'
+                    . '<i class="far fa-trash-alt">'
+                    . '</i>'
+                    . '</a>';
+                //$nestedData['action'] = '';
                 $data[] = $nestedData;
             }
         }

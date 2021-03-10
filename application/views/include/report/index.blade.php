@@ -8,7 +8,8 @@
                 <!--                <a class="btn btn-success btn-sm" href="{{base_url()}}result/add">Thêm</a>-->
             </h5>
             <div class="card-body">
-                <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+                <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0"
+                    width="100%">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -19,6 +20,7 @@
                             <th>{{lang("import_time")}}</th>
                             <th>{{lang("file")}}</th>
                             <th>{{lang("status")}}</th>
+                            <th>{{lang("index_action_th")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,6 +68,9 @@
                 },
                 {
                     "data": "status"
+                },
+                {
+                    "data": "action"
                 }
             ]
 

@@ -10,6 +10,7 @@ class Import_model extends MY_Model
     {
         $this->table = 'pmp_import';
         $this->primary_key = 'id';
+        $this->name = "import";
         parent::__construct();
         $this->has_one['user'] = array('foreign_model' => 'User_model', 'foreign_table' => 'users', 'foreign_key' => 'id', 'local_key' => 'user_id');
         $this->has_one['object'] = array('foreign_model' => 'Object_model', 'foreign_table' => 'pmp_object', 'foreign_key' => 'id', 'local_key' => 'object_id');

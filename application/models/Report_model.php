@@ -8,6 +8,7 @@ class Report_model extends MY_Model {
     public function __construct() {
         $this->table = 'pmp_report';
         $this->primary_key = 'id';
+        $this->name = "report";
         parent::__construct();
         // $this->has_one['area'] = array('foreign_model' => 'Area_model', 'foreign_table' => 'pmp_area', 'foreign_key' => 'id', 'local_key' => 'area_id');
         // $this->has_one['factory'] = array('foreign_model' => 'Factory_model', 'foreign_table' => 'pmp_factory', 'foreign_key' => 'id', 'local_key' => 'factory_id');
