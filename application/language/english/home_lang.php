@@ -285,3 +285,5 @@ $lang['reset_password_validation_new_password_confirm_label'] = 'Confirm New Pas
 
 
 $lang['choose_language'] = "Choose Language";
+$lang['logs'] = "Logs";
+$lang['import_all'] = "Import all";

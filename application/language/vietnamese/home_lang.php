@@ -278,3 +278,6 @@ $lang['email_forgot_password_link'] = 'Khôi phục mật khẩu của bạn';
 
 
 $lang['choose_language'] = "Chọn ngôn ngữ";
+
+$lang['logs'] = "Logs";
+$lang['import_all'] = "Nhập vào tất cả";

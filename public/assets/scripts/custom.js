@@ -7,6 +7,7 @@ $(document).ready(function() {
             var title = $(this).attr("title");
             var href = $(this).attr("href");
             if (confirm(title) == true) {
+                $(".page-loader-wrapper").show();
                 location.href = href;
             }
             return false;

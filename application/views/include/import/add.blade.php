@@ -14,7 +14,7 @@
                             <div class="form-group row">
                                 <b class="col-12 col-sm-3 col-form-label text-sm-right">{{lang("file")}}:</b>
                                 <div class="col-12 col-sm-8 col-lg-6 pt-1">
-                                    <input type="file" name="file" />
+                                    <input type="file" name="files[]" multiple />
                                 </div>
                             </div>
                             <div class="form-group row">

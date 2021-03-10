@@ -6,31 +6,34 @@
         <section class="card card-fluid">
             <h5 class="card-header drag-handle">
                 <a class="btn btn-success btn-sm" href="{{base_url()}}import/add">{{lang("add")}}</a>
-                {{--<div style="margin-left:auto;">
-                    <input type="text" id="daterange" class="form-control form-control-sm btn-group" style="width: 200px;" placeholder="{{lang('search_time')}}"
-                />
-    </div>--}}
-    </h5>
+                <div style="margin-left:auto;">
+                    <a href="{{base_url()}}import/import_all" id="import_all" class="btn btn-primary"
+                        data-type="confirm" title="{{lang("import_all")}}"><i
+                            class="fas fa-file-import mr-1"></i>{{lang("import_all")}}</a>
+                </div>
+            </h5>
 
-    <div class="card-body">
-        <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>{{lang("comment")}}</th>
-                    <th>{{lang("date")}}</th>
-                    <th>{{lang("user")}}</th>
-                    <th>{{lang("file")}}</th>
-                    <th>{{lang("index_action_th")}}</th>
-                </tr>
-            </thead>
-            <tbody>
+            <div class="card-body">
+                <table id="quanlytin" class="table table-striped table-bordered table-hover" cellspacing="0"
+                    width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>{{lang("comment")}}</th>
+                            <th>{{lang("date")}}</th>
+                            <th>{{lang("user")}}</th>
+                            <th>{{lang("file")}}</th>
+                            <th>{{lang("logs")}}</th>
+                            <th>{{lang("index_action_th")}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
-    </section>
-</div>
 </div>
 
 <script type="text/javascript">
@@ -76,6 +79,9 @@
                 },
                 {
                     "data": "file"
+                },
+                {
+                    "data": "logs"
                 },
                 {
                     "data": "action"
