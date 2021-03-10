@@ -155,7 +155,7 @@ class Import extends MY_Controller
             $where = $this->import_model->where(array("deleted" => 0, 'object_id' => $object_id));
         } else {
             $search = $this->input->post('search')['value'];
-            $sWhere = "deleted = 0 and object_id = " . $this->db->escape($object_id) . " and note like '%" .  $this->db->escape($search) . "%'";
+            $sWhere = "deleted = 0 and object_id = " . $this->db->escape($object_id) . " and note like '%" .  $search . "%'";
             $where = $this->import_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
             $totalFiltered = $where->count_rows();
             $where = $this->import_model->where($sWhere, NULL, NULL, FALSE, FALSE, TRUE);
