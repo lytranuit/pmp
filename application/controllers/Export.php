@@ -3330,10 +3330,7 @@ class Export extends MY_Controller
                 $area = $area_list[$key];
                 $department_results = $this->result_model->set_value_export($params)->where(array('area_id' => $area->id))->with_department()->with_area()->group_by("department_id")->get_all();
                 $length_department = count($department_results);
-                $head = "5.1";
-                if ($type != "Year") {
-                    $head = "2.";
-                }
+                $head = "5.";
                 $templateProcessor->setValue("one_heading#" . ($key + 1), $head . ($key + 1));
                 $templateProcessor->setValue("one_name_heading#" . ($key + 1), htmlspecialchars($area->name));
                 $templateProcessor->setValue("one_name_en_heading#" . ($key + 1), htmlspecialchars($area->name_en));
@@ -3913,9 +3910,6 @@ class Export extends MY_Controller
                 $department_results = $this->result_model->set_value_export($params)->where(array('area_id' => $area->id))->with_department()->with_area()->group_by("department_id")->get_all();
                 $length_department = count($department_results);
                 $head = "5.1";
-                if ($type != "Year") {
-                    $head = "2.";
-                }
                 $templateProcessor->setValue("one_heading#" . ($key + 1), $head . ($key + 1));
                 $templateProcessor->setValue("one_name_heading#" . ($key + 1), htmlspecialchars($area->name));
                 $templateProcessor->setValue("one_name_en_heading#" . ($key + 1), htmlspecialchars($area->name_en));
