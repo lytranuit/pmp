@@ -129,6 +129,9 @@ class Import extends MY_Controller
     { /////// trang ca nhan
         $this->load->model("import_model");
         $id = $params[0];
+        ///XÓA DATA TRƯỚC KHI XÓA FILE
+        $this->truncate($id, false);
+        //XÓA FILE
         $status = $this->import_model->update(array("deleted" => 1), $id);
 
         /// Log audit trail
@@ -714,14 +717,18 @@ class Import extends MY_Controller
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
-    public function truncate($id_record)
+    public function truncate($id_record, $refresh = true)
     {
         $this->load->model("import_model");
         $this->load->model("result_model");
         $this->load->model("employeeresult_model");
         $record = $this->import_model->where(array("id" => $id_record, 'deleted' => 0, 'status' => 2))->get();
         if (empty($record)) {
-            redirect('import', 'refresh');
+            if ($refresh) {
+                redirect('import', 'refresh');
+            } else {
+                return 1;
+            }
         }
         // print_r($record);
         $object_id = $record->object_id;
