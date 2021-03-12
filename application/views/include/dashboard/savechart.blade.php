@@ -94,8 +94,8 @@
             $('#myChart' + department_id + "_" + target_id + "_" + object_id).highcharts(options);
             let chart_svg = $('#myChart' + department_id + "_" + target_id + "_" + object_id).highcharts().getSVG({
                 exporting: {
-                    sourceHeight: 300,
-                    sourceWidth: 1000,
+                    sourceHeight: 400,
+                    sourceWidth: 1700,
                 }
             });
             canvg(document.getElementById('value_' + department_id + "_" + target_id + "_" + object_id), chart_svg)
@@ -135,7 +135,7 @@
                     }
                 }
                 console.log(count_chart);
-
+                
                 $.ajax({
                     url: path + 'ajax/uploadchart',
                     type: "POST",

@@ -229,7 +229,6 @@ class Dashboard extends MY_Controller
         $params = input_params($params);
         $params['object_id'] = $object_id;
         $this->data['params'] = $params;
-
         if ($this->data['object_id'] == 3) {
             $department_list = $this->employeeresult_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0))->with_employee()->group_by(array("employee_id", "area_id"))->get_all();
             foreach ($department_list as $row) {
@@ -269,7 +268,30 @@ class Dashboard extends MY_Controller
                 $row->data = $data;
                 $results[] = $row;
             }
-        } else {
+        } elseif ($this->data['object_id'] == 14 || $this->data['object_id'] == 15) {
+            $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
+            foreach ($department_list as $row) {
+                $department = $row->department;
+                $area_id = $department->area_id;
+                $target = $row->target;
+                $params['area_id'] = $area_id;
+                $params['department_id'] = $department->id;
+                $params['target_id'] = $target->id;
+                if ($target->id == 14 || $target->id == 15) {
+                    $title = "Trend chart of non viable particles size (≥ 5.0 µm)";
+                } else {
+                    $title = "Trend chart of non viable particles size (≥ 0.5 µm)";
+                }
+
+                $subtitle = "";
+                $params['title'] = $title;
+                $params['subtitle'] = $subtitle;
+                $data = $this->result_model->chart_datav2($params);
+
+                $row->data = $data;
+                $results[] = $row;
+            }
+        } elseif ($this->data['object_id'] == 10 || $this->data['object_id'] == 11) {
             $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
             foreach ($department_list as $row) {
                 $department = $row->department;
@@ -280,7 +302,24 @@ class Dashboard extends MY_Controller
                 $params['target_id'] = $target->id;
                 $title = "Trend chart of microbiological monitoring";
                 $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
+                $params['title'] = $title;
+                $params['subtitle'] = $subtitle;
+                $data = $this->result_model->chart_datav2($params);
 
+                $row->data = $data;
+                $results[] = $row;
+            }
+        } else {
+            $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
+            foreach ($department_list as $row) {
+                $department = $row->department;
+                $area_id = $department->area_id;
+                $target = $row->target;
+                $params['area_id'] = $area_id;
+                $params['department_id'] = $department->id;
+                $params['target_id'] = $target->id;
+                $title = "Trend chart of $target->name_en";
+                $subtitle = "";
                 $params['title'] = $title;
                 $params['subtitle'] = $subtitle;
                 $data = $this->result_model->chart_datav2($params);

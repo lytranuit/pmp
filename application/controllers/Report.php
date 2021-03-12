@@ -161,7 +161,7 @@ class Report extends MY_Controller
 
                 $nestedData['name'] = implode(" ", $list_url);
                 if ($this->ion_auth->is_admin()) {
-                    $nestedData['id'] = '<a href="' . base_url() . "export/export/$post->id" . '" target="_blank">' . $post->id . '</a>';
+                    $nestedData['id'] = '<a href="' . base_url() . "export/export/$post->id" . '" data-type="confirm" title="export">' . $post->id . '</a>';
                 } else {
                     $nestedData['id'] = $post->id;
                 }

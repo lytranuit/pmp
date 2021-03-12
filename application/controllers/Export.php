@@ -11,7 +11,7 @@ class Export extends MY_Controller
         parent::__construct();
     }
 
-    public function export($id_record)
+    public function export($id_record, $refresh = true)
     {
         set_time_limit(-1);
         ini_set('max_execution_time', 0);
@@ -4765,6 +4765,10 @@ class Export extends MY_Controller
             // redirect("dashboard", 'refresh');
             // header("Location: " . $_SERVER['HTTP_HOST'] . "/MyWordFile.docx");
         }
+        if ($refresh) {
+            header('Location: ' . $_SERVER['HTTP_REFERER']);
+            exit;
+        }
     }
 
     function cronjob()
@@ -4774,7 +4778,7 @@ class Export extends MY_Controller
         if (!empty($report)) {
             $id_record = $report->id;
             $this->report_model->update(array('status' => 2), $id_record);
-            $this->export($id_record);
+            $this->export($id_record, false);
         }
         echo 1;
     }
@@ -4788,7 +4792,7 @@ class Export extends MY_Controller
             foreach ($reports as $report) {
                 $id_record = $report->id;
                 $this->report_model->update(array('status' => 2), $id_record);
-                $this->export($id_record);
+                $this->export($id_record, false);
             }
         }
         echo 1;
