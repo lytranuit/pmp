@@ -417,6 +417,11 @@ class Result_model extends MY_Model
         // die();
 
         $annotations = array(
+            'labelOptions' => array(
+                'y' => 15,
+                'verticalAlign' => 'bottom',
+                'distance' => 25
+            ),
             'labels' => array()
         );
         $lineAtIndex = null;

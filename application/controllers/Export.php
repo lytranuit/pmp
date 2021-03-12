@@ -282,7 +282,7 @@ class Export extends MY_Controller
                     $name_chart = $object_id . "_" . $target_id . "_" . $area->id . "_" . $employee->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
                     ///CHART
-                    $templateProcessor->setImageValue("chart_image#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                    $templateProcessor->setImageValue("chart_image#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
 
                     $templateProcessor->setValue("employee_name#" . ($key1 + 1), $employee->name);
                     $templateProcessor->setValue("employee_id#" . ($key1 + 1), $id);
@@ -937,7 +937,7 @@ class Export extends MY_Controller
                     $name_chart = $object_id . "_" . $target_id . "_" . $area->id . "_" . $employee->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
                     ///CHART
-                    $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                    $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
 
                     $templateProcessor->setValue("department_heading#" . ($key + 1) . "#" . ($key1 + 1), "5." . ($key + 1) . "." . ($key1 + 1));
                     $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), $employee->name);
@@ -1797,7 +1797,7 @@ class Export extends MY_Controller
                         $target_id = $target->id;
                         $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
-                        $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                        $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
 
                         $heading =  $head . ($key + 1) . "." . ($key1 + 1) . ". $department->name ($department->string_id), $area->name";
                         $heading_i =  "$department->name_en ($department->string_id), $area->name_en";
@@ -2350,7 +2350,7 @@ class Export extends MY_Controller
                     $target_id = $target->id;
                     $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
-                    $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                    $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
 
                     $heading =  $head . ($key + 1) . "." . ($key1 + 1) . ". $department->name ($department->string_id), $area->name";
                     $heading_i =  "$department->name_en ($department->string_id), $area->name_en";
@@ -2924,12 +2924,15 @@ class Export extends MY_Controller
                         for ($j = 0; $j < count($child); $j++) {
                             $target = $child[$j];
                             $templateProcessor->setValue("four_heading#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $head . ($key1 + 1) . "." . ($i + 1) . "." . ($j + 1));
-                            $templateProcessor->setValue("target_name#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), strtolower($target->name));
+                            $templateProcessor->setValue("target_name#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $target->name);
                             $templateProcessor->setValue("target_name_en#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $target->name_en);
+
+                            $templateProcessor->setValue("target_name_low#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), mb_strtolower($target->name, 'UTF-8'));
+                            $templateProcessor->setValue("target_name_en_low#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1),  mb_strtolower($target->name_en, 'UTF-8'));
 
                             $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
-                            $templateProcessor->setImageValue("chart_image#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                            $templateProcessor->setImageValue("chart_image#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
                         }
                     }
                 }
@@ -3138,6 +3141,12 @@ class Export extends MY_Controller
             $templateProcessor->setValue('workshop_name_en', $workshop_name_en);
             $templateProcessor->setValue('object_name', $object_name);
             $templateProcessor->setValue('object_name_en', $object_name_en);
+
+            $templateProcessor->setValue('workshop_name_low', mb_strtolower($workshop_name, 'UTF-8'));
+            $templateProcessor->setValue('workshop_name_en_low', mb_strtolower($workshop_name_en, 'UTF-8'));
+            $templateProcessor->setValue('object_name_low', mb_strtolower($object_name, 'UTF-8'));
+            $templateProcessor->setValue('object_name_en_low', mb_strtolower($object_name_en, 'UTF-8'));
+
             $templateProcessor->setValue('phong_thietbi_cap', mb_strtoupper($phong_thietbi, 'UTF-8'));
             $templateProcessor->setValue('phong_thietbi_cap_en', mb_strtoupper($phong_thietbi_en, 'UTF-8'));
             $templateProcessor->setValue('type_bc_cap', mb_strtoupper($type_bc, 'UTF-8'));
@@ -3344,6 +3353,10 @@ class Export extends MY_Controller
                     $area = $department_results[$key1]->area;
                     $templateProcessor->setValue("department_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name));
                     $templateProcessor->setValue("department_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->name_en));
+
+                    $templateProcessor->setValue("department_name_low#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars(mb_strtolower($department->name, 'UTF-8')));
+                    $templateProcessor->setValue("department_name_en_low#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars(mb_strtolower($department->name_en, 'UTF-8')));
+
                     $templateProcessor->setValue("area_name#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name));
                     $templateProcessor->setValue("area_name_en#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($area->name_en));
                     $templateProcessor->setValue("department_id#" . ($key + 1) . "#" . ($key1 + 1), htmlspecialchars($department->string_id));
@@ -3546,12 +3559,16 @@ class Export extends MY_Controller
                         $templateProcessor->cloneBlock("target_block#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1), count($child), true, true);
                         for ($j = 0; $j < count($child); $j++) {
                             $target = $child[$j];
-                            $templateProcessor->setValue("target_name#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), strtolower($target->name));
+                            $templateProcessor->setValue("target_name#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $target->name);
                             $templateProcessor->setValue("target_name_en#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $target->name_en);
+
+                            $templateProcessor->setValue("target_name_low#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), mb_strtolower($target->name, 'UTF-8'));
+                            $templateProcessor->setValue("target_name_en_low#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), mb_strtolower($target->name_en, 'UTF-8'));
+
 
                             $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
-                            $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                            $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
                         }
                     }
                 }
@@ -4137,7 +4154,7 @@ class Export extends MY_Controller
 
                             $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
-                            $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                            $templateProcessor->setImageValue("chart_image#" . ($key + 1) . "#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
                         }
                     }
                 }
@@ -4743,7 +4760,7 @@ class Export extends MY_Controller
 
                         $name_chart = $object_id . "_" . $target->id . "_" . $workshop_id . "_" . $system->id . "_" . $type_bc . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
-                        $templateProcessor->setImageValue("chart_image#"  . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 1000, 'height' => 300, 'ratio' => false));
+                        $templateProcessor->setImageValue("chart_image#"  . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
                     }
                 }
             }

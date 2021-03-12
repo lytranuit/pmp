@@ -95,7 +95,7 @@
             let chart_svg = $('#myChart' + department_id + "_" + target_id + "_" + object_id).highcharts().getSVG({
                 exporting: {
                     sourceHeight: 400,
-                    sourceWidth: 1700,
+                    sourceWidth: 1000,
                 }
             });
             canvg(document.getElementById('value_' + department_id + "_" + target_id + "_" + object_id), chart_svg)
@@ -149,9 +149,9 @@
 
                         console.log(count_upload);
 
-                        if (count_upload >= count_chart) {
-                            location.href = path + "report/";
-                        }
+                        //if (count_upload >= count_chart) {
+                        //    location.href = path + "report/";
+                        //}
                     }
                 })
             }
