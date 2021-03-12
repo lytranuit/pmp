@@ -211,6 +211,13 @@ class Result_model extends MY_Model
         // echo "<pre>";
         // print_r($params);
         // die();
+        $annotations = array(
+            'labels' => array()
+        );
+        //array(
+        //    'point' => "max",
+        //    'text' => "Max"
+        //),
         $lineAtIndex = null;
         $list_limit = array();
         $list_id_limit =  array();
@@ -246,29 +253,7 @@ class Result_model extends MY_Model
             }
             $datatmp[$date][$position] = $value;
         }
-
-        $alert_limit = array(
-            'marker' => array(
-                'enabled' => false
-            ),
-            'data_limit' => $limit,
-            'color' => 'orange',
-            'index' => $key,
-            'name' => "Alert Limit",
-            'data' => array(),
-        );
-        $action_limit = array(
-            'marker' => array(
-                'enabled' => false
-            ),
-            'data_limit' => $limit,
-            'color' => 'red',
-            'index' => $key,
-            'name' => "Action Limit",
-            'data' => array(),
-        );
-        array_unshift($datasets, $action_limit, $alert_limit);
-        foreach ($list_limit as $key => $limit) {
+        if (count($list_limit)) {
             $alert_limit = array(
                 'marker' => array(
                     'enabled' => false
@@ -276,7 +261,7 @@ class Result_model extends MY_Model
                 'data_limit' => $limit,
                 'color' => 'orange',
                 'index' => $key,
-                'name' => "Alert",
+                'name' => "Alert Limit",
                 'data' => array(),
             );
             $action_limit = array(
@@ -286,16 +271,50 @@ class Result_model extends MY_Model
                 'data_limit' => $limit,
                 'color' => 'red',
                 'index' => $key,
-                'name' => "Action",
+                'name' => "Action Limit",
                 'data' => array(),
             );
-            // if ($key > 0) {
-            $alert_limit['showInLegend'] = false;
-            $action_limit['showInLegend'] = false;
-            // }
             array_unshift($datasets, $action_limit, $alert_limit);
-        }
+            foreach ($list_limit as $key => $limit) {
+                $alert_limit = array(
+                    'marker' => array(
+                        'enabled' => false
+                    ),
+                    'data_limit' => $limit,
+                    'color' => 'orange',
+                    'index' => $key,
+                    'name' => "Alert",
+                    'data' => array(),
+                );
+                $action_limit = array(
+                    'marker' => array(
+                        'enabled' => false
+                    ),
+                    'data_limit' => $limit,
+                    'color' => 'red',
+                    'index' => $key,
+                    'name' => "Action",
+                    'data' => array(),
+                );
+                // if ($key > 0) {
+                $alert_limit['showInLegend'] = false;
+                $action_limit['showInLegend'] = false;
+                // }
+                array_unshift($datasets, $action_limit, $alert_limit);
 
+                //
+                $annotations['labels'][] = array(
+                    'point' => "alert_" . $limit['id'],
+                    'text' => $limit['alert_limit'],
+                    'backgroundColor' => 'orange'
+                );
+                $annotations['labels'][] = array(
+                    'point' => "action_" . $limit['id'],
+                    'text' => $limit['action_limit'],
+                    'backgroundColor' => 'red'
+                );
+            }
+        }
         //echo "<pre>";
         //print_r($datatmp);
         //die();
@@ -307,18 +326,24 @@ class Result_model extends MY_Model
                 $position_string_id = $position['name'];
                 $value = isset($datatmp[$date_real][$position_string_id]) ? (float) $datatmp[$date_real][$position_string_id] : null;
                 if ($position_string_id == "Action") {
+
                     $limit = $position['data_limit'];
                     $value = isset($limit['action_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['action_limit'] : null;
+                    $position['data'][] = array('y' => $value, 'id' => "action_" . $limit['id']);
                 } else if ($position_string_id == "Alert") {
                     $limit = $position['data_limit'];
                     $value = isset($limit['alert_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real  ? (float) $limit['alert_limit'] : null;
+                    $position['data'][] = array('y' => $value, 'id' => "alert_" . $limit['id']);
                 } elseif ($position_string_id == "Alert Limit" || $position_string_id == "Action Limit") {
                     $value = null;
+                    $position['data'][] = $value;
+                } else {
+                    $position['data'][] = $value;
                 }
                 if ($value > $max) {
                     $max = $value;
                 }
-                $position['data'][] = $value;
+
                 //                $index = array_search($position_string_id, $position_list);
             }
             $date_real = $date;
@@ -331,8 +356,11 @@ class Result_model extends MY_Model
             'subtitle' => array('text' => $subtitle, 'style' => array("fontSize" => 18)),
             'plotOptions' => array(
                 'series' => array(
-                    'connectNulls' => true
+                    'connectNulls' => true,
                 )
+            ),
+            'annotations' => array(
+                $annotations
             ),
             'xAxis' => array(
                 'title' => array(
@@ -350,6 +378,7 @@ class Result_model extends MY_Model
                 ))
             ),
             'yAxis' => array(
+                'allowDecimals' => false,
                 'title' => array(
                     'align' => 'high',
                     'offset' => 0,
@@ -360,7 +389,7 @@ class Result_model extends MY_Model
                 'min' => 0,
                 'max' => $max + 1,
                 'startOnTick' => false,
-                'endOnTick' => false
+                'endOnTick' => true
             ),
             'series' => $datasets,
         );
@@ -386,6 +415,10 @@ class Result_model extends MY_Model
         // echo "<pre>";
         // print_r($params);
         // die();
+
+        $annotations = array(
+            'labels' => array()
+        );
         $lineAtIndex = null;
         $list_limit = array();
         $list_id_limit =  array();
@@ -420,28 +453,7 @@ class Result_model extends MY_Model
             $datatmp[$key][$position] = $value;
         }
 
-        $alert_limit = array(
-            'marker' => array(
-                'enabled' => false
-            ),
-            'data_limit' => $limit,
-            'color' => 'orange',
-            'index' => $key,
-            'name' => "Alert Limit",
-            'data' => array(),
-        );
-        $action_limit = array(
-            'marker' => array(
-                'enabled' => false
-            ),
-            'data_limit' => $limit,
-            'color' => 'red',
-            'index' => $key,
-            'name' => "Action Limit",
-            'data' => array(),
-        );
-        array_unshift($datasets, $action_limit, $alert_limit);
-        foreach ($list_limit as $key => $limit) {
+        if (count($list_limit)) {
             $alert_limit = array(
                 'marker' => array(
                     'enabled' => false
@@ -449,7 +461,7 @@ class Result_model extends MY_Model
                 'data_limit' => $limit,
                 'color' => 'orange',
                 'index' => $key,
-                'name' => "Alert",
+                'name' => "Alert Limit",
                 'data' => array(),
             );
             $action_limit = array(
@@ -459,16 +471,49 @@ class Result_model extends MY_Model
                 'data_limit' => $limit,
                 'color' => 'red',
                 'index' => $key,
-                'name' => "Action",
+                'name' => "Action Limit",
                 'data' => array(),
             );
-            // if ($key > 0) {
-            $alert_limit['showInLegend'] = false;
-            $action_limit['showInLegend'] = false;
-            // }
             array_unshift($datasets, $action_limit, $alert_limit);
+            foreach ($list_limit as $key => $limit) {
+                $alert_limit = array(
+                    'marker' => array(
+                        'enabled' => false
+                    ),
+                    'data_limit' => $limit,
+                    'color' => 'orange',
+                    'index' => $key,
+                    'name' => "Alert",
+                    'data' => array(),
+                );
+                $action_limit = array(
+                    'marker' => array(
+                        'enabled' => false
+                    ),
+                    'data_limit' => $limit,
+                    'color' => 'red',
+                    'index' => $key,
+                    'name' => "Action",
+                    'data' => array(),
+                );
+                // if ($key > 0) {
+                $alert_limit['showInLegend'] = false;
+                $action_limit['showInLegend'] = false;
+                // }
+                array_unshift($datasets, $action_limit, $alert_limit);
+                //
+                $annotations['labels'][] = array(
+                    'point' => "alert_" . $limit['id'],
+                    'text' => $limit['alert_limit'],
+                    'backgroundColor' => 'orange'
+                );
+                $annotations['labels'][] = array(
+                    'point' => "action_" . $limit['id'],
+                    'text' => $limit['action_limit'],
+                    'backgroundColor' => 'red'
+                );
+            }
         }
-
         // echo "<pre>";
         // print_r($list_limit);
         // die();
@@ -480,18 +525,23 @@ class Result_model extends MY_Model
                 $position_string_id = $position['name'];
                 $value = isset($datatmp[$key][$position_string_id]) ? (float) $datatmp[$key][$position_string_id] : null;
                 if ($position_string_id == "Action") {
+
                     $limit = $position['data_limit'];
                     $value = isset($limit['action_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['action_limit'] : null;
+                    $position['data'][] = array('y' => $value, 'id' => "action_" . $limit['id']);
                 } else if ($position_string_id == "Alert") {
                     $limit = $position['data_limit'];
                     $value = isset($limit['alert_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real  ? (float) $limit['alert_limit'] : null;
+                    $position['data'][] = array('y' => $value, 'id' => "alert_" . $limit['id']);
                 } elseif ($position_string_id == "Alert Limit" || $position_string_id == "Action Limit") {
                     $value = null;
+                    $position['data'][] = $value;
+                } else {
+                    $position['data'][] = $value;
                 }
                 if ($value > $max) {
                     $max = $value;
                 }
-                $position['data'][] = $value;
                 //                $index = array_search($position_string_id, $position_list);
             }
             $date_real = $date;
@@ -507,6 +557,9 @@ class Result_model extends MY_Model
                     'connectNulls' => true
                 )
             ),
+            'annotations' => array(
+                $annotations
+            ),
             'xAxis' => array(
                 'title' => array(
                     'align' => 'high',
@@ -515,6 +568,10 @@ class Result_model extends MY_Model
                     'rotation' => 0,
                     'x' => 50
                 ),
+                //'labels'=>array(
+
+                //    'rotation' => -90,
+                //),
                 'categories' => $labels,
                 'plotLines' => array(array(
                     'color' => 'gray', // Red
@@ -530,10 +587,13 @@ class Result_model extends MY_Model
                     'rotation' => 0,
                     'y' => -20
                 ),
+
+                'showLastLabel' => true,
+                'showLastLabel' => true,
                 'min' => 0,
                 'max' => $max + 1,
                 'startOnTick' => false,
-                'endOnTick' => false
+                'endOnTick' => true
             ),
             'series' => $datasets,
         );

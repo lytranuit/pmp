@@ -67,53 +67,12 @@ class EmployeeResult_model extends MY_Model
         $max = 1;
         $labels = array();
         // $labels[] = array()
+
+        $annotations = array(
+            'labels' => array()
+        );
         $position_list = array();
         $datatmp = array();
-        $datasets = array();
-        $datasets[] = array(
-            'marker' => array(
-                'enabled' => false
-            ),
-            'color' => 'red',
-            'name' => "Action Limit",
-            'data' => array(),
-        );
-        $datasets[] = array(
-            'marker' => array(
-                'enabled' => false
-            ),
-            'color' => 'orange',
-            'name' => "Alert Limit",
-            'data' => array(),
-        );
-        $datasets[] =  array(
-            'name' => "Head",
-            'data' => array(),
-        );
-        $datasets[] =  array(
-            'name' => "Noise",
-            'data' => array(),
-        );
-        $datasets[] =  array(
-            'name' => "Chest",
-            'data' => array(),
-        );
-        $datasets[] =  array(
-            'name' => "Left forearm",
-            'data' => array(),
-        );
-        $datasets[] =  array(
-            'name' => "Right forearm",
-            'data' => array(),
-        );
-        $datasets[] =  array(
-            'name' => "Left glove print 5 fingers",
-            'data' => array(),
-        );
-        $datasets[] =  array(
-            'name' => "Right glove print 5 fingers",
-            'data' => array(),
-        );
         $lineAtIndex = null;
         $labels = array();
         $list_id_limit = array();
@@ -154,6 +113,57 @@ class EmployeeResult_model extends MY_Model
             //     }
             // }
         }
+
+        $datasets = array();
+        if (count($list_limit)) {
+            $datasets[] = array(
+                'marker' => array(
+                    'enabled' => false
+                ),
+                'color' => 'red',
+                'name' => "Action Limit",
+                'data' => array(),
+            );
+            $datasets[] = array(
+                'marker' => array(
+                    'enabled' => false
+                ),
+                'color' => 'orange',
+                'name' => "Alert Limit",
+                'data' => array(),
+            );
+        }
+        $datasets[] =  array(
+            'name' => "Head",
+            'data' => array(),
+        );
+        $datasets[] =  array(
+            'name' => "Noise",
+            'data' => array(),
+        );
+        $datasets[] =  array(
+            'name' => "Chest",
+            'data' => array(),
+        );
+        $datasets[] =  array(
+            'name' => "Left forearm",
+            'data' => array(),
+        );
+        $datasets[] =  array(
+            'name' => "Right forearm",
+            'data' => array(),
+        );
+        $datasets[] =  array(
+            'name' => "Left glove print 5 fingers",
+            'data' => array(),
+        );
+        $datasets[] =  array(
+            'name' => "Right glove print 5 fingers",
+            'data' => array(),
+        );
+        //echo '<pre>';
+        //print_r($datasets);
+        //die();
         foreach ($list_limit as $key => $limit) {
             $alert_limit = array(
                 'marker' => array(
@@ -180,9 +190,26 @@ class EmployeeResult_model extends MY_Model
             $action_limit['showInLegend'] = false;
             // }
             array_push($datasets, $action_limit, $alert_limit);
+            //
+            $annotations['labels'][] = array(
+                'point' => "alert_" . $limit['id'],
+                'text' => $limit['alert_limit'],
+                'backgroundColor' => 'orange'
+            );
+            $annotations['labels'][] = array(
+                'point' => "action_" . $limit['id'],
+                'text' => $limit['action_limit'],
+                'backgroundColor' => 'red'
+            );
         }
+        //echo '<pre>';
+        //print_r($data);
+        //die();
         foreach ($data as $row) {
             $date_real = $row->date;
+            //echo '<pre>';
+            // print_r($a);
+            //  die();
             $value_H = (float) $row->value_H;
             $value_N = (float) $row->value_N;
             $value_C = (float) $row->value_C;
@@ -190,21 +217,28 @@ class EmployeeResult_model extends MY_Model
             $value_RF = (float) $row->value_RF;
             $value_LG = (float) $row->value_LG;
             $value_RG = (float) $row->value_RG;
-            $values = array(null, null, $value_H, $value_N, $value_C, $value_LF, $value_RF, $value_LG, $value_RG);
+            $values = array($value_H, $value_N, $value_C, $value_LF, $value_RF, $value_LG, $value_RG);
+            if (count($list_limit)) {
+                array_unshift($values, null, null);
+            }
             foreach ($datasets as $key => &$position) {
-                if ($key < 9) {
-                    $value = $values[$key];
-                } else {
+                if (isset($position['data_limit'])) {
                     $limit = $position['data_limit'];
                     if ($position['name'] == "Action") {
                         $value = isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['action_limit'] : null;
+                        $position['data'][] = array('y' => $value, 'id' => "action_" . $limit['id']);
                     } elseif ($position['name'] == "Alert") {
                         $value = isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['alert_limit'] : null;
+                        $position['data'][] = array('y' => $value, 'id' => "alert_" . $limit['id']);
                     } else {
                         $value = null;
+                        $position['data'][] = $value;
                     }
+                } else {
+                    $value = $values[$key];
+                    $position['data'][] = $value;
                 }
-                $position['data'][] = $value;
+
                 if ($value > $max) {
                     $max = $value;
                 }
@@ -216,6 +250,9 @@ class EmployeeResult_model extends MY_Model
         $results = array(
             'title' => array('text' => $title),
             'subtitle' => array('text' => $subtitle, 'style' => array("fontSize" => 18)),
+            'annotations' => array(
+                $annotations
+            ),
             'xAxis' => array(
                 'title' => array(
                     'align' => 'high',
@@ -242,7 +279,7 @@ class EmployeeResult_model extends MY_Model
                 'min' => 0,
                 'max' => $max + 1,
                 'startOnTick' => false,
-                'endOnTick' => false
+                'endOnTick' => true
             ),
             'series' => $datasets,
         );

@@ -4188,12 +4188,16 @@ class Export extends MY_Controller
             // die();
             $target_results = $this->result_model->set_value_export($params)->with_target()->group_by("target_id")->get_all();
 
+            echo '<pre>';
+            print_r($target_results);
+            die();
             $target_parent = $target_list = array();
             foreach ($target_results as $temp) {
                 $target = $temp->target;
                 $target_object = $this->objecttarget_model->where(array("object_id" => $object_id, 'target_id' => $temp->target_id))->with_parent(array("with" => array('relation' => 'target')))->get();
-                // echo "<pre>";
-                // print_r($target_object);
+                echo "<pre>";
+                print_r($temp->target_id);
+                //print_r($target_object);
 
                 $target->order = $target_object->order;
                 if (isset($target_object->parent) && !empty($target_object->parent)) {

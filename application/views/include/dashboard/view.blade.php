@@ -12,7 +12,8 @@
                         <div class="pt-1">
                             <select class="form-control form-control-sm factory_id">
                                 @foreach ($factory as $row)
-                                <option value="{{$row->id}}">{{language_current() != "vietnamese" ? $row->name_en : $row->name}}</option>
+                                <option value="{{$row->id}}">
+                                    {{language_current() != "vietnamese" ? $row->name_en : $row->name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -42,18 +43,22 @@
                                 </label>
 
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option4" value="HalfYear"> {{lang("half_year")}}
+                                    <input type="radio" name="options" id="option4" value="HalfYear">
+                                    {{lang("half_year")}}
                                 </label>
                                 <label class="btn btn-light type_data active">
                                     <input type="radio" name="options" id="option5" value="Year"> {{lang("year")}}
                                 </label>
                                 <label class="btn btn-light type_data">
-                                    <input type="radio" name="options" id="option6" value="TwoYear"> {{lang("two_year")}}
+                                    <input type="radio" name="options" id="option6" value="TwoYear">
+                                    {{lang("two_year")}}
                                 </label>
                             </div>
-                            <select style="width: 200px;" class="form-control form-control-sm btn-group" id="the_selector">
+                            <select style="width: 200px;" class="form-control form-control-sm btn-group"
+                                id="the_selector">
                             </select>
-                            <input type="text" id="daterange" class="form-control form-control-sm btn-group" style="width: 200px;" />
+                            <input type="text" id="daterange" class="form-control form-control-sm btn-group"
+                                style="width: 200px;" />
 
                         </div>
                     </div>
@@ -159,110 +164,15 @@
         </div>
     </script>
     <script type="text/javascript">
+        Highcharts.setOptions({
+    	lang: {
+      	numericSymbols: null
+      }
+    });
         var date_from = moment();
         var date_to = moment();
         var date_from_prev, date_from_to;
         var object_id = <?= $object_id ?>;
-        // var ctx = document.getElementById('myChart').getContext('2d');
-        // var originalLineDraw = Chart.controllers.line.prototype.draw;
-        // Chart.helpers.extend(Chart.controllers.line.prototype, {
-        //     draw: function () {
-        //         originalLineDraw.apply(this, arguments);
-
-        //         var chart = this.chart;
-        //         var ctx = chart.chart.ctx;
-
-        //         var index = chart.config.data.lineAtIndex;
-        //         if (index) {
-        //             var xaxis = chart.scales['x-axis-0'];
-        //             var yaxis = chart.scales['y-axis-0'];
-
-        //             ctx.save();
-        //             ctx.beginPath();
-        //             ctx.moveTo(xaxis.getPixelForValue(undefined, index), yaxis.top);
-        //             ctx.strokeStyle = 'gray';
-        //             ctx.lineTo(xaxis.getPixelForValue(undefined, index), yaxis.bottom);
-        //             ctx.stroke();
-        //             ctx.restore();
-        //         }
-        //     }
-        // });
-        // var chart = new Chart(ctx, {
-        //     type: 'line',
-        //     data: [],
-        //     options: {
-        //         legend: {
-        //             position: 'right'
-        //         },
-        //         elements: {
-        //             line: {
-        //                 tension: 0.0000001
-        //             }
-        //         },
-        //         title: {
-        //             display: true,
-        //             text: 'Custom Chart Title'
-        //         },
-        //         scales: {
-        //             yAxes: [{
-        //                     ticks: {
-        //                         suggestedMin: 0,
-        //                     }
-        //                 }]
-        //         }
-        //     }
-        // });
-        // var chart1 = new Highcharts.Chart({
-        //     chart: {
-        //         renderTo: 'chart-id'
-        //     },
-        //     title: {
-        //         text: 'Solar Employment Growth by Sector, 2010-2016'
-        //     },
-
-        //     subtitle: {
-        //         text: 'Source: thesolarfoundation.com'
-        //     },
-        //     xAxis: {
-        //         categories: ["2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017"]
-        //     },
-
-        //     legend: {
-        //         layout: 'vertical',
-        //         align: 'right',
-        //         verticalAlign: 'middle'
-        //     },
-        //     series: [{
-        //         name: 'Installation',
-        //         data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-        //     }, {
-        //         name: 'Manufacturing',
-        //         data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-        //     }, {
-        //         name: 'Sales & Distribution',
-        //         data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-        //     }, {
-        //         name: 'Project Development',
-        //         data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-        //     }, {
-        //         name: 'Other',
-        //         data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-        //     }],
-
-        // });
-        // var chart_svg = chart1.getSVG({
-        //     exporting: {
-        //         sourceHeight: 300,
-        //         sourceWidth: 1000,
-        //     }
-        // });
-
-        // canvg(document.getElementById('chart-canvas'), chart_svg)
-
-
-        // var canvas = document.getElementById("chart-canvas");
-        // var img = canvas.toDataURL("image/png");
-        // console.log(img);
         $(document).ready(function() {
             $(".page-loader-wrapper").show();
             $(".department_id").change(async function() {
@@ -276,7 +186,6 @@
             });
 
             $("#the_selector").change(function() {
-
                 load_data();
             })
             $(".area_id").change(async function() {
@@ -299,7 +208,7 @@
             $(".workshop_id").change(async function() {
                 $(".page-loader-wrapper").show();
                 let value = $(this).val();
-                console.log(object_id);
+                //console.log(object_id);
                 if (object_id > 17) {
                     let system = await $.ajax({
                         url: path + "dashboard/getsystem/" + value,
@@ -550,7 +459,7 @@
                             ...options,
                             ...data
                         };
-
+                        console.log(options);
                         $("#chart_template_" + type_bc + ' .chart-' + target['id']).highcharts(options);
                     }
                 }

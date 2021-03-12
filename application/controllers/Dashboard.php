@@ -29,6 +29,7 @@ class Dashboard extends MY_Controller
             base_url() . "public/lib/canvg/rgbcolor.js",
             base_url() . "public/lib/canvg/canvg.min.js",
             "https://code.highcharts.com/highcharts.js",
+            "https://code.highcharts.com/modules/annotations.js",
             "https://code.highcharts.com/modules/exporting.js",
             base_url() . "public/assets/scripts/custom.js?v=" . $version
         );

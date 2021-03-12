@@ -40,6 +40,11 @@
     });
     var count_chart = 0;
     var count_upload = 0;
+    Highcharts.setOptions({
+    	lang: {
+      	numericSymbols: null
+      }
+    });
     $(document).ready(function() {
         $(".page-loader-wrapper").show();
         $("#target_accordion").empty();
