@@ -149,9 +149,9 @@
 
                         console.log(count_upload);
 
-                        //if (count_upload >= count_chart) {
-                        //    location.href = path + "report/";
-                        //}
+                        if (count_upload >= count_chart) {
+                            location.href = path + "report/";
+                        }
                     }
                 })
             }

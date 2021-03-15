@@ -1,23 +1,12 @@
-### Installation (Blade Laravel 5.1)
-The package can be installed via Composer by requiring the "philo/laravel-blade": "3.*" package in your project's composer.json.
+### Installation
+The package can be installed via Composer by requiring the "philo/laravel-blade": "2.0" package in your project's composer.json.
 
 ```json
-{
-	"require": {
-	    "philo/laravel-blade": "3.*"
-	}
-}
-```
-
-### Installation (Blade Laravel 4)
-The package can be installed via Composer by requiring the "philo/laravel-blade": "2.*" package in your project's composer.json.
-
-```json
-{
+[
 	"require": {
 	    "philo/laravel-blade": "2.*"
 	}
-}
+]
 ```
 
 ### Usage
@@ -45,8 +34,8 @@ $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
 
 $blade = new Blade($views, $cache);
-echo $blade->view()->make('hello')->render();
+echo $blade->view()->make('hello');
 ```
 
-You can use all blade features as described in the Laravel 5 documentation:
+You can use all blade features as described in the Laravel 4 documentation:
 http://laravel.com/docs/templates#blade-templating

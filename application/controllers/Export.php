@@ -1,6 +1,8 @@
 <?php
 
 use PhpOffice\PhpWord\Element\Table;
+use PhpOffice\PhpWord\Element\Chart;
+use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\SimpleType\TblWidth;
 
 class Export extends MY_Controller
@@ -2932,7 +2934,12 @@ class Export extends MY_Controller
 
                             $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
-                            $templateProcessor->setImageValue("chart_image#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
+                            $categories = array('A', 'B', 'C', 'D', 'E');
+                            $series1 = array(1, 3, 2, 5, 4);
+                            $chart = new Chart('line', $categories, $series1);
+                            //$chart->getStyle()->setWidth(Converter::inchToEmu(2.5))->setHeight(Converter::inchToEmu(2));
+                            $templateProcessor->setChart("chart_image#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $chart);
+                            //$templateProcessor->setImageValue("chart_image#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
                         }
                     }
                 }

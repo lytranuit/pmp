@@ -15,7 +15,7 @@ use Illuminate\View\Factory;
 class Blade {
 
 	/**
-	 * Array containing paths where to look for blade files
+	 * Array containg paths where to look for blade files
 	 * @var array
 	 */
 	public $viewPaths;
@@ -40,9 +40,8 @@ class Blade {
 	 * Initialize class
 	 * @param array  $viewPaths
 	 * @param string $cachePath
-	 * @param Illuminate\Events\Dispatcher $events
 	 */
-	function __construct($viewPaths = array(), $cachePath, Dispatcher $events = null) {
+	function __construct($viewPaths = array(), $cachePath) {
 
 		$this->container = new Container;
 
@@ -52,7 +51,7 @@ class Blade {
 
 		$this->registerFilesystem();
 
-		$this->registerEvents($events ?: new Dispatcher);
+		$this->registerEvents();
 
 		$this->registerEngineResolver();
 
@@ -68,15 +67,14 @@ class Blade {
 
 	public function registerFilesystem()
 	{
-		$this->container->singleton('files', function(){
+		$this->container->bindShared('files', function(){
 			return new Filesystem;
 		});
 	}
-	public function registerEvents(Dispatcher $events)
+	public function registerEvents()
 	{
-		$this->container->singleton('events', function() use ($events)
-		{
-			return $events;
+		$this->container->bindShared('events', function(){
+			return new Dispatcher;
 		});
 	}
 	/**
@@ -88,7 +86,7 @@ class Blade {
 	{
 		$me = $this;
 
-		$this->container->singleton('view.engine.resolver', function($app) use ($me)
+		$this->container->bindShared('view.engine.resolver', function($app) use ($me)
 		{
 			$resolver = new EngineResolver;
 
@@ -129,7 +127,7 @@ class Blade {
 		// The Compiler engine requires an instance of the CompilerInterface, which in
 		// this case will be the Blade compiler, so we'll first create the compiler
 		// instance to pass into the engine so it can compile the views properly.
-		$this->container->singleton('blade.compiler', function($app) use ($me)
+		$this->container->bindShared('blade.compiler', function($app) use ($me)
 		{
 			$cache = $me->cachePath;
 
@@ -150,7 +148,7 @@ class Blade {
 	public function registerViewFinder()
 	{
 		$me = $this;
-		$this->container->singleton('view.finder', function($app) use ($me)
+		$this->container->bindShared('view.finder', function($app) use ($me)
 		{
 			$paths = $me->viewPaths;
 
