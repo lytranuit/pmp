@@ -187,7 +187,174 @@ class Result_model extends MY_Model
         $result = $query->result();
         return $result;
     }
+    function chart_data_work($params)
+    {
+        $this->load->model("target_model");
+        $results = array('labels' => array(), 'datasets' => array());
+        $data = $this->chartdata($params);
+        $data_limit = $this->chartdata_limit($params);
+        $target = $this->target_model->get($params['target_id']);
+        //if ($params['target_id'] == 4) {
 
+        //    echo "<pre>";
+        //    print_r($data);
+        //    die();
+        //}
+        $max = 1;
+        $labels = array();
+        // $labels[] = array()
+        $position_list = array();
+        $datatmp = array();
+
+        $datasets = array();
+        // echo "<pre>";
+        // print_r($params);
+        // die();
+        $annotations = array(
+            'labels' => array()
+        );
+        //array(
+        //    'point' => "max",
+        //    'text' => "Max"
+        //),
+        $lineAtIndex = null;
+        $list_limit = array();
+        $list_id_limit =  array();
+        foreach ($data as $key => $row) {
+            $date = $row->date;
+
+            $limit = array_values(array_filter($data_limit, function ($item) use ($date) {
+                return $item['day_effect'] <= $date;
+            }));
+            if (isset($limit[0]) && !in_array($limit[0]['id'], $list_id_limit)) {
+                $list_id_limit[] = $limit[0]['id'];
+                $limit[0]['day_effect_to'] = date("Y-m-d");
+                if (count($list_limit) > 0) {
+                    $list_limit[count($list_limit) - 1]['day_effect_to'] = $limit[0]['day_effect'];
+                }
+                $list_limit[] = $limit[0];
+            }
+            if (!in_array($date, $labels)) {
+                $labels[] = $date;
+            }
+            $position = $row->position_string_id;
+            $value = $row->value;
+            ///CHECK MỐC 
+            if ($lineAtIndex === null && $params['date_from_prev'] != "" && $row->date >= $params['date_from']) {
+                $lineAtIndex = count($labels) - 1;
+            }
+            if (!in_array($position, $position_list)) {
+                $position_list[] = $position;
+                $datasets[] = array(
+                    'name' => $position,
+                    'data' => array(),
+                );
+            }
+            $datatmp[$date][$position] = $value;
+        }
+        if (count($list_limit)) {
+            $alert_limit = array(
+                'marker' => array(
+                    'enabled' => false
+                ),
+                'data_limit' => $limit,
+                'color' => 'orange',
+                'index' => $key,
+                'name' => "Alert Limit",
+                'data' => array(),
+            );
+            $action_limit = array(
+                'marker' => array(
+                    'enabled' => false
+                ),
+                'data_limit' => $limit,
+                'color' => 'red',
+                'index' => $key,
+                'name' => "Action Limit",
+                'data' => array(),
+            );
+            array_unshift($datasets, $action_limit, $alert_limit);
+            foreach ($list_limit as $key => $limit) {
+                $alert_limit = array(
+                    'marker' => array(
+                        'enabled' => false
+                    ),
+                    'data_limit' => $limit,
+                    'color' => 'orange',
+                    'index' => $key,
+                    'name' => "Alert",
+                    'data' => array(),
+                );
+                $action_limit = array(
+                    'marker' => array(
+                        'enabled' => false
+                    ),
+                    'data_limit' => $limit,
+                    'color' => 'red',
+                    'index' => $key,
+                    'name' => "Action",
+                    'data' => array(),
+                );
+                // if ($key > 0) {
+                $alert_limit['showInLegend'] = false;
+                $action_limit['showInLegend'] = false;
+                // }
+                array_unshift($datasets, $action_limit, $alert_limit);
+
+                //
+                $annotations['labels'][] = array(
+                    'point' => "alert_" . $limit['id'],
+                    'text' => $limit['alert_limit'],
+                    'backgroundColor' => 'orange'
+                );
+                $annotations['labels'][] = array(
+                    'point' => "action_" . $limit['id'],
+                    'text' => $limit['action_limit'],
+                    'backgroundColor' => 'red'
+                );
+            }
+        }
+        //echo "<pre>";
+        //print_r($datatmp);
+        //die();
+        $limit_prev = null;
+        foreach ($labels as $key => &$date_real) {
+            $date = date("d/m/y", strtotime($date_real));
+
+            foreach ($datasets as &$position) {
+                $position_string_id = $position['name'];
+                $value = isset($datatmp[$date_real][$position_string_id]) ? (float) $datatmp[$date_real][$position_string_id] : null;
+                if ($position_string_id == "Action") {
+                    $limit = $position['data_limit'];
+                    $value = isset($limit['action_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real ? (float) $limit['action_limit'] : null;
+                    $position['data'][] = $value;
+                } else if ($position_string_id == "Alert") {
+                    $limit = $position['data_limit'];
+                    $value = isset($limit['alert_limit']) && isset($limit['day_effect']) && $limit['day_effect'] <= $date_real && $limit['day_effect_to'] >= $date_real  ? (float) $limit['alert_limit'] : null;
+                    $position['data'][] = $value;
+                } elseif ($position_string_id == "Alert Limit" || $position_string_id == "Action Limit") {
+                    $value = null;
+                    $position['data'][] = $value;
+                } else {
+                    $position['data'][] = $value;
+                }
+                if ($value > $max) {
+                    $max = $value;
+                }
+
+                //                $index = array_search($position_string_id, $position_list);
+            }
+            $date_real = $date;
+        }
+        //$yAxis_title = $target->unit;
+        //$title = $params['title'];
+        //$subtitle = $params['subtitle'];
+        $results = array(
+            'categories' => $labels,
+            'series' => $datasets,
+        );
+        return $results;
+    }
     function chart_datav2($params)
     {
         $this->load->model("target_model");
@@ -395,6 +562,7 @@ class Result_model extends MY_Model
         );
         return $results;
     }
+
     function chart_data_nuoc($params)
     {
         $this->load->model("target_model");

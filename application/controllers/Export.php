@@ -2896,9 +2896,16 @@ class Export extends MY_Controller
                         $tmp = array();
                         for ($j = 0; $j < count($child); $j++) {
                             $target = $child[$j];
-                            $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
+                            //$name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
                             // echo $name_chart . "<br>";
-                            if (file_exists(APPPATH . '../public/upload/chart/' . $name_chart)) {
+
+                            $params['area_id'] = $area->id;
+                            $params['department_id'] = $department->id;
+                            $params['target_id'] = $target->id;
+                            $data = $this->result_model->chart_data_work($params);
+
+                            if (!empty($data)) {
+                                $child[$j]->data = $data;
                                 $tmp[] = $child[$j];
                             }
                         }
@@ -2934,10 +2941,34 @@ class Export extends MY_Controller
 
                             $name_chart = $object_id . "_" . $target->id . "_" . $department->id . "_" . $params['type'] . "_" . str_replace("/", "_", str_replace(" ", "_", $params['selector'])) . ".png";
 
-                            $categories = array('A', 'B', 'C', 'D', 'E');
-                            $series1 = array(1, 3, 2, 5, 4);
-                            $chart = new Chart('line', $categories, $series1);
-                            //$chart->getStyle()->setWidth(Converter::inchToEmu(2.5))->setHeight(Converter::inchToEmu(2));
+                            //$department = $row->department;
+                            //        $area_id = $department->area_id;
+                            //        $target = $row->target;
+                            //        $params['area_id'] = $area_id;
+                            //        $params['department_id'] = $department->id;
+                            //        $params['target_id'] = $target->id;
+                            //        $title = "Trend chart of microbiological monitoring";
+                            //        $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
+                            //        $params['title'] = $title;
+                            //        $params['subtitle'] = $subtitle;
+                            //        $data = $this->result_model->chart_datav2($params);
+                            if ($target->id == 14 || $target->id == 15) {
+                                $title = "Trend chart of non viable particles size (≥ 5.0 µm)";
+                            } else {
+                                $title = "Trend chart of non viable particles size (≥ 0.5 µm)";
+                            }
+                            $data = $target->data;
+                            //echo "<pre>";
+                            //print_r($data);
+                            //die();
+
+                            $data1 = array_shift($data['series']);
+                            $chart = new Chart('line', $data['categories'], $data1['data'], array('title' => $title, 'majorTickMarkPos' => 'in', 'showLegend' => true, 'showAxisLabels' => true, 'gridY' => true, 'gridX' => true), $data1['name']);
+
+                            foreach ($data['series'] as $pos) {
+                                $chart->addSeries($data['categories'], $pos['data'], $pos['name']);
+                            }
+                            $chart->getStyle()->setWidth(Converter::inchToEmu(10))->setHeight(Converter::inchToEmu(3));
                             $templateProcessor->setChart("chart_image#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), $chart);
                             //$templateProcessor->setImageValue("chart_image#" . ($key1 + 1) . "#" . ($i + 1) . "#" . ($j + 1), array('path' => APPPATH . '../public/upload/chart/' . $name_chart, 'width' => 750, 'height' => 300, 'ratio' => false));
                         }
@@ -5015,5 +5046,113 @@ class Export extends MY_Controller
         header("Content-Disposition: attachment; filename=myFile.docx");
 
         readfile($file_export);
+    }
+    public function export_nhan()
+    {
+        set_time_limit(-1);
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '2048M');
+        require_once APPPATH . 'third_party/PHPEXCEL/PHPExcel.php';
+        //Đường dẫn file
+        $file = APPPATH . '../public/upload/data_nhan/nhan.xlsx';
+        //echo $file;
+        //Tiến hành xác thực file
+        $objFile = PHPExcel_IOFactory::identify($file);
+        $objData = PHPExcel_IOFactory::createReader($objFile);
+
+        //Chỉ đọc dữ liệu
+        // $objData->setReadDataOnly(true);
+        // Load dữ liệu sang dạng đối tượng
+        $objPHPExcel = $objData->load($file);
+
+        //Lấy ra số trang sử dụng phương thức getSheetCount();
+        // Lấy Ra tên trang sử dụng getSheetNames();
+        //Chọn trang cần truy xuất
+        $sheet = $objPHPExcel->setActiveSheetIndex(0);
+
+        $sheet_name = $sheet->getTitle();
+        //Lấy ra số dòng cuối cùng
+        $Totalrow = $sheet->getHighestRow();
+        //Lấy ra tên cột cuối cùng
+        $LastColumn = $sheet->getHighestColumn();
+        //Chuyển đổi tên cột đó về vị trí thứ, VD: C là 3,D là 4
+        $TotalCol = PHPExcel_Cell::columnIndexFromString($LastColumn);
+
+        //Tạo mảng chứa dữ liệu
+        $data = [];
+
+        //Tiến hành lặp qua từng ô dữ liệu
+        //----Lặp dòng, Vì dòng đầu là tiêu đề cột nên chúng ta sẽ lặp giá trị từ dòng 2
+        $row_stt = 7;
+        for ($i = $row_stt; $i <= $Totalrow; $i++) {
+            //----Lặp cột
+            for ($j = 0; $j < $TotalCol; $j++) {
+                // Tiến hành lấy giá trị của từng ô đổ vào mảng
+                $cell = $sheet->getCellByColumnAndRow($j, $i);
+
+                $data[$i - $row_stt][$j] = $cell->getCalculatedValue();
+                ///CHUYEN RICH TEXT
+                if ($data[$i - $row_stt][$j] instanceof PHPExcel_RichText) {
+                    $data[$i - $row_stt][$j] = $data[$i - $row_stt][$j]->getPlainText();
+                }
+                ////CHUYEN DATE 
+                if (PHPExcel_Shared_Date::isDateTime($cell) && $data[$i - $row_stt][$j] > 0) {
+
+                    if (is_numeric($data[$i - $row_stt][$j])) {
+                        $data[$i - $row_stt][$j] = date("Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($data[$i - $row_stt][$j]));
+                    } else if ($data[$i - $row_stt][$j] == '26/09/16') {
+                        $data[$i - $row_stt][$j] = '2016-09-26';
+                    }
+                }
+            }
+        }
+        //echo "<pre>";
+        //print_r($data);
+        //die();
+        $length_clone = floor(count($data) / 6) + 1;
+
+        //Hiển thị mảng dữ liệu
+
+        $file = APPPATH . '../public/upload/template/template_nhan.docx';
+        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
+        $year = $sheet_name;
+        $short_year = substr($year, -2);
+        $month = 1;
+        $month_string = sprintf("%02d", $month);
+        $templateProcessor->cloneBlock("table", $length_clone, true, true);
+        $row = 1;
+        $stt = 0;
+        for ($i = 0; $i < count($data); $i++) {
+            if ($stt > 5) {
+                $stt = 0;
+                $row++;
+            }
+            $name = $data[$i][1];
+            $ma_backup = "BK/$short_year" . $month_string . $month_string . "/" . $data[$i][3] . "/" . $data[$i][2];
+            $date = $data[$i][$month + 5] . "." . $month_string . "." . $short_year;
+            $date_storage = $data[$i][$month + 5] . "." . $month_string . "." . (substr((int)$year + 6, -2));
+            $templateProcessor->setValue("name_$stt" . "#$row", $name);
+            $templateProcessor->setValue("ma_backup_$stt" . "#$row", $ma_backup);
+            $templateProcessor->setValue("date_created_$stt" . "#$row", $date);
+            $templateProcessor->setValue("date_storage_$stt" . "#$row", $date_storage);
+            $stt++;
+        }
+        ////TABLE VITRI
+
+        $name_file = time() . ".docx";
+        $name_file = urlencode($name_file);
+        if (!file_exists(APPPATH . '../public/export_nhan')) {
+            mkdir(APPPATH . '../public/export_nhan', 0777, true);
+        }
+        //echo $temp_file;
+        //die();
+        $file_export = APPPATH . '../public/export_nhan/' . $name_file;
+        $templateProcessor->saveAs($file_export);
+
+        // Your browser will name the file "myFile.docx"
+        // regardless of what it's named on the server 
+        header("Content-Disposition: attachment; filename=$name_file");
+        readfile($file_export);
+        exit;
     }
 }
