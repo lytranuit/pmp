@@ -5109,7 +5109,8 @@ class Export extends MY_Controller
         //echo "<pre>";
         //print_r($data);
         //die();
-        $length_clone = floor(count($data) / 6) + 1;
+        $arr_month = array(1, 2, 3);
+        $length_clone = floor(count($data) * count($arr_month)  / 6) + 1;
 
         //Hiển thị mảng dữ liệu
 
@@ -5117,28 +5118,30 @@ class Export extends MY_Controller
         $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($file);
         $year = $sheet_name;
         $short_year = substr($year, -2);
-        $month = 1;
-        $month_string = sprintf("%02d", $month);
-        $templateProcessor->cloneBlock("table", $length_clone, true, true);
         $row = 1;
         $stt = 0;
-        for ($i = 0; $i < count($data); $i++) {
-            if ($stt > 5) {
-                $stt = 0;
-                $row++;
-            }
-            $name = $data[$i][1];
-            $ma_backup = "BK/$short_year" . $month_string . $month_string . "/" . $data[$i][3] . "/" . $data[$i][2];
-            $date = $data[$i][$month + 5] . "." . $month_string . "." . $short_year;
-            $date_storage = $data[$i][$month + 5] . "." . $month_string . "." . (substr((int)$year + 6, -2));
-            $templateProcessor->setValue("name_$stt" . "#$row", $name);
-            $templateProcessor->setValue("ma_backup_$stt" . "#$row", $ma_backup);
-            $templateProcessor->setValue("date_created_$stt" . "#$row", $date);
-            $templateProcessor->setValue("date_storage_$stt" . "#$row", $date_storage);
-            $stt++;
-        }
-        ////TABLE VITRI
+        $templateProcessor->cloneBlock("table", $length_clone, true, true);
 
+        foreach ($arr_month as $month) {
+
+            $month_string = sprintf("%02d", $month);
+            for ($i = 0; $i < count($data); $i++) {
+                if ($stt > 5) {
+                    $stt = 0;
+                    $row++;
+                }
+                $name = $data[$i][1];
+                $ma_backup = "BK/$short_year" . $month_string . $month_string . "/" . $data[$i][3] . "/" . $data[$i][2];
+                $date = $data[$i][$month + 5];
+                $date_storage = date("Y-m-d", strtotime($data[$i][$month + 5] . ' +6 years'));
+                $templateProcessor->setValue("name_$stt" . "#$row", $name);
+                $templateProcessor->setValue("ma_backup_$stt" . "#$row", $ma_backup);
+                $templateProcessor->setValue("date_created_$stt" . "#$row", $date);
+                $templateProcessor->setValue("date_storage_$stt" . "#$row", $date_storage);
+                $stt++;
+            }
+            ////TABLE VITRI
+        }
         $name_file = time() . ".docx";
         $name_file = urlencode($name_file);
         if (!file_exists(APPPATH . '../public/export_nhan')) {
