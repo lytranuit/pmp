@@ -358,9 +358,10 @@ $config['sess_expire_on_close'] = TRUE;
 $config['sess_encrypt_cookie'] = TRUE;
 $config['sess_use_database'] = TRUE;
 $config['sess_table_name'] = 'ci_sessions';
-$config['sess_match_ip'] = FALSE;
+$config['sess_match_ip'] = TRUE;
 $config['sess_match_useragent'] = FALSE;
 $config['sess_time_to_update'] = 300;
+$config['sess_regenerate_destroy'] = FALSE;
 
 
 
@@ -380,11 +381,11 @@ $config['sess_time_to_update'] = 300;
   |       'cookie_httponly') will also affect sessions.
   |
  */
-$config['cookie_prefix'] = '';
-$config['cookie_domain'] = '';
+$config['cookie_prefix'] = "";
+$config['cookie_domain'] = "";
 $config['cookie_path'] = '/';
 $config['cookie_secure'] = FALSE;
-$config['cookie_httponly'] = FALSE;
+$config['cookie_httponly']   = FALSE;
 
 /*
   |--------------------------------------------------------------------------
