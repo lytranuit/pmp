@@ -222,121 +222,121 @@ class Dashboard extends MY_Controller
         $this->report_model->trail($id, "insert", null, $data_up, null, $text);
 
 
-        redirect("report", "refresh");
-        //$params = array(
-        //    'type' => $type,
-        //    'selector' => $selector,
-        //    'daterange' => $daterange,
-        //    'workshop_id' => $workshop_id
-        //);
-        //$params = input_params($params);
-        //$params['object_id'] = $object_id;
-        //$this->data['params'] = $params;
-        //if ($this->data['object_id'] == 3) {
-        //    $department_list = $this->employeeresult_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0))->with_employee()->group_by(array("employee_id", "area_id"))->get_all();
-        //    foreach ($department_list as $row) {
-        //        $employee = $row->employee;
-        //        $area_id = $row->area_id;
-        //        $target_id = $row->target_id;
-        //        $params['area_id'] = $area_id;
-        //        $params['employee_id'] = $employee->id;
-        //        $params['target_id'] = $target_id;
-        //        $title = "Biểu đồ xu hướng vi sinh nhân viên $employee->name ($employee->string_id)";
-        //        $subtitle = "Trend chart of microbiological monitoring of Personnel $employee->name ($employee->string_id)";
+        // redirect("report", "refresh");
+        $params = array(
+           'type' => $type,
+           'selector' => $selector,
+           'daterange' => $daterange,
+           'workshop_id' => $workshop_id
+        );
+        $params = input_params($params);
+        $params['object_id'] = $object_id;
+        $this->data['params'] = $params;
+        if ($this->data['object_id'] == 3) {
+           $department_list = $this->employeeresult_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0))->with_employee()->group_by(array("employee_id", "area_id"))->get_all();
+           foreach ($department_list as $row) {
+               $employee = $row->employee;
+               $area_id = $row->area_id;
+               $target_id = $row->target_id;
+               $params['area_id'] = $area_id;
+               $params['employee_id'] = $employee->id;
+               $params['target_id'] = $target_id;
+               $title = "Biểu đồ xu hướng vi sinh nhân viên $employee->name ($employee->string_id)";
+               $subtitle = "Trend chart of microbiological monitoring of Personnel $employee->name ($employee->string_id)";
 
-        //        $params['title'] = $title;
-        //        $params['subtitle'] = $subtitle;
-        //        $data = $this->employeeresult_model->chart_datav2($params);
-        //        $row->department_id = $employee->id;
-        //        $row->department = $employee;
-        //        $row->data = $data;
-        //        $results[] = $row;
-        //    }
-        //} elseif ($this->data['object_id'] == 18 || $this->data['object_id'] == 19 || $this->data['object_id'] == 20) {
-        //    $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by(array("system_id", "type_bc", "target_id"))->get_all();
-        //    foreach ($department_list as $row) {
-        //        $target = $row->target;
-        //        $params['type_bc'] = $row->type_bc;
+               $params['title'] = $title;
+               $params['subtitle'] = $subtitle;
+               $data = $this->employeeresult_model->chart_datav2($params);
+               $row->department_id = $employee->id;
+               $row->department = $employee;
+               $row->data = $data;
+               $results[] = $row;
+           }
+        } elseif ($this->data['object_id'] == 18 || $this->data['object_id'] == 19 || $this->data['object_id'] == 20) {
+           $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_target()->group_by(array("system_id", "type_bc", "target_id"))->get_all();
+           foreach ($department_list as $row) {
+               $target = $row->target;
+               $params['type_bc'] = $row->type_bc;
 
-        //        // $params['department_id'] = $row->department_id;
-        //        $params['system_id'] = $row->system_id;
-        //        $params['target_id'] = $row->target_id;
-        //        $title = "Trend chart of $target->name_en";
-        //        $subtitle = "";
-        //        $params['title'] = $title;
-        //        $params['subtitle'] = $subtitle;
-        //        $data = $this->result_model->chart_data_nuoc($params);
+               // $params['department_id'] = $row->department_id;
+               $params['system_id'] = $row->system_id;
+               $params['target_id'] = $row->target_id;
+               $title = "Trend chart of $target->name_en";
+               $subtitle = "";
+               $params['title'] = $title;
+               $params['subtitle'] = $subtitle;
+               $data = $this->result_model->chart_data_nuoc($params);
 
-        //        $row->department_id = $row->workshop_id . "_" . $row->system_id . "_" . $row->type_bc;
-        //        $row->data = $data;
-        //        $results[] = $row;
-        //    }
-        //} elseif ($this->data['object_id'] == 14 || $this->data['object_id'] == 15) {
-        //    $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
-        //    foreach ($department_list as $row) {
-        //        $department = $row->department;
-        //        $area_id = $department->area_id;
-        //        $target = $row->target;
-        //        $params['area_id'] = $area_id;
-        //        $params['department_id'] = $department->id;
-        //        $params['target_id'] = $target->id;
-        //        if ($target->id == 14 || $target->id == 15) {
-        //            $title = "Trend chart of non viable particles size (≥ 5.0 µm)";
-        //        } else {
-        //            $title = "Trend chart of non viable particles size (≥ 0.5 µm)";
-        //        }
+               $row->department_id = $row->workshop_id . "_" . $row->system_id . "_" . $row->type_bc;
+               $row->data = $data;
+               $results[] = $row;
+           }
+        } elseif ($this->data['object_id'] == 14 || $this->data['object_id'] == 15) {
+           $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
+           foreach ($department_list as $row) {
+               $department = $row->department;
+               $area_id = $department->area_id;
+               $target = $row->target;
+               $params['area_id'] = $area_id;
+               $params['department_id'] = $department->id;
+               $params['target_id'] = $target->id;
+               if ($target->id == 14 || $target->id == 15) {
+                   $title = "Trend chart of non viable particles size (≥ 5.0 µm)";
+               } else {
+                   $title = "Trend chart of non viable particles size (≥ 0.5 µm)";
+               }
 
-        //        $subtitle = "";
-        //        $params['title'] = $title;
-        //        $params['subtitle'] = $subtitle;
-        //        $data = $this->result_model->chart_datav2($params);
+               $subtitle = "";
+               $params['title'] = $title;
+               $params['subtitle'] = $subtitle;
+               $data = $this->result_model->chart_datav2($params);
 
-        //        $row->data = $data;
-        //        $results[] = $row;
-        //    }
-        //} elseif ($this->data['object_id'] == 10 || $this->data['object_id'] == 11) {
-        //    $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
-        //    foreach ($department_list as $row) {
-        //        $department = $row->department;
-        //        $area_id = $department->area_id;
-        //        $target = $row->target;
-        //        $params['area_id'] = $area_id;
-        //        $params['department_id'] = $department->id;
-        //        $params['target_id'] = $target->id;
-        //        $title = "Trend chart of microbiological monitoring";
-        //        $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
-        //        $params['title'] = $title;
-        //        $params['subtitle'] = $subtitle;
-        //        $data = $this->result_model->chart_datav2($params);
+               $row->data = $data;
+               $results[] = $row;
+           }
+        } elseif ($this->data['object_id'] == 10 || $this->data['object_id'] == 11) {
+           $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
+           foreach ($department_list as $row) {
+               $department = $row->department;
+               $area_id = $department->area_id;
+               $target = $row->target;
+               $params['area_id'] = $area_id;
+               $params['department_id'] = $department->id;
+               $params['target_id'] = $target->id;
+               $title = "Trend chart of microbiological monitoring";
+               $subtitle = "($target->name_en method) $department->name_en ($department->string_id)";
+               $params['title'] = $title;
+               $params['subtitle'] = $subtitle;
+               $data = $this->result_model->chart_datav2($params);
 
-        //        $row->data = $data;
-        //        $results[] = $row;
-        //    }
-        //} else {
-        //    $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
-        //    foreach ($department_list as $row) {
-        //        $department = $row->department;
-        //        $area_id = $department->area_id;
-        //        $target = $row->target;
-        //        $params['area_id'] = $area_id;
-        //        $params['department_id'] = $department->id;
-        //        $params['target_id'] = $target->id;
-        //        $title = "Trend chart of $target->name_en";
-        //        $subtitle = "";
-        //        $params['title'] = $title;
-        //        $params['subtitle'] = $subtitle;
-        //        $data = $this->result_model->chart_datav2($params);
+               $row->data = $data;
+               $results[] = $row;
+           }
+        } else {
+           $department_list = $this->result_model->where('date', '>=', $params['date_from'])->where('date', '<=', $params['date_to'])->where(array('workshop_id' => $workshop_id, 'deleted' => 0, 'object_id' => $object_id))->with_department()->with_target()->group_by(array("department_id", "target_id"))->get_all();
+           foreach ($department_list as $row) {
+               $department = $row->department;
+               $area_id = $department->area_id;
+               $target = $row->target;
+               $params['area_id'] = $area_id;
+               $params['department_id'] = $department->id;
+               $params['target_id'] = $target->id;
+               $title = "Trend chart of $target->name_en";
+               $subtitle = "";
+               $params['title'] = $title;
+               $params['subtitle'] = $subtitle;
+               $data = $this->result_model->chart_datav2($params);
 
-        //        $row->data = $data;
-        //        $results[] = $row;
-        //    }
-        //}
+               $row->data = $data;
+               $results[] = $row;
+           }
+        }
 
-        //// echo "<pre>";
-        //// print_r($results);
-        //// die();
-        //$this->data['results'] = $results;
-        //echo $this->blade->view()->make('page/page', $this->data)->render();
+        // echo "<pre>";
+        // print_r($results);
+        // die();
+        $this->data['results'] = $results;
+        echo $this->blade->view()->make('page/page', $this->data)->render();
     }
     public function chartdatav3()
     {

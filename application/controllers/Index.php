@@ -62,56 +62,6 @@ class Index extends MY_Controller
         die();
     }
 
-    function printbillnormal()
-    {
-        try {
-            // Enter the share name for your USB printer here
-            //            $connector = null;
-            $connector = new WindowsPrintConnector("Receipt Printer");
-
-            /* Print a "Hello world" receipt" */
-            $printer = new Printer($connector);
-            $printer->text("Hello World!\n");
-            $printer->cut();
-
-            /* Close printer */
-            $printer->close();
-        } catch (Exception $e) {
-            echo "Couldn't print to this printer: " . $e->getMessage() . "\n";
-        }
-    }
-
-    function printbill()
-    {
-        $id = $this->input->get('id');
-        $this->load->model("saleorder_model");
-        $tin = $this->saleorder_model->where(array('id' => $id))->with_details()->as_object()->get();
-        //          echo "<pre>";
-        //        print_r($tin);
-        //        die();
-        //            PRINT BILL
-        // boost the memory limit if it's low ;)
-        ini_set('memory_limit', '256M');
-        // load library
-        $this->load->library('pdf');
-        $pdf = $this->pdf->load();
-        // retrieve data from model
-        $this->data['cart'] = $tin;
-        $pdf->allow_charset_conversion = true;  // Set by default to TRUE
-        $pdf->charset_in = 'UTF-8';
-        //   $pdf->SetDirectionality('rtl');
-        $pdf->autoLangToFont = true;
-        $html = $this->blade->view()->make('pdf/bill', $this->data)->render();
-
-        // render the view into HTML
-        $pdf->WriteHTML($html);
-        // write the HTML into the PDF
-        $output = 'itemreport' . date('Y_m_d_H_i_s') . '_.pdf';
-        $pdf->Output("$output", 'I');
-        // save to file because we can exit();
-        // - See more at: http://webeasystep.com/blog/view_article/codeigniter_tutorial_pdf_to_create_your_reports#sthash.QFCyVGLu.dpuf
-    }
-
     public function index()
     {
         redirect("report", "refresh");
